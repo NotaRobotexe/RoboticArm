@@ -1,0 +1,1 @@
+g++ -o "/home/pi/projects/Robotic_Arm_RspPi/bin/ARM/Debug/Robotic_Arm_RspPi.out" -Wl,--no-undefined -Wl,-z,relro -Wl,-z,now -Wl,-z,noexecstack /home/pi/projects/Robotic_Arm_RspPi/obj/ARM/Debug/main.o /home/pi/projects/Robotic_Arm_RspPi/obj/ARM/Debug/NetworkCom.o /home/pi/projects/Robotic_Arm_RspPi/obj/ARM/Debug/Trigger.o -lwiringPi

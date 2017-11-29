@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Motors>
+  <Elbow0>
+    <Angle>120</Angle>
+    <MaxUse>120</MaxUse>
+    <StartFrom>0</StartFrom>
+  </Elbow0>
+  <Elbow1>
+    <Angle>120</Angle>
+    <MaxUse>120</MaxUse>
+    <StartFrom>0</StartFrom>
+  </Elbow1>
+  <Elbow2>
+    <Angle>180</Angle>
+    <MaxUse>90.53</MaxUse>
+    <StartFrom>0</StartFrom>
+  </Elbow2>
+  <Base>
+    <Angle>360</Angle>
+    <MaxUse>259.32</MaxUse>
+    <StartFrom>70.17</StartFrom>
+  </Base>
+  <Gripper0>
+    <Angle>180</Angle>
+    <MaxUse>180</MaxUse>
+    <StartFrom>0</StartFrom>
+  </Gripper0>
+  <Gripper1>
+    <Angle>180</Angle>
+    <MaxUse>180</MaxUse>
+    <StartFrom>0</StartFrom>
+  </Gripper1>
+</Motors>
