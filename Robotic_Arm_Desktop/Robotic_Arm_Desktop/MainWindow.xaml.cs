@@ -232,6 +232,7 @@ namespace Robotic_Arm_Desktop
                 {
                     case 0x00ff:
                         {
+                            OnOffControllStatus(); //controll status just for effect
                             gamepadData = Gamepad.GamepadProcesing(lParam);
                             movemend.AnalizeData(gamepadData);
                             gamepadConnected = true;
@@ -262,11 +263,11 @@ namespace Robotic_Arm_Desktop
         {
             if (movemend.keyboardenabled == true)
             {
-                OnOffControllStatus(); //controll status just for effect
 
                 if (e.Key != Key.D1 && e.Key != Key.D2 && e.Key != Key.D3)
                 {
                     movemend.AnalizeData(e.Key);
+                    OnOffControllStatus(); //controll status just for effect
                 }
                 else if (e.Key == Key.D1 && movemend.keyboardMovingArm != 0)
                 {
@@ -442,12 +443,12 @@ namespace Robotic_Arm_Desktop
         /*draw position data to the app and update 3d model*/
         private void DrawDataAndUpdateModel()
         {
-            this.baseRv.Content = movemend.baseMovemend.AngleInHz;
-            this.elb0v.Content = movemend.elbow0.AngleInHz;
-            this.elb1v.Content = movemend.elbow1.AngleInHz;
-            this.elb2v.Content = movemend.elbow2.AngleInHz;
-            this.grrv.Content = movemend.griperRotation.AngleInHz;
-            this.grv.Content = movemend.griper.AngleInHz;
+            this.baseRv.Content = Math.Round(movemend.baseMovemend.AngleInHz, 1);
+            this.elb0v.Content = Math.Round(movemend.elbow0.AngleInHz, 1);
+            this.elb1v.Content = Math.Round(movemend.elbow1.AngleInHz, 1);
+            this.elb2v.Content = Math.Round(movemend.elbow2.AngleInHz, 1);
+            this.grrv.Content = Math.Round(movemend.griperRotation.AngleInHz, 1);
+            this.grv.Content = Math.Round(movemend.griper.AngleInHz, 1);
 
             this.baseRa.Content = Math.Round(movemend.baseMovemend.AngleInDegree, 2) + " °";
             this.elb0a.Content = Math.Round(movemend.elbow0.AngleInDegree, 2) + " °";
@@ -559,7 +560,6 @@ namespace Robotic_Arm_Desktop
                 MessageBox.Show("Select template");
             }
         }
-
 
         private void FastmodeChanged(object sender, RoutedEventArgs e)
         {

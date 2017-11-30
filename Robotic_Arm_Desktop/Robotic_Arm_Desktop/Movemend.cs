@@ -7,7 +7,7 @@ using System.Windows.Input;
 
 namespace Robotic_Arm_Desktop
 {
-    class Arm //TODO: dorobit zakladnu poziciu
+    class Arm
     {
         public const double minF = 102;  //hz or dnk what is it
         public const double maxF = 576;
@@ -79,7 +79,7 @@ namespace Robotic_Arm_Desktop
         public float valueCountExp = (float)0.001;
         public float valueCount = 1; //on how much will value increment
 
-        public void StartAndQuitPosition() //TODO: treba nastavit bezpecnu poziciu pre zapnutie a vypnutie;
+        public void StartAndQuitPosition() 
         {
             baseMovemend.AngleInDegree = 180;
             elbow0.AngleInDegree = 0;

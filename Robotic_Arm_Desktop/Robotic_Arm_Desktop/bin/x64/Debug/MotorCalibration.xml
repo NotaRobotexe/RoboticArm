@@ -27,7 +27,7 @@
   </Gripper0>
   <Gripper1>
     <Angle>180</Angle>
-    <MaxUse>180</MaxUse>
+    <MaxUse>0</MaxUse>
     <StartFrom>0</StartFrom>
   </Gripper1>
 </Motors>
