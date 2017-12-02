@@ -45,7 +45,7 @@
             <Label Content="Griper trigger:" HorizontalAlignment="Left" Margin="18,254,0,0" VerticalAlignment="Top" Foreground="#FFEAEAEA" FontSize="18" FontWeight="Bold"/>
             <Label x:Name="grv" Content="0" HorizontalAlignment="Left" Margin="259,215,0,0" VerticalAlignment="Top" FontSize="18" Foreground="#FF609DD1" FontWeight="Bold"/>
             <Label x:Name="gr" Content="0" HorizontalAlignment="Left" Margin="189,215,0,0" VerticalAlignment="Top" FontSize="18" Foreground="#FF609DD1" FontWeight="Bold" RenderTransformOrigin="0.489,0.256"/>
-            <Label Content="False" HorizontalAlignment="Left" Margin="217,254,0,0" VerticalAlignment="Top" FontSize="18" Foreground="#FF609DD1" FontWeight="Bold" RenderTransformOrigin="0.745,-0.433"/>
+            <Label Name="trigger" Content="False" HorizontalAlignment="Left" Margin="217,254,0,0" VerticalAlignment="Top" FontSize="18" Foreground="#FF609DD1" FontWeight="Bold" RenderTransformOrigin="0.745,-0.433"/>
             <Label Content="Incrementation :" HorizontalAlignment="Left" Margin="18,293,0,0" VerticalAlignment="Top"  Foreground="#FFEAEAEA" FontSize="18" FontWeight="Bold"/>
             <Label Name="incLabel" Content="0" HorizontalAlignment="Left" Margin="229,293,0,0" VerticalAlignment="Top" FontSize="18" Foreground="#FF609DD1" FontWeight="Bold"/>
 
@@ -74,18 +74,18 @@
             <Button Content="STOP" HorizontalAlignment="Left" Margin="42,149,0,0" VerticalAlignment="Top" Width="140"  Background="#FF2E2E2E" BorderBrush="Gainsboro" BorderThickness="4" FontSize="24" FontFamily="Segoe UI Semibold" ForceCursor="True" Foreground="#FFF1F1F1" Height="66" Style="{DynamicResource ButtonStyle1}" Click="Stop"/>
             <Label Content="Uptime:" HorizontalAlignment="Left" Margin="247,81,0,0" VerticalAlignment="Top" Foreground="#FFECECEC" FontSize="16" FontWeight="Bold"/>
             <Label Content="Power consumption:" HorizontalAlignment="Left" Margin="450,45,0,0" VerticalAlignment="Top" Foreground="#FFECECEC" FontSize="16" FontWeight="Bold" RenderTransformOrigin="0.268,1.032"/>
-            <Label Content="Status:" HorizontalAlignment="Left" Margin="247,45,0,0" VerticalAlignment="Top" Foreground="#FFECECEC" FontSize="16" FontWeight="Bold"/>
+            <Label Content="Connected :" HorizontalAlignment="Left" Margin="247,45,0,0" VerticalAlignment="Top" Foreground="#FFECECEC" FontSize="16" FontWeight="Bold"/>
             <Label Content="Temperature:" HorizontalAlignment="Left" Margin="450,117,0,0" VerticalAlignment="Top" Foreground="#FFECECEC" FontSize="16" FontWeight="Bold" RenderTransformOrigin="0.194,0.548"/>
             <Label Content="CPU usage:" HorizontalAlignment="Left" Margin="450,81,0,0" VerticalAlignment="Top" Foreground="#FFECECEC" FontSize="16" FontWeight="Bold" RenderTransformOrigin="0.259,0.527"/>
             <Label Content="Ping :" HorizontalAlignment="Left" Margin="247,117,0,0" VerticalAlignment="Top" Foreground="#FFECECEC" FontSize="16" FontWeight="Bold"/>
             <Label Content="Fan speed:" HorizontalAlignment="Left" Margin="450,153,0,0" VerticalAlignment="Top" Foreground="#FFECECEC" FontSize="16" FontWeight="Bold"/>
-            <Label Content="err" HorizontalAlignment="Left" Margin="357,45,0,0" VerticalAlignment="Top" FontSize="15" Foreground="#FF609DD1" FontWeight="Bold"/>
-            <Label x:Name="latency" Content="err" HorizontalAlignment="Left" Margin="357,118,0,0" VerticalAlignment="Top" FontSize="15" Foreground="#FF609DD1" FontWeight="Bold"/>
-            <Label Content="err" HorizontalAlignment="Left" Margin="684,81,0,0" VerticalAlignment="Top" FontSize="15" Foreground="#FF609DD1" FontWeight="Bold" RenderTransformOrigin="0.467,0.467"/>
-            <Label Content="err" HorizontalAlignment="Left" Margin="357,81,0,0" VerticalAlignment="Top" FontSize="15" Foreground="#FF609DD1" FontWeight="Bold"/>
-            <Label Content="err" HorizontalAlignment="Left" Margin="684,118,0,0" VerticalAlignment="Top" FontSize="15" Foreground="#FF609DD1" FontWeight="Bold"/>
-            <Label Content="err" HorizontalAlignment="Left" Margin="684,46,0,0" VerticalAlignment="Top" FontSize="15" Foreground="#FF609DD1" FontWeight="Bold"/>
-            <Slider HorizontalAlignment="Left" Margin="594,162,0,0" VerticalAlignment="Top" Width="120"  Value="80" Maximum="100" RenderTransformOrigin="0.342,0.611"/>
+            <Label Name="status" Content="err" HorizontalAlignment="Left" Margin="357,45,0,0" VerticalAlignment="Top" FontSize="15" Foreground="#FF609DD1" FontWeight="Bold"/>
+            <Label  x:Name="latency" Content="err" HorizontalAlignment="Left" Margin="357,118,0,0" VerticalAlignment="Top" FontSize="15" Foreground="#FF609DD1" FontWeight="Bold"/>
+            <Label Name="cpuusage" Content="err" HorizontalAlignment="Left" Margin="667,81,0,0" VerticalAlignment="Top" FontSize="15" Foreground="#FF609DD1" FontWeight="Bold" RenderTransformOrigin="0.467,0.467"/>
+            <Label Name="uptime" Content="err" HorizontalAlignment="Left" Margin="357,81,0,0" VerticalAlignment="Top" FontSize="15" Foreground="#FF609DD1" FontWeight="Bold"/>
+            <Label Name="temperature" Content="err" HorizontalAlignment="Left" Margin="667,118,0,0" VerticalAlignment="Top" FontSize="15" Foreground="#FF609DD1" FontWeight="Bold"/>
+            <Label Content="err" HorizontalAlignment="Left" Margin="667,46,0,0" VerticalAlignment="Top" FontSize="15" Foreground="#FF609DD1" FontWeight="Bold"/>
+            <Slider HorizontalAlignment="Left" Margin="594,162,0,0" VerticalAlignment="Top" Width="103"  Value="80" Maximum="100" RenderTransformOrigin="0.342,0.611"/>
             <Button Content="Reload" HorizontalAlignment="Left" Margin="247,169,0,0" VerticalAlignment="Top" Width="140"  Background="#FF2E2E2E" BorderBrush="Gainsboro" BorderThickness="3" FontSize="24" FontFamily="Segoe UI Semibold" ForceCursor="True" Foreground="#FFF1F1F1" Height="46"/>
         </Grid>
         <Grid HorizontalAlignment="Left" Height="330" Margin="20,300,0,0" VerticalAlignment="Top" Width="351" Background="#FF252526">

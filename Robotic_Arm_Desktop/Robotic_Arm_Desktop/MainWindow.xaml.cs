@@ -19,6 +19,7 @@ using System.Windows.Media.Media3D;
 using HelixToolkit.Wpf;
 using System.IO;
 using System.Threading;
+using System.Diagnostics;
 
 namespace Robotic_Arm_Desktop
 {
@@ -43,10 +44,14 @@ namespace Robotic_Arm_Desktop
         DispatcherTimer AutoModeAnimation;
 
         List<string> Commands = new List<string>(); //Template command
+        Stopwatch stopWatch;
+        TimeSpan elapsed;
 
         public MainWindow()
         {
             InitializeComponent();
+
+            Stats.GetPingAndTryConnection();//TODO: nech sa to overi este pri zadavani ip adresi
 
             NetworkCom.InitCom();
             NetworkCom.VideoStrem(900, 600);
@@ -82,9 +87,11 @@ namespace Robotic_Arm_Desktop
             //load data to combobox
             LoadFilesToComboBox();
 
-            loadingDone = true;
+
+            StatTimersForStatsStuff();
 
             DrawDataAndUpdateModel();
+            loadingDone = true;
         }
 
         private void Stop(object sender, RoutedEventArgs e)
@@ -579,6 +586,60 @@ namespace Robotic_Arm_Desktop
         {
             Global.stop = true;
             numOfLoop.Text = "1";
+        }
+
+        /*Stats shit*/
+
+        void StatTimersForStatsStuff()
+        {
+            DispatcherTimer PingTimer = new DispatcherTimer();
+            PingTimer.Tick += PingTimer_Tick;
+            PingTimer.Interval = new TimeSpan(0, 0, 0, 0, 500);
+            PingTimer.Start();
+
+            DispatcherTimer DataTimer = new DispatcherTimer();
+            DataTimer.Tick += DataTimer_Tick;
+            DataTimer.Interval = new TimeSpan(0, 0, 0, 2);
+            DataTimer.Start();
+
+            DispatcherTimer TriggerTimer = new DispatcherTimer();
+            TriggerTimer.Tick += TriggerTimer_Tick;
+            TriggerTimer.Interval = new TimeSpan(0, 0, 0, 0, 100);
+            TriggerTimer.Start();
+
+            DispatcherTimer UpTime = new DispatcherTimer();
+            UpTime.Tick += UpTime_Tick;
+            UpTime.Interval = new TimeSpan(0, 0, 1);
+            UpTime.Start();
+
+            stopWatch = new Stopwatch();
+            stopWatch.Start();
+        }
+
+        private void UpTime_Tick(object sender, EventArgs e)
+        {
+            elapsed = stopWatch.Elapsed;
+            this.uptime.Content = elapsed.ToString("hh\\:mm\\:ss");
+        }
+
+        private void TriggerTimer_Tick(object sender, EventArgs e)
+        {
+            NetworkCom.CheckTrigger();
+            this.trigger.Content = Global.triggered;
+        }
+
+        private void DataTimer_Tick(object sender, EventArgs e)
+        {
+            NetworkCom.GetData();
+            this.cpuusage.Content = Stats.CPUload + " %";
+            this.temperature.Content = Stats.Temperature + " °C";
+        }
+
+        private void PingTimer_Tick(object sender, EventArgs e)
+        {
+            Stats.GetPingAndTryConnection();
+            this.latency.Content = Stats.ping;
+            this.status.Content = Global.connected;
         }
     }
 }

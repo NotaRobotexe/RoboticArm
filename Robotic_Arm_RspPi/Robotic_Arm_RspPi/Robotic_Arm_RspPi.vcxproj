@@ -53,11 +53,11 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="NetworkCom.cpp" />
-    <ClCompile Include="Trigger.cpp" />
+    <ClCompile Include="GPIO.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="NetworkCom.h" />
-    <ClInclude Include="Trigger.h" />
+    <ClInclude Include="GPIO.h" />
   </ItemGroup>
   <ItemDefinitionGroup />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

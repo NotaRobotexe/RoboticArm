@@ -3,36 +3,31 @@
 #include <string>
 #include <thread>
 #include  <vector>
-#include "Trigger.h"
+#include "GPIO.h"
 using namespace std;
 
 bool Movement=false;
 bool ShutDownStart = false;
 
 void LaunchStream();
-void LaunchStatMessaging(); //for temperature and procces and fan
-void Messaging();
+void GetData(); //for temperature and procces and fan
+void GetTempAndLoad();
+
 void ShutDown(NetworkCom b);
 
 string getTemp();
 string getCPULoad();
 
+string TempAndLoad = "26*83";
+
 int main(void)
 {
-	Trigger trigger;
-	cout << "kurvavvaaa" << std::endl;
-	while (true)
-	{
-		trigger.blink();
-	}
-
-	//cout << getCPULoad();
-
-	/*bool launched = false;
-
 	NetworkCom netCom(6969);
+	GPIO tr;
 
+	bool launched = false;
 	string NetComMessage = "";
+
 	do
 	{
 		NetComMessage = netCom.Recv();
@@ -40,41 +35,47 @@ int main(void)
 		if (NetComMessage.substr(0,1) == "6")
 		{
 		}
-		else if(NetComMessage.substr(0, 1) == "5")
+		else if(NetComMessage.substr(0, 1) == "5") //data cpu and temp
 		{
+			netCom.Send(TempAndLoad);
+			GetData();
 		}
 		else if (NetComMessage.substr(0, 1) == "4")
 		{
 			Movement = false;
-			cout << "q" << endl;
 		}
 		else if (NetComMessage.substr(0, 1) == "3")
 		{
 			Movement = true;
-			cout << "q" << endl;
 		}
-		else if (NetComMessage.substr(0, 1) == "2")
+		else if (NetComMessage.substr(0, 1) == "2") //GPIO
 		{
+			netCom.Send(tr.CheckTrigger());
 		}
 		else if (NetComMessage.substr(0, 1) == "1")
 		{
-			cout << "q" << endl;
+
+		}
+		else if (NetComMessage.substr(0, 1) == "8") //TODO: fan speed
+		{
+
 		}
 
 
 	} while (NetComMessage.substr(0, 1) != "7");
 	
-	ShutDown(netCom);*/
+	ShutDown(netCom);
 	cin.get();
 	return 0;
 }
 
+/* temperature and cpu load*/
 string getCPULoad() {
 	string load = "";
 	FILE* fp = popen("echo $(vmstat 1 2|tail -1|awk '{print $15}')", "r");
 	if (fp) {
 		std::vector<char> buffer(4);
-		std::size_t n = fread(buffer.data(), 1, buffer.size(), fp);
+		fread(buffer.data(), 1, buffer.size(), fp);
 		pclose(fp);
 
 		for (size_t i = 0; i < buffer.size(); i++)
@@ -102,34 +103,18 @@ string getTemp() {
 	return temp;
 }
 
-
-void LaunchStatMessaging() {
-	//thread th_messaging(Messaging);
-	//th_messaging.detach();
+void GetData() {
+	thread th_messaging(GetTempAndLoad);
+	th_messaging.detach();
 }
 
-void Messaging() {
-	NetworkCom netStat(6968);
-	string msg;
-	int FanSpeed = 50;
+void GetTempAndLoad() {
+	string temp = getTemp();
+	string load = getCPULoad();
 
-	while (true)
-	{
-		msg = netStat.Recv(); // if message return end turn off else message return fan speed
-
-		if (msg != "end") //TODO fan 
-		{
-			FanSpeed = stoi(msg);
-
-		}
-		else 
-		{
-			break;
-		}
-	}
-
-	netStat.Quit();
+	TempAndLoad = temp + "*" + load;
 }
+
 
 void LaunchStream() {
 

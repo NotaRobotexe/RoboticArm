@@ -6,29 +6,34 @@ using System.Threading.Tasks;
 
 namespace Robotic_Arm_Desktop
 {
-    class Stats
+    static class  Stats
     {
-        string ip;
-        bool connected = false;
+        static public string ping = "";
+        static public string CPUload = "";
+        static public string Temperature = "";
 
-        public enum data
-        {
-            ping
-        }
-
-
-        public Stats(string ip)
-        {
-            this.ip = ip;
-        }
-
-        void GetPingAndTryConnection()
+        static public void GetPingAndTryConnection()
         {
             using (System.Net.NetworkInformation.Ping p = new System.Net.NetworkInformation.Ping())
             {
-                //data.ping = "sadasd";
-                //latency.Content = p.Send("192.167.1.69").RoundtripTime.ToString() + " ms";
+                try
+                {
+                    ping = p.Send(Global.ipaddres).RoundtripTime.ToString() + " ms";
+                    Global.connected = true;
+                }
+                catch (Exception)
+                {
+                    Global.connected = false;
+                }
             }
+        }
+
+        static public void getData(string data)
+        {
+            data = data.Substring(0, data.IndexOf('\0')-1);
+            string[] tempAndLoad = data.Split('*');
+            Temperature = tempAndLoad[0];
+            CPUload = tempAndLoad[1];
         }
 
     }

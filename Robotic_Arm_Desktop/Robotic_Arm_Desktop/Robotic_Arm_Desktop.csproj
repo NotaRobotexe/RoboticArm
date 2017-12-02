@@ -84,6 +84,11 @@
     <Compile Include="AutoModeTemplate.cs" />
     <Compile Include="Global.cs" />
     <Compile Include="NetworkCom.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="StartScreen.xaml.cs">
       <DependentUpon>StartScreen.xaml</DependentUpon>
     </Compile>
@@ -113,11 +118,6 @@
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
@@ -146,12 +146,6 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="icons\clear-button.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="giphy.gif" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="download.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
