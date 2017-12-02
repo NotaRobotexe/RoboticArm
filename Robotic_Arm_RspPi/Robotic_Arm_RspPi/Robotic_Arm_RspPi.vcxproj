@@ -54,10 +54,12 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="NetworkCom.cpp" />
     <ClCompile Include="GPIO.cpp" />
+    <ClCompile Include="PCA9685.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="NetworkCom.h" />
     <ClInclude Include="GPIO.h" />
+    <ClInclude Include="PCA9685.h" />
   </ItemGroup>
   <ItemDefinitionGroup />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

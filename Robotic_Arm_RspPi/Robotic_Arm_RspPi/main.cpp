@@ -23,7 +23,7 @@ string TempAndLoad = "26*83";
 int main(void)
 {
 	NetworkCom netCom(6969);
-	GPIO tr;
+	GPIO gpio;
 
 	bool launched = false;
 	string NetComMessage = "";
@@ -34,6 +34,37 @@ int main(void)
 
 		if (NetComMessage.substr(0,1) == "6")
 		{
+			if (NetComMessage.substr(1,1)== "0")
+			{
+				cout << NetComMessage << endl;
+				switch (stoi(NetComMessage.substr(2,1)))
+				{
+					case 0:
+						cout << "base" << endl;
+						break;
+
+					case 1:
+						cout << "elbow0" << endl;
+						break;
+
+					case 2:
+						cout << "elbow1" << endl;
+						break;
+
+					case 3:
+						cout << "elbow2" << endl;
+						break;
+
+					case 4:
+						cout << "grr" << endl;
+						break;
+
+					case 5:
+						cout << "grr" << endl;
+						break;
+
+				}
+			}
 		}
 		else if(NetComMessage.substr(0, 1) == "5") //data cpu and temp
 		{
@@ -50,7 +81,7 @@ int main(void)
 		}
 		else if (NetComMessage.substr(0, 1) == "2") //GPIO
 		{
-			netCom.Send(tr.CheckTrigger());
+			netCom.Send(gpio.CheckTrigger());
 		}
 		else if (NetComMessage.substr(0, 1) == "1")
 		{
@@ -91,7 +122,7 @@ string getTemp() {
 	FILE* fp = popen("/opt/vc/bin/vcgencmd measure_temp", "r");
 	if (fp) {
 		std::vector<char> buffer(9);
-		std::size_t n = fread(buffer.data(), 1, buffer.size(), fp);
+		fread(buffer.data(), 1, buffer.size(), fp);
 		pclose(fp);
 
 		for (size_t i = 5; i < buffer.size(); i++)

@@ -30,10 +30,16 @@ namespace Robotic_Arm_Desktop
 
         static public void getData(string data)
         {
-            data = data.Substring(0, data.IndexOf('\0')-1);
-            string[] tempAndLoad = data.Split('*');
-            Temperature = tempAndLoad[0];
-            CPUload = tempAndLoad[1];
+            if (Global.connected == true)
+            {
+                data = data.Substring(0, data.IndexOf('\0')-1);
+                if (!(data.Any(char.IsLetter)))
+                {
+                    string[] tempAndLoad = data.Split('*');
+                    Temperature = tempAndLoad[0];
+                    CPUload = tempAndLoad[1];
+                }
+            }
         }
 
     }

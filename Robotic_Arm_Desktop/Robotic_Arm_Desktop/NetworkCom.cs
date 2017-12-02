@@ -71,14 +71,18 @@ namespace Robotic_Arm_Desktop
         public static async void CheckTrigger()
         {
             SendData("2");
+
             string trigger = await ReceiveData();
-            if (trigger == "false")
+            if (!(trigger.Any(char.IsDigit)))
             {
-                Global.triggered = false;
-            }
-            else
-            {
-                Global.triggered = true;
+                if (trigger == "false")
+                {
+                    Global.triggered = false;
+                }
+                else
+                {
+                    Global.triggered = true;
+                }
             }
 
         }
@@ -102,7 +106,7 @@ namespace Robotic_Arm_Desktop
 
         public static void Move(String position, String mode)
         {
-            SendData("6 " + position + " " + mode);
+            SendData("6" + mode + position);
         }
 
         public static void SetFanSpeed()

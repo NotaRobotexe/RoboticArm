@@ -40,6 +40,8 @@ namespace Robotic_Arm_Desktop
         bool fastMode = false;
         bool connected = false;
 
+        bool testconnection = false;
+
         DispatcherTimer ControllstatusTimer;
         DispatcherTimer AutoModeAnimation;
 
@@ -51,7 +53,10 @@ namespace Robotic_Arm_Desktop
         {
             InitializeComponent();
 
-            Stats.GetPingAndTryConnection();//TODO: nech sa to overi este pri zadavani ip adresi
+            if (testconnection== false)
+            {
+                Stats.GetPingAndTryConnection();//TODO: nech sa to overi este pri zadavani ip adresi
+            }
 
             NetworkCom.InitCom();
             NetworkCom.VideoStrem(900, 600);
@@ -637,7 +642,10 @@ namespace Robotic_Arm_Desktop
 
         private void PingTimer_Tick(object sender, EventArgs e)
         {
-            Stats.GetPingAndTryConnection();
+            if (testconnection == false)
+            {
+                Stats.GetPingAndTryConnection();
+            }
             this.latency.Content = Stats.ping;
             this.status.Content = Global.connected;
         }
