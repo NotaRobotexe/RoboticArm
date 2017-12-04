@@ -8,12 +8,11 @@ using System.Net.Sockets;
 
 namespace Robotic_Arm_Desktop
 {
-    public static class NetworkCom
+    public class NetworkCom
     {
-        static Socket socket;
+        private Socket socket;
 
-
-        public static int InitCom()
+        public int InitCom( int port)
         {
             if (Global.connected == true)
             {
@@ -21,18 +20,19 @@ namespace Robotic_Arm_Desktop
 
                 try
                 {
-                    socket.Connect(IPAddress.Parse(Global.ipaddres), 6969);
+                    socket.Connect(IPAddress.Parse(Global.ipaddres), port);
                     return 0;
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
+                    Console.WriteLine(e.ToString());
                     return -1;
                 }
             }
             return -1;
         }
 
-        public static void SendData(string s)
+        public void SendData(string s)
         {
             if (Global.connected == true)
             {
@@ -46,7 +46,7 @@ namespace Robotic_Arm_Desktop
             }
         }
 
-        public static async Task<string> ReceiveData()
+        public async Task<string> ReceiveData()
         {
             if (Global.connected == true)
             {
@@ -63,10 +63,7 @@ namespace Robotic_Arm_Desktop
             return "";
         }
 
-        public static void VideoStrem(int x, int y)
-        {
-            SendData("1 " + x + " " + y);
-        }
+        /*
 
         public static async void CheckTrigger()
         {
@@ -112,6 +109,6 @@ namespace Robotic_Arm_Desktop
         public static void SetFanSpeed()
         {
             SendData("8");
-        }
+        }*/
     }
 }

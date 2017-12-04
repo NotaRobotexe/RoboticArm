@@ -1,19 +1,34 @@
 #include <iostream>
-#include "NetworkCom.h"
 #include <string>
 #include <thread>
-#include  <vector>
+#include <vector>
+#include <chrono>
+
 #include "GPIO.h"
+#include "NetworkCom.h"
+#include "PCA9685.h"
+
+#define BASE 10
+#define ARM0a 11
+#define ARM0b 12
+#define ARM1 13
+#define ARM2 13
+#define GRIPPERR 14
+#define GRIPPER 15
+
+#define MIN_s 102
+#define MAX_s 576
+
 using namespace std;
 
 bool Movement=false;
 bool ShutDownStart = false;
 
 void LaunchStream();
-void GetData(); //for temperature and procces and fan
-void GetTempAndLoad();
-
-void ShutDown(NetworkCom b);
+void GetTempAndLoad(NetworkCom netData);
+void distanceTrigger(NetworkCom netTrigger);
+void ShutDown(NetworkCom b, NetworkCom a, NetworkCom c, NetworkCom d, NetworkCom e);
+void movemendReciever(NetworkCom netMove);
 
 string getTemp();
 string getCPULoad();
@@ -23,7 +38,10 @@ string TempAndLoad = "26*83";
 int main(void)
 {
 	NetworkCom netCom(6969);
-	GPIO gpio;
+	NetworkCom netData(6968);
+	NetworkCom netMove(6967);
+	NetworkCom netTrigger(6966);
+	NetworkCom netFan(6965);
 
 	bool launched = false;
 	string NetComMessage = "";
@@ -31,71 +49,27 @@ int main(void)
 	do
 	{
 		NetComMessage = netCom.Recv();
+		cout << "com recive" + NetComMessage << endl;
 
-		if (NetComMessage.substr(0,1) == "6")
+		if (NetComMessage.substr(0,1)=="1") //launch all thread
 		{
-			if (NetComMessage.substr(1,1)== "0")
-			{
-				cout << NetComMessage << endl;
-				switch (stoi(NetComMessage.substr(2,1)))
-				{
-					case 0:
-						cout << "base" << endl;
-						break;
+			thread th_dataMessaging(GetTempAndLoad, netData);
+			th_dataMessaging.detach();
 
-					case 1:
-						cout << "elbow0" << endl;
-						break;
+			thread th_triggerMessaaging(distanceTrigger, netTrigger);
+			th_triggerMessaaging.detach();
 
-					case 2:
-						cout << "elbow1" << endl;
-						break;
-
-					case 3:
-						cout << "elbow2" << endl;
-						break;
-
-					case 4:
-						cout << "grr" << endl;
-						break;
-
-					case 5:
-						cout << "grr" << endl;
-						break;
-
-				}
-			}
+			thread th_movemend(movemendReciever,netMove);
+			th_movemend.detach();
 		}
-		else if(NetComMessage.substr(0, 1) == "5") //data cpu and temp
-		{
-			netCom.Send(TempAndLoad);
-			GetData();
-		}
-		else if (NetComMessage.substr(0, 1) == "4")
-		{
-			Movement = false;
-		}
-		else if (NetComMessage.substr(0, 1) == "3")
-		{
-			Movement = true;
-		}
-		else if (NetComMessage.substr(0, 1) == "2") //GPIO
-		{
-			netCom.Send(gpio.CheckTrigger());
-		}
-		else if (NetComMessage.substr(0, 1) == "1")
+		else if (NetComMessage.substr(0, 1) == "2") //launch or relaunch stream
 		{
 
 		}
-		else if (NetComMessage.substr(0, 1) == "8") //TODO: fan speed
-		{
-
-		}
-
 
 	} while (NetComMessage.substr(0, 1) != "7");
 	
-	ShutDown(netCom);
+	ShutDown(netCom,netMove,netData,netFan,netTrigger);
 	cin.get();
 	return 0;
 }
@@ -134,28 +108,96 @@ string getTemp() {
 	return temp;
 }
 
-void GetData() {
-	thread th_messaging(GetTempAndLoad);
-	th_messaging.detach();
+void GetTempAndLoad(NetworkCom netData) {
+	do
+	{
+		string temp = getTemp();
+		string load = getCPULoad();
+
+		string NetComMessage = temp + "*" + load;
+
+		netData.Send(NetComMessage);
+		
+		this_thread::sleep_for(chrono::milliseconds(1000));
+
+	} while (ShutDownStart==false);
 }
 
-void GetTempAndLoad() {
-	string temp = getTemp();
-	string load = getCPULoad();
+/*distance trigger*/
 
-	TempAndLoad = temp + "*" + load;
+void distanceTrigger(NetworkCom netTrigger) {
+	string status = "false";
+	GPIO gpio;
+
+	do
+	{
+		string trigger = gpio.CheckTrigger();
+		if (trigger != status)
+		{
+			netTrigger.Send(trigger);
+			status = trigger;
+		}
+
+		this_thread::sleep_for(chrono::milliseconds(100));
+
+	} while (ShutDownStart==false);
 }
 
+void movemendReciever(NetworkCom netMove) {
+	PCA9685 pwm;
+	pwm.init(1, 0x40);
+	pwm.setPWMFreq(51);
+
+	do
+	{
+		string msg = netMove.Recv();
+		if (msg.substr(0, 1) == "0")
+		{
+			if (stoi(msg.substr(2, 3))<= MAX_s && stoi(msg.substr(2, 3))>= MIN_s)
+			{
+				if (msg.substr(1, 1) == "0")
+				{
+					pwm.setPWM(BASE, stoi(msg.substr(2, 3)));
+					cout << "base " + msg.substr(2, 3) << endl;;
+				}
+				else if (msg.substr(1, 1) == "1") {
+					pwm.setPWM(ARM0a, stoi(msg.substr(2, 3)));
+					pwm.setPWM(ARM0b, (MAX_s+MIN_s) - stoi(msg.substr(2, 3)));
+
+					cout << "arm0 " + msg.substr(2, 3) << endl;;
+				}
+				else if (msg.substr(1, 1) == "2") {
+					pwm.setPWM(ARM1, stoi(msg.substr(2, 3)));
+					cout << "arm1 " + msg.substr(2, 3) << endl;;
+				}
+				else if (msg.substr(1, 1) == "3") {
+					pwm.setPWM(ARM2, stoi(msg.substr(2, 3)));
+					cout << "arm2 " + msg.substr(2, 3) << endl;;
+				}
+				else if (msg.substr(1, 1) == "4") {
+					pwm.setPWM(GRIPPERR, stoi(msg.substr(2, 3)));
+					cout << "gripper r " + msg.substr(2, 3) << endl;;
+				}
+				else if (msg.substr(1, 1) == "5") {
+					pwm.setPWM(GRIPPER, stoi(msg.substr(2, 3)));
+					cout << "gripper " + msg.substr(2, 3) << endl;;
+				}
+			}
+		}
+
+	} while (ShutDownStart == false);
+}
 
 void LaunchStream() {
 
 }
 
-void ShutDown(NetworkCom b) {
+void ShutDown(NetworkCom b, NetworkCom a, NetworkCom c, NetworkCom d, NetworkCom e) {
 	ShutDownStart = true;
 	b.Quit();
+	a.Quit();
+	c.Quit();
+	d.Quit();
+	e.Quit();
 }
 
-void StartMovemend() {
-
-}

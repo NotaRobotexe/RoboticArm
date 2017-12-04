@@ -38,7 +38,6 @@ namespace Robotic_Arm_Desktop
         bool CapturingTemplate = false;
         bool WaitForTrigger = false;
         bool fastMode = false;
-        bool connected = false;
 
         bool testconnection = false;
 
@@ -49,6 +48,12 @@ namespace Robotic_Arm_Desktop
         Stopwatch stopWatch;
         TimeSpan elapsed;
 
+        NetworkCom netCom;
+        NetworkCom netData;
+        NetworkCom netMove;
+        NetworkCom netTrigger;
+        NetworkCom netFan;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -58,14 +63,16 @@ namespace Robotic_Arm_Desktop
                 Stats.GetPingAndTryConnection();//TODO: nech sa to overi este pri zadavani ip adresi
             }
 
-            NetworkCom.InitCom();
-            NetworkCom.VideoStrem(900, 600);
-
             movemend = new Movemend();
             movemend.StartAndQuitPosition();
             this.Loaded += MainWindow_Loaded; //some method need be call after window is loaded like gamepad because it need window handler 
             model = new _3Dmodel();
 
+            InitCom();
+
+            netCom.SendData("1");
+            GetCPUandTemp();
+            GetTrigger();
         }
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
@@ -101,14 +108,14 @@ namespace Robotic_Arm_Desktop
 
         private void Stop(object sender, RoutedEventArgs e)
         {
-            NetworkCom.StopMovemend();
+            //NetworkCom.StopMovemend();
         }
 
         /*undone things*/
         private void Start(object sender, RoutedEventArgs e)
         {
             movemend.StartAndQuitPosition();
-            NetworkCom.StartMovemend();
+            //NetworkCom.StartMovemend();
         }
 
         private void HUDclick(object sender, RoutedEventArgs e)
@@ -246,7 +253,7 @@ namespace Robotic_Arm_Desktop
                         {
                             OnOffControllStatus(); //controll status just for effect
                             gamepadData = Gamepad.GamepadProcesing(lParam);
-                            movemend.AnalizeData(gamepadData);
+                            movemend.AnalizeData(gamepadData,netMove);
                             gamepadConnected = true;
                             DrawDataAndUpdateModel();
                         }
@@ -278,7 +285,7 @@ namespace Robotic_Arm_Desktop
 
                 if (e.Key != Key.D1 && e.Key != Key.D2 && e.Key != Key.D3)
                 {
-                    movemend.AnalizeData(e.Key);
+                    movemend.AnalizeData(e.Key,netMove);
                     OnOffControllStatus(); //controll status just for effect
                 }
                 else if (e.Key == Key.D1 && movemend.keyboardMovingArm != 0)
@@ -482,7 +489,7 @@ namespace Robotic_Arm_Desktop
         /*uppers tabs*/
         private void ExitWin(object sender, RoutedEventArgs e)
         {
-            NetworkCom.SendData("7");
+            netCom.SendData("7");
             Application.Current.Shutdown();
         }
 
@@ -593,7 +600,8 @@ namespace Robotic_Arm_Desktop
             numOfLoop.Text = "1";
         }
 
-        /*Stats shit*/
+
+        /*comunication and stats*/
 
         void StatTimersForStatsStuff()
         {
@@ -601,16 +609,6 @@ namespace Robotic_Arm_Desktop
             PingTimer.Tick += PingTimer_Tick;
             PingTimer.Interval = new TimeSpan(0, 0, 0, 0, 500);
             PingTimer.Start();
-
-            DispatcherTimer DataTimer = new DispatcherTimer();
-            DataTimer.Tick += DataTimer_Tick;
-            DataTimer.Interval = new TimeSpan(0, 0, 0, 2);
-            DataTimer.Start();
-
-            DispatcherTimer TriggerTimer = new DispatcherTimer();
-            TriggerTimer.Tick += TriggerTimer_Tick;
-            TriggerTimer.Interval = new TimeSpan(0, 0, 0, 0, 100);
-            TriggerTimer.Start();
 
             DispatcherTimer UpTime = new DispatcherTimer();
             UpTime.Tick += UpTime_Tick;
@@ -621,23 +619,54 @@ namespace Robotic_Arm_Desktop
             stopWatch.Start();
         }
 
+        void InitCom()
+        {
+            netCom = new NetworkCom();
+            netData = new NetworkCom();
+            netMove = new NetworkCom(); 
+            netTrigger = new NetworkCom() ;
+            netFan = new NetworkCom();
+
+            netCom.InitCom(6969);
+            netData.InitCom(6968);
+            netMove.InitCom(6967);
+            netTrigger.InitCom(6966);
+            netFan.InitCom(6965);
+        }
+
+        async void GetCPUandTemp()
+        {
+            while (Global.connected == true)
+            {
+                string data = await netData.ReceiveData();
+                Stats.getData(data);
+
+                this.cpuusage.Content = Stats.CPUload + " %";
+                this.temperature.Content = Stats.Temperature + " °C";
+            }
+        }
+
+        async void GetTrigger()
+        {
+            while (Global.connected == true)
+            {
+                string trigger = await netTrigger.ReceiveData();
+                if (trigger == "false")
+                {
+                    Global.triggered = false;
+                }
+                else
+                {
+                    Global.triggered = true;
+                }
+                this.trigger.Content = Global.triggered;
+            }
+        }
+
         private void UpTime_Tick(object sender, EventArgs e)
         {
             elapsed = stopWatch.Elapsed;
             this.uptime.Content = elapsed.ToString("hh\\:mm\\:ss");
-        }
-
-        private void TriggerTimer_Tick(object sender, EventArgs e)
-        {
-            NetworkCom.CheckTrigger();
-            this.trigger.Content = Global.triggered;
-        }
-
-        private void DataTimer_Tick(object sender, EventArgs e)
-        {
-            NetworkCom.GetData();
-            this.cpuusage.Content = Stats.CPUload + " %";
-            this.temperature.Content = Stats.Temperature + " °C";
         }
 
         private void PingTimer_Tick(object sender, EventArgs e)
@@ -649,5 +678,7 @@ namespace Robotic_Arm_Desktop
             this.latency.Content = Stats.ping;
             this.status.Content = Global.connected;
         }
+
+
     }
 }

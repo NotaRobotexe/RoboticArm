@@ -24,7 +24,7 @@ namespace Robotic_Arm_Desktop
             OneDegree = (maxF - minF) / maxAngle;
         }
 
-        public void SetAngleFromKeyboadrOrGamepad(double increment,string part)
+        public void SetAngleFromKeyboadrOrGamepad(double increment,string part, NetworkCom netMove)
         {
             double MaxPosition = maxF;
             if ((minF + AngleToHz(startfrom) + AngleToHz(maxUseAngle))< maxF)
@@ -37,7 +37,7 @@ namespace Robotic_Arm_Desktop
                 AngleInHz += increment;
                 AngleInDegree = (AngleInHz-minF) / OneDegree;
 
-                NetworkCom.Move(part+((AngleInHz+minF).ToString()), "0");
+                netMove.SendData("0"+part+AngleInHz.ToString());
             }
         }
 
@@ -99,7 +99,7 @@ namespace Robotic_Arm_Desktop
 
         }
 
-        public void AnalizeData(GamepadState data) 
+        public void AnalizeData(GamepadState data,NetworkCom netMove) 
         {
                 //value 143yellow 79red 47green 31blue 6left 0up 2right 4down 15nothing|7. 0nothing 4left down 1left up 2right up 8 right down 16 select 32 start 64 right press 128 left press | 8. mode 64/192
             if(data.mode != 64)
@@ -128,60 +128,60 @@ namespace Robotic_Arm_Desktop
 
             if (data.frontButton==8)
             {
-                elbow0.SetAngleFromKeyboadrOrGamepad(valueCount,"1");
+                elbow0.SetAngleFromKeyboadrOrGamepad(valueCount,"1",netMove);
             }
             else if (data.frontButton == 4)
             {
-                elbow0.SetAngleFromKeyboadrOrGamepad(-(valueCount),"1");
+                elbow0.SetAngleFromKeyboadrOrGamepad(-(valueCount),"1",netMove);
             }
             else if (data.frontButton == 1)
             {
-                griper.SetAngleFromKeyboadrOrGamepad(-valueCount,"5");
+                griper.SetAngleFromKeyboadrOrGamepad(-valueCount,"5", netMove);
             }
             else if (data.frontButton == 2)
             {
-                griper.SetAngleFromKeyboadrOrGamepad(valueCount, "5");
+                griper.SetAngleFromKeyboadrOrGamepad(valueCount, "5", netMove);
             }
 
             if (data.leftStickVer>0)
             {
-                elbow1.SetAngleFromKeyboadrOrGamepad(valueCount, "2");
+                elbow1.SetAngleFromKeyboadrOrGamepad(valueCount, "2", netMove);
             }
             else if (data.leftStickVer < 0)
             {
-                elbow1.SetAngleFromKeyboadrOrGamepad(-(valueCount), "2");
+                elbow1.SetAngleFromKeyboadrOrGamepad(-(valueCount), "2", netMove);
             }
 
             if (data.rightStickVer > 0)
             {
-                elbow2.SetAngleFromKeyboadrOrGamepad(valueCount, "3");
+                elbow2.SetAngleFromKeyboadrOrGamepad(valueCount, "3", netMove);
             }
             else if (data.rightStickVer < 0)
             {
-                elbow2.SetAngleFromKeyboadrOrGamepad(-(valueCount), "3");
+                elbow2.SetAngleFromKeyboadrOrGamepad(-(valueCount), "3", netMove);
             }
 
             if (data.rightStickHor > 0)
             {
-                griperRotation.SetAngleFromKeyboadrOrGamepad(valueCount, "4");
+                griperRotation.SetAngleFromKeyboadrOrGamepad(valueCount, "4", netMove);
             }
             else if (data.rightStickHor < 0)
             {
-                griperRotation.SetAngleFromKeyboadrOrGamepad(-(valueCount), "4");
+                griperRotation.SetAngleFromKeyboadrOrGamepad(-(valueCount), "4", netMove);
             }
 
             if (data.leftStickHor > 0)
             {
-                baseMovemend.SetAngleFromKeyboadrOrGamepad(valueCount, "0");
+                baseMovemend.SetAngleFromKeyboadrOrGamepad(valueCount, "0", netMove);
             }
             else if (data.leftStickHor < 0)
             {
-                baseMovemend.SetAngleFromKeyboadrOrGamepad(-(valueCount), "0");
+                baseMovemend.SetAngleFromKeyboadrOrGamepad(-(valueCount), "0", netMove);
             }
 
         }
 
-        public void AnalizeData(Key key) //for keyboard
+        public void AnalizeData(Key key, NetworkCom netMove) //for keyboard
         {
 
             if (key == Key.R)
@@ -201,57 +201,57 @@ namespace Robotic_Arm_Desktop
 
             if (key == Key.W && keyboardMovingArm ==0)
             {
-                elbow0.SetAngleFromKeyboadrOrGamepad(valueCount, "1");
+                elbow0.SetAngleFromKeyboadrOrGamepad(valueCount, "1", netMove);
             }
             else if (key == Key.S && keyboardMovingArm == 0)
             {
-                elbow0.SetAngleFromKeyboadrOrGamepad(-(valueCount), "1");
+                elbow0.SetAngleFromKeyboadrOrGamepad(-(valueCount), "1", netMove);
             }
 
 
             if (key == Key.W && keyboardMovingArm == 1)
             {
-                elbow1.SetAngleFromKeyboadrOrGamepad(valueCount, "2");
+                elbow1.SetAngleFromKeyboadrOrGamepad(valueCount, "2", netMove);
             }
             else if (key == Key.S && keyboardMovingArm == 1)
             {
-                elbow1.SetAngleFromKeyboadrOrGamepad(-(valueCount), "2");
+                elbow1.SetAngleFromKeyboadrOrGamepad(-(valueCount), "2", netMove);
             }
 
             if (key == Key.W && keyboardMovingArm == 2)
             {
-                elbow2.SetAngleFromKeyboadrOrGamepad(valueCount, "3");
+                elbow2.SetAngleFromKeyboadrOrGamepad(valueCount, "3", netMove);
             }
             else if (key == Key.S && keyboardMovingArm == 2)
             {
-                elbow2.SetAngleFromKeyboadrOrGamepad(-(valueCount), "3");
+                elbow2.SetAngleFromKeyboadrOrGamepad(-(valueCount), "3", netMove);
             }
 
             if (key == Key.LeftShift)
             {
-                griper.SetAngleFromKeyboadrOrGamepad(-valueCount, "5");
+                griper.SetAngleFromKeyboadrOrGamepad(-valueCount, "5", netMove);
             }
             else if (key == Key.CrSel)
             {
-                griper.SetAngleFromKeyboadrOrGamepad(valueCount, "5");
+                griper.SetAngleFromKeyboadrOrGamepad(valueCount, "5", netMove);
             }
 
             if (key == Key.E)
             {
-                griperRotation.SetAngleFromKeyboadrOrGamepad(valueCount, "4");
+                griperRotation.SetAngleFromKeyboadrOrGamepad(valueCount, "4", netMove);
             }
             else if (key == Key.Q)
             {
-                griperRotation.SetAngleFromKeyboadrOrGamepad(-(valueCount), "4");
+                griperRotation.SetAngleFromKeyboadrOrGamepad(-(valueCount), "4", netMove);
             }
 
             if (key == Key.A)
             {
-                baseMovemend.SetAngleFromKeyboadrOrGamepad(valueCount, "0");
+                baseMovemend.SetAngleFromKeyboadrOrGamepad(valueCount, "0", netMove);
             }
             else if (key == Key.D)
             {
-                baseMovemend.SetAngleFromKeyboadrOrGamepad(-(valueCount), "0");
+                baseMovemend.SetAngleFromKeyboadrOrGamepad(-(valueCount), "0", netMove);
             }
         }
 

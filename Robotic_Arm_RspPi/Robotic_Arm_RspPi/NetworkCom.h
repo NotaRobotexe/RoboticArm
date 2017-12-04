@@ -7,6 +7,7 @@ private:
 	void set_info_s();
 	void error(std::string s);
 	int port;
+	int sck, new_sck;
 	std::string addres;
 
 public:

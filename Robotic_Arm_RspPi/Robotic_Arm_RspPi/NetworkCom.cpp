@@ -13,8 +13,6 @@
 #include <unistd.h>
 #include <errno.h>
 
-
-int sck, new_sck;
 sockaddr_in info;
 
 NetworkCom::NetworkCom(int port)
@@ -54,7 +52,6 @@ void NetworkCom::error(std::string s) { //UNDONE: (1) ak bude cas treba sa kuknu
 	else {
 		std::cout << "cannot open error_log file";
 	}
-	system("pause");
 	exit(1);
 }
 
