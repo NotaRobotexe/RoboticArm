@@ -39,7 +39,7 @@ namespace Robotic_Arm_Desktop
         bool WaitForTrigger = false;
         bool fastMode = false;
 
-        bool testconnection = false;
+        bool testconnection = true; //debug only 
 
         DispatcherTimer ControllstatusTimer;
         DispatcherTimer AutoModeAnimation;
