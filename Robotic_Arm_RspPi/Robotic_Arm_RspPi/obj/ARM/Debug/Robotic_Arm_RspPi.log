@@ -4,7 +4,7 @@
   Starting remote build
   Compiling sources:
   main.cpp
-C:\Users\mt2si\Desktop\projekty\S.O.C Robotic Arm\Robotic Arm\Robotic_Arm_RspPi\Robotic_Arm_RspPi\main.cpp(33,7): warning : unused variable ‘launched’ [-Wunused-variable]
+C:\Users\mt2si\Desktop\projekty\S.O.C Robotic Arm\Robotic Arm\Robotic_Arm_RspPi\Robotic_Arm_RspPi\main.cpp(45,7): warning : unused variable ‘launched’ [-Wunused-variable]
   Linking objects
   /usr/bin/ld: /home/pi/projects/Robotic_Arm_RspPi/obj/ARM/Debug/main.o: undefined reference to symbol 'pthread_create@@GLIBC_2.4'
   //lib/arm-linux-gnueabihf/libpthread.so.0: error adding symbols: DSO missing from command line

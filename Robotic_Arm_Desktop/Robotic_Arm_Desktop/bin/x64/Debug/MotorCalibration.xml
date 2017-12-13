@@ -12,8 +12,8 @@
   </Elbow1>
   <Elbow2>
     <Angle>180</Angle>
-    <MaxUse>90.53</MaxUse>
-    <StartFrom>0</StartFrom>
+    <MaxUse>60.02</MaxUse>
+    <StartFrom>6.1</StartFrom>
   </Elbow2>
   <Base>
     <Angle>360</Angle>
@@ -27,7 +27,7 @@
   </Gripper0>
   <Gripper1>
     <Angle>180</Angle>
-    <MaxUse>0</MaxUse>
+    <MaxUse>180</MaxUse>
     <StartFrom>0</StartFrom>
   </Gripper1>
 </Motors>

@@ -8,13 +8,12 @@
 #include "NetworkCom.h"
 #include "PCA9685.h"
 
-#define BASE 10
-#define ARM0a 11
-#define ARM0b 12
-#define ARM1 13
+#define ARM0a 9
+#define ARM0b 11
+#define ARM1 10
 #define ARM2 13
-#define GRIPPERR 14
-#define GRIPPER 15
+#define GRIPPERR 15
+#define GRIPPER 14
 
 #define MIN_s 102
 #define MAX_s 576
@@ -157,7 +156,7 @@ void movemendReciever(NetworkCom netMove) {
 			{
 				if (msg.substr(1, 1) == "0")
 				{
-					pwm.setPWM(BASE, stoi(msg.substr(2, 3)));
+					//pwm.setPWM(BASE, stoi(msg.substr(2, 3)));
 					cout << "base " + msg.substr(2, 3) << endl;;
 				}
 				else if (msg.substr(1, 1) == "1") {

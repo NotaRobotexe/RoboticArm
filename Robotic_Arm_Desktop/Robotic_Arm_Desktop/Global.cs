@@ -8,7 +8,7 @@ namespace Robotic_Arm_Desktop
 {
     public static class Global
     {
-        public static string ipaddres = "169.254.191.199";
+        public static string ipaddres = "169.254.48.106";
         public static bool connected = false;
 
         public static bool stop = false; // manual mode stop all action
