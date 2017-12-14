@@ -39,8 +39,6 @@ namespace Robotic_Arm_Desktop
         bool WaitForTrigger = false;
         bool fastMode = false;
 
-        bool testconnection = false; //debug only 
-
         DispatcherTimer ControllstatusTimer;
         DispatcherTimer AutoModeAnimation;
 
@@ -58,7 +56,7 @@ namespace Robotic_Arm_Desktop
         {
             InitializeComponent();
 
-            if (testconnection== false)
+            if (Global.DebugMode== false)
             {
                 Stats.GetPingAndTryConnection();//TODO: nech sa to overi este pri zadavani ip adresi
             }
@@ -73,10 +71,19 @@ namespace Robotic_Arm_Desktop
             netCom.SendData("1");
             GetCPUandTemp();
             GetTrigger();
+
+            //test for stream
+            BitmapImage image = new BitmapImage(new Uri("icons/errorScreen.png", UriKind.Relative));
+            ImageSource errImage = image;
+            ViewFrame.Source = errImage;
+            OfflineVideoStream();
+
         }
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
+            ShowRes.Content = xres.Text + " px  " + yres.Text + " px";
+
             InitializeGamepad();
             helix.Content = model.group;
 
@@ -671,7 +678,7 @@ namespace Robotic_Arm_Desktop
 
         private void PingTimer_Tick(object sender, EventArgs e)
         {
-            if (testconnection == false)
+            if (Global.DebugMode == false)
             {
                 Stats.GetPingAndTryConnection();
             }
@@ -679,6 +686,17 @@ namespace Robotic_Arm_Desktop
             this.status.Content = Global.connected;
         }
 
+        void OfflineVideoStream()
+        {
+            if (Global.OfflineVideo == true)
+            {
+                MessageBox.Show("buffer size " + (Convert.ToInt64(xres.Text) * Convert.ToInt64(yres.Text)) + " empty");
+            }
+        }
 
+        private void ReloadPressed(object sender, RoutedEventArgs e)
+        {
+            ShowRes.Content = xres.Text + " px  " +yres.Text + " px";
+        }
     }
 }

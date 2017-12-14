@@ -93,6 +93,7 @@
       <DependentUpon>StartScreen.xaml</DependentUpon>
     </Compile>
     <Compile Include="Stats.cs" />
+    <Compile Include="VideoStream.cs" />
     <Compile Include="XmlReadWriter.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -146,6 +147,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="icons\clear-button.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="icons\errorScreen.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

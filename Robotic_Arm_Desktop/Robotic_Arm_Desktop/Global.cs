@@ -14,5 +14,9 @@ namespace Robotic_Arm_Desktop
         public static bool stop = false; // manual mode stop all action
         public static bool triggered = false;
         public static bool autoModeRunning = false;
+
+        //debug only 
+        public static bool DebugMode = true;
+        public static bool OfflineVideo = true;
     }
 }
