@@ -73,18 +73,16 @@
             <Button Style="{DynamicResource ButtonStyle1}" Content="START" HorizontalAlignment="Left" Margin="42,37,0,0" VerticalAlignment="Top" Width="140"  Background="#FF2E2E2E" BorderBrush="Gainsboro" BorderThickness="4" FontSize="24" FontFamily="Segoe UI Semibold" ForceCursor="True" Foreground="#FFF1F1F1" Height="66" Click="Start"/>
             <Button Content="STOP" HorizontalAlignment="Left" Margin="42,149,0,0" VerticalAlignment="Top" Width="140"  Background="#FF2E2E2E" BorderBrush="Gainsboro" BorderThickness="4" FontSize="24" FontFamily="Segoe UI Semibold" ForceCursor="True" Foreground="#FFF1F1F1" Height="66" Style="{DynamicResource ButtonStyle1}" Click="Stop"/>
             <Label Content="Uptime:" HorizontalAlignment="Left" Margin="247,81,0,0" VerticalAlignment="Top" Foreground="#FFECECEC" FontSize="16" FontWeight="Bold"/>
-            <Label Content="Power consumption:" HorizontalAlignment="Left" Margin="450,45,0,0" VerticalAlignment="Top" Foreground="#FFECECEC" FontSize="16" FontWeight="Bold" RenderTransformOrigin="0.268,1.032"/>
             <Label Content="Connected :" HorizontalAlignment="Left" Margin="247,45,0,0" VerticalAlignment="Top" Foreground="#FFECECEC" FontSize="16" FontWeight="Bold"/>
             <Label Content="Temperature:" HorizontalAlignment="Left" Margin="450,117,0,0" VerticalAlignment="Top" Foreground="#FFECECEC" FontSize="16" FontWeight="Bold" RenderTransformOrigin="0.194,0.548"/>
             <Label Content="CPU usage:" HorizontalAlignment="Left" Margin="450,81,0,0" VerticalAlignment="Top" Foreground="#FFECECEC" FontSize="16" FontWeight="Bold" RenderTransformOrigin="0.259,0.527"/>
             <Label Content="Ping :" HorizontalAlignment="Left" Margin="247,117,0,0" VerticalAlignment="Top" Foreground="#FFECECEC" FontSize="16" FontWeight="Bold"/>
             <Label Content="Fan speed:" HorizontalAlignment="Left" Margin="450,153,0,0" VerticalAlignment="Top" Foreground="#FFECECEC" FontSize="16" FontWeight="Bold"/>
-            <Label Name="status" Content="err" HorizontalAlignment="Left" Margin="357,45,0,0" VerticalAlignment="Top" FontSize="15" Foreground="#FF609DD1" FontWeight="Bold"/>
+            <Label Name="status" Content="false" HorizontalAlignment="Left" Margin="357,45,0,0" VerticalAlignment="Top" FontSize="15" Foreground="#FF609DD1" FontWeight="Bold"/>
             <Label  x:Name="latency" Content="err" HorizontalAlignment="Left" Margin="357,118,0,0" VerticalAlignment="Top" FontSize="15" Foreground="#FF609DD1" FontWeight="Bold"/>
             <Label Name="cpuusage" Content="err" HorizontalAlignment="Left" Margin="667,81,0,0" VerticalAlignment="Top" FontSize="15" Foreground="#FF609DD1" FontWeight="Bold" RenderTransformOrigin="0.467,0.467"/>
             <Label Name="uptime" Content="err" HorizontalAlignment="Left" Margin="357,81,0,0" VerticalAlignment="Top" FontSize="15" Foreground="#FF609DD1" FontWeight="Bold"/>
-            <Label Name="temperature" Content="err" HorizontalAlignment="Left" Margin="667,118,0,0" VerticalAlignment="Top" FontSize="15" Foreground="#FF609DD1" FontWeight="Bold"/>
-            <Label Content="err" HorizontalAlignment="Left" Margin="667,46,0,0" VerticalAlignment="Top" FontSize="15" Foreground="#FF609DD1" FontWeight="Bold"/>
+            <Label Name="temperature" Content="err" HorizontalAlignment="Left" Margin="667,118,0,0" VerticalAlignment="Top" FontSize="15" Foreground="#FF609DD1" FontWeight="Bold" Width="48"/>
             <Slider HorizontalAlignment="Left" Margin="594,162,0,0" VerticalAlignment="Top" Width="103"  Value="80" Maximum="100" RenderTransformOrigin="0.342,0.611"/>
             <Button Style="{DynamicResource ButtonStyle1}" Content="Reload" HorizontalAlignment="Left" Margin="247,169,0,0" VerticalAlignment="Top" Width="140"  Background="#FF2E2E2E" BorderBrush="Gainsboro" BorderThickness="3" FontSize="24" FontFamily="Segoe UI Semibold" ForceCursor="True" Foreground="#FFF1F1F1" Height="46" Click="ReloadPressed"/>
         </Grid>
@@ -102,8 +100,8 @@
             </ListBox>
             <Label Content="Available :" HorizontalAlignment="Left" Margin="162,69,0,0" VerticalAlignment="Top" Foreground="#FFEAEAEA" FontSize="17" FontWeight="Bold"/>
             <Label Content="Max use :" Margin="162,117,0,0" VerticalAlignment="Top" Foreground="#FFEAEAEA" FontSize="17" FontWeight="Bold" HorizontalAlignment="Left" Width="92"/>
-            <Label Name="availableD" Content="err" HorizontalAlignment="Left" Margin="267,74,0,0" VerticalAlignment="Top" FontSize="15" Foreground="#FF609DD1" FontWeight="Bold"/>
-            <Label Name="maxUse" Content="err" HorizontalAlignment="Left" Margin="267,110,0,0" VerticalAlignment="Top" FontSize="15" Foreground="#FF609DD1" FontWeight="Bold"/>
+            <Label Name="availableD" Content="err" HorizontalAlignment="Left" Margin="267,69,0,0" VerticalAlignment="Top" FontSize="15" Foreground="#FF609DD1" FontWeight="Bold"/>
+            <Label Name="maxUse" Content="err" HorizontalAlignment="Left" Margin="267,117,0,0" VerticalAlignment="Top" FontSize="15" Foreground="#FF609DD1" FontWeight="Bold"/>
             <Button Style="{DynamicResource ButtonStyle1}" x:Name="SaveMotorSeting" Content="Save" HorizontalAlignment="Left" Margin="184,252,0,0" VerticalAlignment="Top"  Width="90" Height="25" Background="#FF2E2E2E" BorderBrush="Gainsboro" BorderThickness="2" FontSize="14" FontFamily="Segoe UI Semibold" ForceCursor="True" Foreground="#FFF1F1F1" Click="SaveMotorsStats"/>
             <Slider Name="max" Minimum="0" HorizontalAlignment="Left" Margin="168,161,0,0" VerticalAlignment="Top" Width="129" ValueChanged="MaxUseSliderChange"/>
             <Label  Content="Start from :" HorizontalAlignment="Left" Margin="162,182,0,0" VerticalAlignment="Top" Foreground="#FFEAEAEA" FontSize="17" FontWeight="Bold" />
@@ -117,7 +115,7 @@
             <Label Content="New :" HorizontalAlignment="Left" Margin="398,314,0,0" VerticalAlignment="Top" Foreground="#FFECECEC" FontSize="16" FontWeight="Bold"/>
             <Label Content="Auto mode:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Foreground="#FFEAEAEA" FontSize="22" FontWeight="Bold"/>
             <Button x:Name="EnableAutoMode" Content="Button" HorizontalAlignment="Left" Margin="76,80,0,0" VerticalAlignment="Top" Width="74" Click="EnableAutoMode_Click"/>
-            <Button Content="Button" HorizontalAlignment="Left" Margin="95,150,0,0" VerticalAlignment="Top" Width="75"/>
+            <Button x:Name="ScriptEditor" Content="open script" HorizontalAlignment="Left" Margin="95,150,0,0" VerticalAlignment="Top" Width="75" Click="OpenScriptEditor"/>
             <Label Content="Select :" HorizontalAlignment="Left" Margin="398,227,0,0" VerticalAlignment="Top" Foreground="#FFECECEC" FontSize="16" FontWeight="Bold"/>
             <Button Style="{DynamicResource ButtonStyle1}" Name="modestart0" Content="Start" HorizontalAlignment="Left" Margin="398,270,0,0" VerticalAlignment="Top"  Width="90" Height="25" Background="#FF2E2E2E" BorderBrush="Gainsboro" BorderThickness="2" FontSize="14" FontFamily="Segoe UI Semibold" ForceCursor="True" Foreground="#FFF1F1F1" Click="StartTemplate"/>
             <Button Style="{DynamicResource ButtonStyle1}" Name="modestop0" Content="stop" HorizontalAlignment="Left" Margin="515,270,0,0" VerticalAlignment="Top"  Width="90" Height="25" Background="#FF2E2E2E" BorderBrush="Gainsboro" BorderThickness="2" FontSize="14" FontFamily="Segoe UI Semibold" ForceCursor="True" Foreground="#FFF1F1F1" Click="StopMoving"/>

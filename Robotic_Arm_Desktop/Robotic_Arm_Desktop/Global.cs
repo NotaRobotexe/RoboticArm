@@ -17,6 +17,6 @@ namespace Robotic_Arm_Desktop
 
         //debug only 
         public static bool DebugMode = true;
-        public static bool OfflineVideo = true;
+        public static bool OfflineVideo = false;
     }
 }

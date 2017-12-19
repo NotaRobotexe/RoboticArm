@@ -23,6 +23,22 @@ using System.Diagnostics;
 
 namespace Robotic_Arm_Desktop
 {
+    //TODO: implementovat video stream
+    //TODO: HUD, contrast ostatne
+    //TODO: kalibrovanie - netreba mozno ako posledne
+    //TODO: Safety control - taktiez netreba moc
+    //TODO: fixnut zakazovanie a povolovanie vstupu
+    //TODO: fixnut ostatne buggy
+    //TODO: prerobit pohyb motorov
+    //TODO: prerobit posielanie dat do pi
+    //TODO: spiest sa ako babovka
+    //TODO: responzivnost - nepotrebne fullHD staci
+
+    //TODO: SCRIPT module - hot hot hot hot
+    //TODO: Spracovanie obrazu a vsetky tie blbosti - hot hot hot hot
+    //TODO: Implementovanie pythonu
+    //TODO: Prestat pridavat TODO
+
     public partial class MainWindow : Window
     {
         GamepadState gamepadData;
@@ -54,6 +70,7 @@ namespace Robotic_Arm_Desktop
 
         public MainWindow()
         {
+            Directory.CreateDirectory(System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\RoboticArm\\Scripts");
             InitializeComponent();
 
             if (Global.DebugMode== false)
@@ -697,6 +714,12 @@ namespace Robotic_Arm_Desktop
         private void ReloadPressed(object sender, RoutedEventArgs e)
         {
             ShowRes.Content = xres.Text + " px  " +yres.Text + " px";
+        }
+
+        private void OpenScriptEditor(object sender, RoutedEventArgs e)
+        {
+            SriptEditor Editor = new SriptEditor();
+            Editor.Show();
         }
     }
 }
