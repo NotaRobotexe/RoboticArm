@@ -30,7 +30,7 @@ namespace Robotic_Arm_Desktop
 
         private void SaveScript(object sender, RoutedEventArgs e)
         {
-            string content = new TextRange(Editor.Document.ContentStart, Editor.Document.ContentEnd).Text;
+            string content = EditorNew.Text;
             MessageBox.Show(content);
             SaveFileDialog saveFileDialog = new SaveFileDialog();
             saveFileDialog.Title = "Save a Script";
@@ -57,7 +57,7 @@ namespace Robotic_Arm_Desktop
 
         private void Clearbox(object sender, RoutedEventArgs e)
         {
-            Editor.Document.Blocks.Clear();
+            EditorNew.Clear();
         }
 
         private void OpenScript(object sender, RoutedEventArgs e)
