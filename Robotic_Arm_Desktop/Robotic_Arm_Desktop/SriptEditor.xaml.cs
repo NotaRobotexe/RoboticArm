@@ -31,7 +31,6 @@ namespace Robotic_Arm_Desktop
         private void SaveScript(object sender, RoutedEventArgs e)
         {
             string content = EditorNew.Text;
-            MessageBox.Show(content);
             SaveFileDialog saveFileDialog = new SaveFileDialog();
             saveFileDialog.Title = "Save a Script";
             saveFileDialog.InitialDirectory = System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\RoboticArm\\Scripts";
@@ -40,7 +39,12 @@ namespace Robotic_Arm_Desktop
 
             string path = saveFileDialog.FileName;
 
-            File.WriteAllText(path, content);
+            if (path != "Script.ArmScript")
+            {
+                File.WriteAllText(path, content);
+                saved = true;
+            }
+
 
         }
 
@@ -52,20 +56,31 @@ namespace Robotic_Arm_Desktop
             }
             else
             {
+                MessageBox.Show("Save or clear script first");
             }
         }
 
         private void Clearbox(object sender, RoutedEventArgs e)
         {
             EditorNew.Clear();
+            saved = true;
         }
 
         private void OpenScript(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Title = "Open a Script";
+            openFileDialog.InitialDirectory = System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\RoboticArm\\Scripts";
             openFileDialog.ShowDialog();
+
             string path = openFileDialog.FileName;
-            MessageBox.Show(path);
+            string content = File.ReadAllText(path);
+
+            if (content != null)
+            {
+                EditorNew.Text = content;
+            }
+
         }
     }
 }

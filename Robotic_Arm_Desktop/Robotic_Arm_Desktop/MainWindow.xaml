@@ -115,7 +115,7 @@
             <Label Content="New :" HorizontalAlignment="Left" Margin="398,314,0,0" VerticalAlignment="Top" Foreground="#FFECECEC" FontSize="16" FontWeight="Bold"/>
             <Label Content="Auto mode:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Foreground="#FFEAEAEA" FontSize="22" FontWeight="Bold"/>
             <Button x:Name="EnableAutoMode" Content="Button" HorizontalAlignment="Left" Margin="76,80,0,0" VerticalAlignment="Top" Width="74" Click="EnableAutoMode_Click"/>
-            <Button x:Name="ScriptEditor" Content="open script" HorizontalAlignment="Left" Margin="95,150,0,0" VerticalAlignment="Top" Width="75" Click="OpenScriptEditor"/>
+            <Button x:Name="ScriptEditor" Content="open script editor" HorizontalAlignment="Left" Margin="95,150,0,0" VerticalAlignment="Top" Width="75" Click="OpenScriptEditor"/>
             <Label Content="Select :" HorizontalAlignment="Left" Margin="398,227,0,0" VerticalAlignment="Top" Foreground="#FFECECEC" FontSize="16" FontWeight="Bold"/>
             <Button Style="{DynamicResource ButtonStyle1}" Name="modestart0" Content="Start" HorizontalAlignment="Left" Margin="398,270,0,0" VerticalAlignment="Top"  Width="90" Height="25" Background="#FF2E2E2E" BorderBrush="Gainsboro" BorderThickness="2" FontSize="14" FontFamily="Segoe UI Semibold" ForceCursor="True" Foreground="#FFF1F1F1" Click="StartTemplate"/>
             <Button Style="{DynamicResource ButtonStyle1}" Name="modestop0" Content="stop" HorizontalAlignment="Left" Margin="515,270,0,0" VerticalAlignment="Top"  Width="90" Height="25" Background="#FF2E2E2E" BorderBrush="Gainsboro" BorderThickness="2" FontSize="14" FontFamily="Segoe UI Semibold" ForceCursor="True" Foreground="#FFF1F1F1" Click="StopMoving"/>
@@ -135,6 +135,10 @@
             <Button Style="{DynamicResource ButtonStyle1}" Name="fastmodetemplate" IsEnabled="False" Content="fastmode" HorizontalAlignment="Left" Margin="901,317,-365,0" VerticalAlignment="Top"  Width="90" Height="25" Background="#FF2E2E2E" BorderBrush="Gainsboro" BorderThickness="2" FontSize="14" FontFamily="Segoe UI Semibold" ForceCursor="True" Foreground="#FFF1F1F1" Click="FastmodeChanged"/>
             <Label Content="Loops :" HorizontalAlignment="Left" Margin="10,194,0,0" VerticalAlignment="Top" Foreground="#FFECECEC" FontSize="16" FontWeight="Bold"/>
             <Label Content="Templates :" HorizontalAlignment="Left" Margin="465,178,0,0" VerticalAlignment="Top" Foreground="#FFEAEAEA" FontSize="18" FontWeight="Bold"/>
+            <Button Content="Load Script" HorizontalAlignment="Left" Margin="214,85,0,0" VerticalAlignment="Top" Width="74" Click="LoadScript"/>
+            <Label Name="scriptName" Content="Label" HorizontalAlignment="Left" Margin="288,198,0,0" VerticalAlignment="Top" FontSize="15" Foreground="#FF609DD1" FontWeight="Bold"/>
+            <Label Content="Script Name : " HorizontalAlignment="Left" Margin="172,194,0,0" VerticalAlignment="Top" Foreground="#FFECECEC" FontSize="16" FontWeight="Bold"/>
+            <Button Name="startScript" Content="Start Script" IsEnabled="False" HorizontalAlignment="Left" Margin="150,258,0,0" VerticalAlignment="Top" Width="75" Click="RunScript"/>
         </Grid>
         <Grid HorizontalAlignment="Left" Height="187" Margin="670,650,0,0" VerticalAlignment="Top" Width="366" Background="#FF252526">
             <Label Content="Manual Mode:" HorizontalAlignment="Left" Margin="18,10,0,0" VerticalAlignment="Top" Foreground="#FFEAEAEA" FontSize="22" FontWeight="Bold"/>

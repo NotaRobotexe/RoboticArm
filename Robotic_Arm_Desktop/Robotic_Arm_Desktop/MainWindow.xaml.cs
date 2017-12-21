@@ -20,6 +20,7 @@ using HelixToolkit.Wpf;
 using System.IO;
 using System.Threading;
 using System.Diagnostics;
+using Microsoft.Win32;
 
 namespace Robotic_Arm_Desktop
 {
@@ -46,6 +47,8 @@ namespace Robotic_Arm_Desktop
         _3Dmodel model;
         Gamepad gamepad;
         XmlReadWriter xrw;
+
+        string ScriptPath = "";
 
         bool AutoMode = false;
         bool gamepadConnected = false;
@@ -720,6 +723,26 @@ namespace Robotic_Arm_Desktop
         {
             SriptEditor Editor = new SriptEditor();
             Editor.Show();
+        }
+
+        private void LoadScript(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Title = "Open a Script";
+            openFileDialog.InitialDirectory = System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\RoboticArm\\Scripts";
+            openFileDialog.ShowDialog();
+
+            string name = openFileDialog.SafeFileName;
+            string name_ = name.Substring(0,name.IndexOf("."));
+            scriptName.Content = name_; 
+
+            ScriptPath = openFileDialog.FileName;
+            startScript.IsEnabled = true;
+        }
+
+        private void RunScript(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }
