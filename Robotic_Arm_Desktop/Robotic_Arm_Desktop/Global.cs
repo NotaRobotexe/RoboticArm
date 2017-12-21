@@ -11,6 +11,7 @@ namespace Robotic_Arm_Desktop
         public static string ipaddres = "169.254.48.106";
         public static bool connected = false;
 
+
         public static bool stop = false; // manual mode stop all action
         public static bool triggered = false;
         public static bool autoModeRunning = false;

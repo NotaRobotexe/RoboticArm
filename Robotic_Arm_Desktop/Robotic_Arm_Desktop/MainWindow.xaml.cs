@@ -30,14 +30,10 @@ namespace Robotic_Arm_Desktop
     //TODO: Safety control - taktiez netreba moc
     //TODO: fixnut zakazovanie a povolovanie vstupu
     //TODO: fixnut ostatne buggy
-    //TODO: prerobit pohyb motorov
-    //TODO: prerobit posielanie dat do pi
-    //TODO: spiest sa ako babovka
+    //TODO: doponcit posielanie dat do pi
     //TODO: responzivnost - nepotrebne fullHD staci
-
     //TODO: SCRIPT module - hot hot hot hot
     //TODO: Spracovanie obrazu a vsetky tie blbosti - hot hot hot hot
-    //TODO: Implementovanie pythonu
     //TODO: Prestat pridavat TODO
 
     public partial class MainWindow : Window
@@ -729,20 +725,29 @@ namespace Robotic_Arm_Desktop
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
             openFileDialog.Title = "Open a Script";
-            openFileDialog.InitialDirectory = System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\RoboticArm\\Scripts";
+            openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\RoboticArm\\Scripts";
             openFileDialog.ShowDialog();
 
-            string name = openFileDialog.SafeFileName;
-            string name_ = name.Substring(0,name.IndexOf("."));
-            scriptName.Content = name_; 
-
             ScriptPath = openFileDialog.FileName;
-            startScript.IsEnabled = true;
+
+            if (ScriptPath != "")
+            {
+                string name = openFileDialog.SafeFileName;
+                string name_ = name.Substring(0,name.IndexOf("."));
+                scriptName.Content = name_; 
+            
+                startScript.IsEnabled = true;
+            }
         }
 
         private void RunScript(object sender, RoutedEventArgs e)
         {
-
+            Process pythone = new Process();
+            pythone.StartInfo.FileName = ScriptPath;
+            pythone.StartInfo.UseShellExecute = false;
+            pythone.StartInfo.RedirectStandardOutput = true;
+            pythone.StartInfo.CreateNoWindow = true;
+            pythone.Start();
         }
     }
 }

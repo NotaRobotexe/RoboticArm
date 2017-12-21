@@ -56,7 +56,7 @@ namespace Robotic_Arm_Desktop
             }
             else
             {
-                MessageBox.Show("Save or clear script first");
+                MessageBox.Show("Save or delete a file first");
             }
         }
 
