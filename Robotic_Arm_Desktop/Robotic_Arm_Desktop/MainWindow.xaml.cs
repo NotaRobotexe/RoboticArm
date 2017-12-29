@@ -34,6 +34,7 @@ namespace Robotic_Arm_Desktop
     //TODO: responzivnost - nepotrebne fullHD staci
     //TODO: SCRIPT module - hot hot hot hot
     //TODO: Spracovanie obrazu a vsetky tie blbosti - hot hot hot hot
+    //TODO: spiest sa ako babovka #1
     //TODO: Prestat pridavat TODO
 
     public partial class MainWindow : Window
@@ -69,6 +70,7 @@ namespace Robotic_Arm_Desktop
 
         public MainWindow()
         {
+
             Directory.CreateDirectory(System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\RoboticArm\\Scripts");
             InitializeComponent();
 
@@ -82,8 +84,8 @@ namespace Robotic_Arm_Desktop
             this.Loaded += MainWindow_Loaded; //some method need be call after window is loaded like gamepad because it need window handler 
             model = new _3Dmodel();
 
-            InitCom();
 
+            InitCom();
             netCom.SendData("1");
             GetCPUandTemp();
             GetTrigger();
@@ -167,6 +169,7 @@ namespace Robotic_Arm_Desktop
 
             if (AutoMode == true)
             {
+
                 manualModeStatus.Content = "Disabled";
                 ManualModeStatusEllipse.Fill = new SolidColorBrush(Color.FromRgb(172, 33, 33));
             }
@@ -174,6 +177,14 @@ namespace Robotic_Arm_Desktop
             {
                 manualModeStatus.Content = "Enabled";
                 ManualModeStatusEllipse.Fill = new SolidColorBrush(Color.FromRgb(37, 37, 38));
+            }
+
+            movemend.keyboardenabled = !movemend.keyboardenabled;
+            buttonAnimationOnOff(keyboardEnalbeButton, movemend.keyboardenabled);
+            if (gamepad.gamepadConnected == true )
+            {
+                movemend.gamepadEnabled = !movemend.gamepadEnabled;
+                buttonAnimationOnOff(GamepadEnalbeButton, movemend.gamepadEnabled);
             }
         }
 
@@ -201,14 +212,20 @@ namespace Robotic_Arm_Desktop
 
         private void KeyboardOnOff(object sender, RoutedEventArgs e)
         {
-            movemend.keyboardenabled = !movemend.keyboardenabled;
-            buttonAnimationOnOff(keyboardEnalbeButton, movemend.keyboardenabled);
+            if (AutoMode == false)
+            {
+                movemend.keyboardenabled = !movemend.keyboardenabled;
+                buttonAnimationOnOff(keyboardEnalbeButton, movemend.keyboardenabled);
+            }
         }
 
         private void GamepadOnOff(object sender, RoutedEventArgs e)
         {
-            movemend.gamepadEnabled = !movemend.gamepadEnabled;
-            buttonAnimationOnOff(GamepadEnalbeButton, movemend.gamepadEnabled);
+            if (gamepad.gamepadConnected == true && AutoMode == false)
+            {
+                movemend.gamepadEnabled = !movemend.gamepadEnabled;
+                buttonAnimationOnOff(GamepadEnalbeButton, movemend.gamepadEnabled);
+            }
         }
 
         void buttonAnimationOnOff(Button button,bool on)
@@ -274,7 +291,6 @@ namespace Robotic_Arm_Desktop
                 {
                     case 0x00ff:
                         {
-                            OnOffControllStatus(); //controll status just for effect
                             gamepadData = Gamepad.GamepadProcesing(lParam);
                             movemend.AnalizeData(gamepadData,netMove);
                             gamepadConnected = true;
@@ -309,7 +325,6 @@ namespace Robotic_Arm_Desktop
                 if (e.Key != Key.D1 && e.Key != Key.D2 && e.Key != Key.D3)
                 {
                     movemend.AnalizeData(e.Key,netMove);
-                    OnOffControllStatus(); //controll status just for effect
                 }
                 else if (e.Key == Key.D1 && movemend.keyboardMovingArm != 0)
                 {
@@ -485,13 +500,6 @@ namespace Robotic_Arm_Desktop
         /*draw position data to the app and update 3d model*/
         private void DrawDataAndUpdateModel()
         {
-            this.baseRv.Content = Math.Round(movemend.baseMovemend.AngleInHz, 1);
-            this.elb0v.Content = Math.Round(movemend.elbow0.AngleInHz, 1);
-            this.elb1v.Content = Math.Round(movemend.elbow1.AngleInHz, 1);
-            this.elb2v.Content = Math.Round(movemend.elbow2.AngleInHz, 1);
-            this.grrv.Content = Math.Round(movemend.griperRotation.AngleInHz, 1);
-            this.grv.Content = Math.Round(movemend.griper.AngleInHz, 1);
-
             this.baseRa.Content = Math.Round(movemend.baseMovemend.AngleInDegree, 2) + " °";
             this.elb0a.Content = Math.Round(movemend.elbow0.AngleInDegree, 2) + " °";
             this.elb1a.Content = Math.Round(movemend.elbow1.AngleInDegree, 2) + " °";
@@ -507,6 +515,8 @@ namespace Robotic_Arm_Desktop
             {
                 modeposition0.Content = baseRa.Content + " " + elb0a.Content + " " + elb1a.Content + " " + elb2a.Content + " " + grra.Content;
             }
+
+            OnOffControllStatus(); //controll status just for effect
         }
 
         /*uppers tabs*/
@@ -702,6 +712,17 @@ namespace Robotic_Arm_Desktop
             this.status.Content = Global.connected;
         }
 
+        private void NewFanSpeed(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (loadingDone == true)
+            {
+                int speed = (int)Math.Round(fanSlider.Value);
+                netFan.SendData(speed.ToString());
+            }
+        }
+        
+
+
         void OfflineVideoStream()
         {
             if (Global.OfflineVideo == true)
@@ -710,10 +731,14 @@ namespace Robotic_Arm_Desktop
             }
         }
 
+
+
         private void ReloadPressed(object sender, RoutedEventArgs e)
         {
             ShowRes.Content = xres.Text + " px  " +yres.Text + " px";
         }
+
+        /*SCRIPT editor*/
 
         private void OpenScriptEditor(object sender, RoutedEventArgs e)
         {
@@ -748,6 +773,24 @@ namespace Robotic_Arm_Desktop
             pythone.StartInfo.RedirectStandardOutput = true;
             pythone.StartInfo.CreateNoWindow = true;
             pythone.Start();
+        }
+
+        bool ValueBeforeTiping1, ValueBeforeTiping2;
+
+        private void DisableMovemendWhenWriting(object sender, RoutedEventArgs e)
+        {
+            ValueBeforeTiping1 = movemend.keyboardenabled;
+            ValueBeforeTiping2 = movemend.gamepadEnabled;
+
+            movemend.keyboardenabled = false;
+            movemend.gamepadEnabled = false;
+        }
+
+        private void EnableMovementdAfterWriting(object sender, RoutedEventArgs e)
+        {
+
+            movemend.keyboardenabled = ValueBeforeTiping1;
+            movemend.gamepadEnabled = ValueBeforeTiping2;
         }
     }
 }

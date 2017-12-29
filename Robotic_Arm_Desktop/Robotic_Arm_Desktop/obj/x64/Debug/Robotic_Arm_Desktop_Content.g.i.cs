@@ -8,6 +8,6 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("icons/minus-symbol.png")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("icons/hud2.png")]
 
 

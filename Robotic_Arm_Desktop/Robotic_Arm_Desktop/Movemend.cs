@@ -37,7 +37,32 @@ namespace Robotic_Arm_Desktop
                 AngleInHz += increment;
                 AngleInDegree = (AngleInHz-minF) / OneDegree;
 
-                netMove.SendData("0"+part+AngleInHz.ToString());
+                if (part != "0")
+                {
+                    netMove.SendData("00"+part+AngleInHz.ToString());
+                }
+                else
+                {
+                    int Angle = (int)Math.Round(AngleInDegree);
+                    string sAngle;
+                    if (Angle<10)
+                    {
+                        sAngle = "00" + Angle.ToString();
+                    }
+                    else if (Angle<100)
+                    {
+                        sAngle = "0" + Angle.ToString();
+                    }
+                    else
+                    {
+                        sAngle = Angle.ToString();
+                    }
+                    netMove.SendData("00" + part + Angle);
+                    Console.WriteLine(sAngle);
+                }
+
+
+
             }
         }
 
@@ -68,7 +93,7 @@ namespace Robotic_Arm_Desktop
         public Arm baseMovemend = new Arm(360);
         public Arm elbow0 = new Arm(120);
         public Arm elbow1 = new Arm(120);
-        public Arm elbow2 = new Arm(180);
+        public Arm elbow2 = new Arm(120);
         public Arm griper = new Arm(180);
         public Arm griperRotation = new Arm(180);
 

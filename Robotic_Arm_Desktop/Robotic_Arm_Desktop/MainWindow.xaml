@@ -31,20 +31,14 @@
             <Label Content="Elbow 1:" HorizontalAlignment="Left" Margin="18,98,0,0" VerticalAlignment="Top" Foreground="#FFEAEAEA" FontSize="18" FontWeight="Bold"/>
             <Label Content="Elbow 2:" HorizontalAlignment="Left" Margin="18,137,0,0" VerticalAlignment="Top" Foreground="#FFEAEAEA" FontSize="18" FontWeight="Bold"/>
             <Label Content="Griper rotation:" HorizontalAlignment="Left" Margin="17,176,0,0" VerticalAlignment="Top" Foreground="#FFEAEAEA" FontSize="18" FontWeight="Bold"/>
-            <Label x:Name="baseRa" Content="0" HorizontalAlignment="Left" Margin="189,20,0,0" VerticalAlignment="Top" FontSize="18" Foreground="#FF609DD1" FontWeight="Bold" />
-            <Label x:Name="baseRv" Content="0" HorizontalAlignment="Left" Margin="259,20,0,0" VerticalAlignment="Top" FontSize="18" Foreground="#FF609DD1" FontWeight="Bold" />
-            <Label x:Name="elb1v" Content="0" HorizontalAlignment="Left" Margin="259,98,0,0" VerticalAlignment="Top" FontSize="18" Foreground="#FF609DD1" FontWeight="Bold"/>
-            <Label x:Name="elb0a" Content="0" HorizontalAlignment="Left" Margin="189,59,0,0" VerticalAlignment="Top" FontSize="18" Foreground="#FF609DD1" FontWeight="Bold" />
-            <Label x:Name="elb1a" Content="0" HorizontalAlignment="Left" Margin="189,98,0,0" VerticalAlignment="Top" FontSize="18" Foreground="#FF609DD1" FontWeight="Bold" />
-            <Label x:Name="elb2a" Content="0" HorizontalAlignment="Left" Margin="189,137,0,0" VerticalAlignment="Top" FontSize="18" Foreground="#FF609DD1" FontWeight="Bold" />
-            <Label x:Name="elb2v" Content="0" HorizontalAlignment="Left" Margin="259,137,0,0" VerticalAlignment="Top" FontSize="18" Foreground="#FF609DD1" FontWeight="Bold"/>
-            <Label x:Name="elb0v" Content="0" HorizontalAlignment="Left" Margin="259,59,0,0" VerticalAlignment="Top" FontSize="18" Foreground="#FF609DD1" FontWeight="Bold"/>
-            <Label x:Name="grra" Content="0" HorizontalAlignment="Left" Margin="189,176,0,0" VerticalAlignment="Top" FontSize="18" Foreground="#FF609DD1" FontWeight="Bold"/>
-            <Label x:Name="grrv" Content="0" HorizontalAlignment="Left" Margin="259,176,0,0" VerticalAlignment="Top" FontSize="18" Foreground="#FF609DD1" FontWeight="Bold" RenderTransformOrigin="0.561,-0.078"/>
+            <Label x:Name="baseRa" Content="0" HorizontalAlignment="Left" Margin="229,20,0,0" VerticalAlignment="Top" FontSize="18" Foreground="#FF609DD1" FontWeight="Bold" />
+            <Label x:Name="elb0a" Content="0" HorizontalAlignment="Left" Margin="229,59,0,0" VerticalAlignment="Top" FontSize="18" Foreground="#FF609DD1" FontWeight="Bold" />
+            <Label x:Name="elb1a" Content="0" HorizontalAlignment="Left" Margin="229,98,0,0" VerticalAlignment="Top" FontSize="18" Foreground="#FF609DD1" FontWeight="Bold" />
+            <Label x:Name="elb2a" Content="0" HorizontalAlignment="Left" Margin="229,137,0,0" VerticalAlignment="Top" FontSize="18" Foreground="#FF609DD1" FontWeight="Bold" />
+            <Label x:Name="grra" Content="0" HorizontalAlignment="Left" Margin="229,176,0,0" VerticalAlignment="Top" FontSize="18" Foreground="#FF609DD1" FontWeight="Bold"/>
             <Label Content="Griper:" HorizontalAlignment="Left" Margin="18,215,0,0" VerticalAlignment="Top" Foreground="#FFEAEAEA" FontSize="18" FontWeight="Bold"/>
             <Label Content="Griper trigger:" HorizontalAlignment="Left" Margin="18,254,0,0" VerticalAlignment="Top" Foreground="#FFEAEAEA" FontSize="18" FontWeight="Bold"/>
-            <Label x:Name="grv" Content="0" HorizontalAlignment="Left" Margin="259,215,0,0" VerticalAlignment="Top" FontSize="18" Foreground="#FF609DD1" FontWeight="Bold"/>
-            <Label x:Name="gr" Content="0" HorizontalAlignment="Left" Margin="189,215,0,0" VerticalAlignment="Top" FontSize="18" Foreground="#FF609DD1" FontWeight="Bold" RenderTransformOrigin="0.489,0.256"/>
+            <Label x:Name="gr" Content="0" HorizontalAlignment="Left" Margin="229,215,0,0" VerticalAlignment="Top" FontSize="18" Foreground="#FF609DD1" FontWeight="Bold" RenderTransformOrigin="0.489,0.256"/>
             <Label Name="trigger" Content="False" HorizontalAlignment="Left" Margin="217,254,0,0" VerticalAlignment="Top" FontSize="18" Foreground="#FF609DD1" FontWeight="Bold" RenderTransformOrigin="0.745,-0.433"/>
             <Label Content="Incrementation :" HorizontalAlignment="Left" Margin="18,293,0,0" VerticalAlignment="Top"  Foreground="#FFEAEAEA" FontSize="18" FontWeight="Bold"/>
             <Label Name="incLabel" Content="0" HorizontalAlignment="Left" Margin="229,293,0,0" VerticalAlignment="Top" FontSize="18" Foreground="#FF609DD1" FontWeight="Bold"/>
@@ -83,7 +77,7 @@
             <Label Name="cpuusage" Content="err" HorizontalAlignment="Left" Margin="667,81,0,0" VerticalAlignment="Top" FontSize="15" Foreground="#FF609DD1" FontWeight="Bold" RenderTransformOrigin="0.467,0.467"/>
             <Label Name="uptime" Content="err" HorizontalAlignment="Left" Margin="357,81,0,0" VerticalAlignment="Top" FontSize="15" Foreground="#FF609DD1" FontWeight="Bold"/>
             <Label Name="temperature" Content="err" HorizontalAlignment="Left" Margin="667,118,0,0" VerticalAlignment="Top" FontSize="15" Foreground="#FF609DD1" FontWeight="Bold" Width="48"/>
-            <Slider HorizontalAlignment="Left" Margin="594,162,0,0" VerticalAlignment="Top" Width="103"  Value="80" Maximum="100" RenderTransformOrigin="0.342,0.611"/>
+            <Slider Name="fanSlider" HorizontalAlignment="Left" Margin="594,162,0,0" VerticalAlignment="Top" Width="103"  Value="80" Minimum="0" Maximum="100" RenderTransformOrigin="0.342,0.611" ValueChanged="NewFanSpeed"/>
             <Button Style="{DynamicResource ButtonStyle1}" Content="Reload" HorizontalAlignment="Left" Margin="247,169,0,0" VerticalAlignment="Top" Width="140"  Background="#FF2E2E2E" BorderBrush="Gainsboro" BorderThickness="3" FontSize="24" FontFamily="Segoe UI Semibold" ForceCursor="True" Foreground="#FFF1F1F1" Height="46" Click="ReloadPressed"/>
         </Grid>
         <Grid HorizontalAlignment="Left" Height="330" Margin="20,300,0,0" VerticalAlignment="Top" Width="351" Background="#FF252526">
@@ -114,7 +108,7 @@
         <Grid HorizontalAlignment="Left" Height="410" Margin="20,650,0,0" VerticalAlignment="Top" Width="626" Background="#FF252526">
             <Label Content="New :" HorizontalAlignment="Left" Margin="398,314,0,0" VerticalAlignment="Top" Foreground="#FFECECEC" FontSize="16" FontWeight="Bold"/>
             <Label Content="Auto mode:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Foreground="#FFEAEAEA" FontSize="22" FontWeight="Bold"/>
-            <Button x:Name="EnableAutoMode" Content="Button" HorizontalAlignment="Left" Margin="76,80,0,0" VerticalAlignment="Top" Width="74" Click="EnableAutoMode_Click"/>
+            <Button x:Name="EnableAutoMode" Content="Enable auto mode" HorizontalAlignment="Left" Margin="76,80,0,0" VerticalAlignment="Top" Width="74" Click="EnableAutoMode_Click"/>
             <Button x:Name="ScriptEditor" Content="open script editor" HorizontalAlignment="Left" Margin="95,150,0,0" VerticalAlignment="Top" Width="75" Click="OpenScriptEditor"/>
             <Label Content="Select :" HorizontalAlignment="Left" Margin="398,227,0,0" VerticalAlignment="Top" Foreground="#FFECECEC" FontSize="16" FontWeight="Bold"/>
             <Button Style="{DynamicResource ButtonStyle1}" Name="modestart0" Content="Start" HorizontalAlignment="Left" Margin="398,270,0,0" VerticalAlignment="Top"  Width="90" Height="25" Background="#FF2E2E2E" BorderBrush="Gainsboro" BorderThickness="2" FontSize="14" FontFamily="Segoe UI Semibold" ForceCursor="True" Foreground="#FFF1F1F1" Click="StartTemplate"/>
@@ -128,7 +122,7 @@
             <Button Style="{DynamicResource ButtonStyle1}" Name="modesave0" Content="Save" HorizontalAlignment="Left" Margin="901,365,-365,0" VerticalAlignment="Top" IsEnabled="False" Click="SaveTemplate"  Width="90" Height="25" Background="#FF2E2E2E" BorderBrush="Gainsboro" BorderThickness="2" FontSize="14" FontFamily="Segoe UI Semibold" ForceCursor="True" Foreground="#FFF1F1F1"/>
             <Label Content="Position :" HorizontalAlignment="Left" Margin="655,227,-109,0" VerticalAlignment="Top" Foreground="#FFECECEC" FontSize="16" FontWeight="Bold"/>
             <Label Name="modeposition0" Content="0" HorizontalAlignment="Left" Margin="740,228,-351,0" VerticalAlignment="Top" FontSize="15" Foreground="#FF609DD1" FontWeight="Bold" Width="237"/>
-            <TextBox Name="tempname" HorizontalAlignment="Left" Height="27" Margin="464,317,0,0" TextWrapping="Wrap" Text="Template name" VerticalAlignment="Top" Width="141" Background="#FF2E2E2E" BorderThickness="2" BorderBrush="#FFD7D8D8" Foreground="#FFEAEAEA" FontSize="16" FontStyle="Italic" TextDecorations="{x:Null}" FontFamily="Segoe UI Emoji"/>
+            <TextBox Name="tempname" HorizontalAlignment="Left" Height="27" Margin="464,317,0,0" TextWrapping="Wrap" Text="Template name" VerticalAlignment="Top" Width="141" Background="#FF2E2E2E" BorderThickness="2" BorderBrush="#FFD7D8D8" Foreground="#FFEAEAEA" FontSize="16" FontStyle="Italic" TextDecorations="{x:Null}" FontFamily="Segoe UI Emoji" GotFocus="DisableMovemendWhenWriting" LostFocus="EnableMovementdAfterWriting"/>
             <ComboBox Name="templateComboBox" HorizontalAlignment="Left" Margin="485,227,0,0" VerticalAlignment="Top" Width="120"/>
             <Label Content="Speed :" HorizontalAlignment="Left" Margin="655,270,-94,0" VerticalAlignment="Top" Foreground="#FFECECEC" FontSize="16" FontWeight="Bold" />
             <TextBox Name="templateSpeed" HorizontalAlignment="Left" TextAlignment="Center" Height="27" Margin="725,274,-159,0" TextWrapping="Wrap" IsEnabled="False" Text="1" VerticalAlignment="Top" Width="60" Background="#FF2E2E2E" BorderThickness="2" BorderBrush="#FFD7D8D8" Foreground="#FFEAEAEA" FontSize="18"/>
@@ -150,7 +144,7 @@
             <Label x:Name="manualModeStatus" Content="Enabled" HorizontalAlignment="Left" Margin="232,141,0,0" VerticalAlignment="Top" FontSize="15" Foreground="#FF609DD1" FontWeight="Bold"/>
             <Ellipse x:Name="ManualModeStatusEllipse" Fill="#FF252526" HorizontalAlignment="Left" Height="12" Margin="303,151,0,0" VerticalAlignment="Top" Width="12" RenderTransformOrigin="-0.6,0.533"/>
         </Grid>
-        <Image x:Name="ViewFrame" HorizontalAlignment="Left" Height="610" Margin="806,20,0,0" VerticalAlignment="Top" Width="1090" />
+        <Image x:Name="ViewFrame" HorizontalAlignment="Left" Height="607" Margin="815,20,0,0" VerticalAlignment="Top" Width="1080" />
 
     </Grid>
 </Window>

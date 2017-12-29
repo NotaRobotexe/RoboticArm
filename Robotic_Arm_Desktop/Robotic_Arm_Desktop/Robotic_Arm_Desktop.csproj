@@ -158,5 +158,11 @@
   <ItemGroup>
     <Resource Include="icons\errorScreen.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="icons\hud1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="icons\hud2.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
