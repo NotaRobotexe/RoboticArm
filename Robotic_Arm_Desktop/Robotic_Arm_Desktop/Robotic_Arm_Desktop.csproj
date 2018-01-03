@@ -82,6 +82,9 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="AutoModeTemplate.cs" />
+    <Compile Include="BetterPopUpBox.xaml.cs">
+      <DependentUpon>BetterPopUpBox.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Global.cs" />
     <Compile Include="NetworkCom.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -98,6 +101,10 @@
     <Compile Include="Stats.cs" />
     <Compile Include="VideoStream.cs" />
     <Compile Include="XmlReadWriter.cs" />
+    <Page Include="BetterPopUpBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

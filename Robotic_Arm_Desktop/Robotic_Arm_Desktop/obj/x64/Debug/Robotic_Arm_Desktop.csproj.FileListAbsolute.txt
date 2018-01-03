@@ -50,3 +50,5 @@ C:\Users\mt2si\Desktop\projekty\S.O.C Robotic Arm\Robotic Arm\Robotic_Arm_Deskto
 C:\Users\mt2si\Desktop\projekty\S.O.C Robotic Arm\Robotic Arm\Robotic_Arm_Desktop\Robotic_Arm_Desktop\obj\x64\Debug\SriptEditor.baml
 C:\Users\mt2si\Desktop\projects\RoboticArm\Robotic_Arm_Desktop\Robotic_Arm_Desktop\obj\x64\Debug\SriptEditor.g.cs
 C:\Users\mt2si\Desktop\projects\RoboticArm\Robotic_Arm_Desktop\Robotic_Arm_Desktop\obj\x64\Debug\SriptEditor.baml
+C:\Users\mt2si\Desktop\projekty\S.O.C Robotic Arm\Robotic Arm\Robotic_Arm_Desktop\Robotic_Arm_Desktop\obj\x64\Debug\BetterPopUpBox.g.cs
+C:\Users\mt2si\Desktop\projekty\S.O.C Robotic Arm\Robotic Arm\Robotic_Arm_Desktop\Robotic_Arm_Desktop\obj\x64\Debug\BetterPopUpBox.baml

@@ -1,0 +1,13 @@
+﻿<Window x:Class="Robotic_Arm_Desktop.BetterPopUpBox"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Robotic_Arm_Desktop"
+        mc:Ignorable="d"
+        Title="BetterPopUpBox" Height="150" Width="400"  WindowStyle="None" WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
+    <Grid Background="#FF1b1b1c">
+        <Label Name="betterLabel" Content="Label" HorizontalAlignment="Center" Margin="10,57,10,0" VerticalAlignment="Top" FontSize="18" Foreground="#FF63D2FA" FontWeight="Bold" Width="380" HorizontalContentAlignment="Center"/>
+
+    </Grid>
+</Window>

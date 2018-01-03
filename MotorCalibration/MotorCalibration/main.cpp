@@ -29,7 +29,7 @@ int main(void)
 	wiringPiSetupGpio();
 
 	int last2 = 102, last3 = 102;
-
+	int last1 = 102;
 	pinMode(DIRECTION, OUTPUT);
 	pinMode(STEP, OUTPUT);
 
@@ -51,8 +51,25 @@ int main(void)
 			cout << "base " + action.substr(1, 3) << endl;
 		}
 		else if (action.substr(0, 1) == "1" && pos >=MIN_s && pos <=MAX_s) {
-			pwm.setPWM(ARM0a, stoi(action.substr(1, 3)));
-			pwm.setPWM(ARM0b, (MAX_s + MIN_s) - stoi(action.substr(1, 3)));
+			pwm.setPWM(ARM0a, stoi(action.substr(1, 3)));//300
+			pwm.setPWM(ARM0b, (MAX_s + MIN_s)+1 - stoi(action.substr(1, 3))); //378
+
+			while (pos != last1)
+			{
+				if (pos>last1)
+				{
+					last1++;
+					pwm.setPWM(ARM0a, last1);
+					pwm.setPWM(ARM0b, (MAX_s + MIN_s) + 1 - last1);
+				}
+				else if (pos<last1)
+				{
+					last1--;
+					pwm.setPWM(ARM0a, last1);
+					pwm.setPWM(ARM0b, (MAX_s + MIN_s) + 1 - last1);
+				}
+				delayMicroseconds(1000 * 5);
+			}
 
 			cout << "arm0 " + action.substr(1, 3) << endl;
 		}

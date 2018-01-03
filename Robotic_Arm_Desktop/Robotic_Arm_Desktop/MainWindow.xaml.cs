@@ -26,15 +26,12 @@ namespace Robotic_Arm_Desktop
 {
     //TODO: implementovat video stream
     //TODO: HUD, contrast ostatne
-    //TODO: kalibrovanie - netreba mozno ako posledne
     //TODO: Safety control - taktiez netreba moc
-    //TODO: fixnut zakazovanie a povolovanie vstupu
     //TODO: fixnut ostatne buggy
-    //TODO: doponcit posielanie dat do pi
     //TODO: responzivnost - nepotrebne fullHD staci
     //TODO: SCRIPT module - hot hot hot hot
     //TODO: Spracovanie obrazu a vsetky tie blbosti - hot hot hot hot
-    //TODO: spiest sa ako babovka #1
+    //TODO: spiest sa ako babovka #1 #2 #3
     //TODO: Prestat pridavat TODO
 
     public partial class MainWindow : Window
@@ -80,7 +77,9 @@ namespace Robotic_Arm_Desktop
             }
 
             movemend = new Movemend();
-            movemend.StartAndQuitPosition();
+            xrw = new XmlReadWriter();
+            xrw.LoadSettings(movemend);
+
             this.Loaded += MainWindow_Loaded; //some method need be call after window is loaded like gamepad because it need window handler 
             model = new _3Dmodel();
 
@@ -115,8 +114,6 @@ namespace Robotic_Arm_Desktop
             ControllstatusTimer.Tick += ControllstatusTimer_Tick;
             ControllstatusTimer.Interval = new TimeSpan(0, 0, 0, 0, 300);
 
-            xrw = new XmlReadWriter();
-            xrw.LoadSettings(movemend);
 
             //set first value to motor calibration
             MotorCalibrationDisplay();
@@ -139,7 +136,6 @@ namespace Robotic_Arm_Desktop
         /*undone things*/
         private void Start(object sender, RoutedEventArgs e)
         {
-            movemend.StartAndQuitPosition();
             //NetworkCom.StartMovemend();
         }
 
@@ -261,7 +257,6 @@ namespace Robotic_Arm_Desktop
                     }
                     else
                     {
-                        MessageBox.Show("Gamepad Connected!");
                         gamepadLabel.Foreground = new SolidColorBrush(Color.FromRgb(241, 241, 241));
                         GamepadEnalbeButton.Content = "Enabled";
                         GamepadEnalbeButton.Foreground = new SolidColorBrush(Color.FromRgb(241, 241, 241));
@@ -292,9 +287,8 @@ namespace Robotic_Arm_Desktop
                     case 0x00ff:
                         {
                             gamepadData = Gamepad.GamepadProcesing(lParam);
-                            movemend.AnalizeData(gamepadData,netMove);
+                            movemend.AnalizeData(gamepadData);
                             gamepadConnected = true;
-                            DrawDataAndUpdateModel();
                         }
                         break;
 
@@ -306,12 +300,16 @@ namespace Robotic_Arm_Desktop
                 }
                 gamepadStateChange = gamepadConnected;
 
-                /*if (movemend.wrongMode == true)
+                if (Global.WrongMode == true)
                 {
-                    movemend.gamepadEnabled = !movemend.gamepadEnabled; //UNDONE: toto treba cele prerobit je to cele na picu. ked sa zobrazi sprava tak nejde prepnut mod a tak
-                    MessageBox.Show("Error! press mode on gamepad for a fix");
-                    buttonAnimationOnOff(GamepadEnalbeButton, false);
-                }*/
+                    if (Global.BetterMessageBoxLauched == false)
+                    {
+                        Global.BetterMessageBoxLauched = true;
+                        Global.BetterMessageBoxErrorIndex = 1;
+                        BetterPopUpBox BetterMessageBox = new BetterPopUpBox();
+                        BetterMessageBox.Show();
+                    }
+                }
 
             }
             return IntPtr.Zero;
@@ -321,10 +319,9 @@ namespace Robotic_Arm_Desktop
         {
             if (movemend.keyboardenabled == true)
             {
-
                 if (e.Key != Key.D1 && e.Key != Key.D2 && e.Key != Key.D3)
                 {
-                    movemend.AnalizeData(e.Key,netMove);
+                    movemend.AnalizeData(e.Key);
                 }
                 else if (e.Key == Key.D1 && movemend.keyboardMovingArm != 0)
                 {
@@ -338,8 +335,6 @@ namespace Robotic_Arm_Desktop
                 {
                     movemend.keyboardMovingArm = 2;
                 }
-
-                DrawDataAndUpdateModel();
             }
         }
 
@@ -356,139 +351,203 @@ namespace Robotic_Arm_Desktop
         {
             if (listBox.SelectedIndex == 0)
             {
-                availableD.Content = movemend.elbow0.maxAngle + " °";
-                max.Maximum = movemend.elbow0.maxAngle;
-                max.Value= movemend.elbow0.maxUseAngle;
-                maxUse.Content= movemend.elbow0.maxUseAngle + " °";
+                max.Maximum = Arm.max_Pwm;
+                max.Minimum = Arm.min_Pwm;
+                max.Value= movemend.elbow0.EndAt; 
+                maxUse.Content=  Math.Round(Arm.PwmToDegree(max.Value),2) + " °";
 
-                start.Maximum = movemend.elbow0.maxAngle;
+                start.Maximum = Arm.max_Pwm; ;
+                start.Minimum = Arm.min_Pwm; ;
                 start.Value = movemend.elbow0.startfrom;
-                startFrom.Content = movemend.elbow0.startfrom + " °";
+                startFrom.Content = "+ " + Math.Round(Arm.PwmToDegree(start.Value),2) + " °";
 
+                double avalible = 180 - Arm.PwmToDegree(start.Value) - (180 - Arm.PwmToDegree(max.Value));
+                availableD.Content = Math.Round(avalible, 2).ToString() + " °";
             }
             else if(listBox.SelectedIndex == 1)
             {
-                availableD.Content = movemend.elbow1.maxAngle + " °";
-                max.Maximum = movemend.elbow1.maxAngle;
-                max.Value = movemend.elbow1.maxUseAngle;
-                maxUse.Content = movemend.elbow1.maxUseAngle + " °";
+                max.Maximum = Arm.max_Pwm;
+                max.Minimum = Arm.min_Pwm;
+                max.Value = movemend.elbow1.EndAt;
+                maxUse.Content= Math.Round(Arm.PwmToDegree(max.Value),2) + " °";
 
-                start.Maximum = movemend.elbow1.maxAngle;
+                start.Maximum = Arm.max_Pwm; ;
+                start.Minimum = Arm.min_Pwm; ;
                 start.Value = movemend.elbow1.startfrom;
-                startFrom.Content = movemend.elbow1.startfrom + " °";
+                startFrom.Content = "+ " + Math.Round(Arm.PwmToDegree(start.Value),2) + " °";
+
+                double avalible = 180 - Arm.PwmToDegree(start.Value) - (180 - Arm.PwmToDegree(max.Value));
+                availableD.Content = Math.Round(avalible, 2).ToString() + " °";
             }
             else if (listBox.SelectedIndex == 2)
             {
-                availableD.Content = movemend.elbow2.maxAngle + " °";
-                max.Maximum = movemend.elbow2.maxAngle;
-                max.Value = movemend.elbow2.maxUseAngle;
-                maxUse.Content = movemend.elbow2.maxUseAngle + " °";
+                max.Maximum = Arm.max_Pwm;
+                max.Minimum = Arm.min_Pwm;
+                max.Value = movemend.elbow2.EndAt;
+                maxUse.Content= Math.Round(Arm.PwmToDegree(max.Value),2) + " °";
 
-                start.Maximum = movemend.elbow2.maxAngle;
+                start.Maximum = Arm.max_Pwm; ;
+                start.Minimum = Arm.min_Pwm; ;
                 start.Value = movemend.elbow2.startfrom;
-                startFrom.Content = movemend.elbow2.startfrom + " °";
+                startFrom.Content = "+ " + Math.Round(Arm.PwmToDegree(start.Value),2) + " °";
+
+                double avalible = 180 - Arm.PwmToDegree(start.Value) - (180 - Arm.PwmToDegree(max.Value));
+                availableD.Content = Math.Round(avalible, 2).ToString() + " °";
             }
             else if (listBox.SelectedIndex == 3)
             {
-                availableD.Content = movemend.baseMovemend.maxAngle + " °";
-                max.Maximum = movemend.baseMovemend.maxAngle;
-                max.Value = movemend.baseMovemend.maxUseAngle;
-                maxUse.Content = movemend.baseMovemend.maxUseAngle + " °";
+                max.Maximum = Arm.max_Pwm;
+                max.Minimum = Arm.min_Pwm;
+                max.Value = movemend.baseMovemend.EndAt;
+                maxUse.Content= Math.Round(Arm.PwmToDegree(max.Value),2) + " °";
 
-                start.Maximum = movemend.baseMovemend.maxAngle;
+                start.Maximum = Arm.max_Pwm; ;
+                start.Minimum = Arm.min_Pwm; ;
                 start.Value = movemend.baseMovemend.startfrom;
-                startFrom.Content = movemend.baseMovemend.startfrom + " °";
+                startFrom.Content = "+ " + Math.Round(Arm.PwmToDegree(start.Value),2) + " °";
+
+                double avalible = 180 - Arm.PwmToDegree(start.Value) - (180 - Arm.PwmToDegree(max.Value));
+                availableD.Content = Math.Round(avalible, 2).ToString() + " °";
             }
             else if (listBox.SelectedIndex == 4)
             {
-                availableD.Content = movemend.griperRotation.maxAngle + " °";
-                max.Maximum = movemend.griperRotation.maxAngle;
-                max.Value = movemend.griperRotation.maxUseAngle;
-                maxUse.Content = movemend.griperRotation.maxUseAngle + " °";
+                max.Maximum = Arm.max_Pwm;
+                max.Minimum = Arm.min_Pwm;
+                max.Value = movemend.griperRotation.EndAt;
+                maxUse.Content= Math.Round(Arm.PwmToDegree(max.Value),2) + " °";
 
-                start.Maximum = movemend.griperRotation.maxAngle;
+                start.Maximum = Arm.max_Pwm; ;
+                start.Minimum = Arm.min_Pwm; ;
                 start.Value = movemend.griperRotation.startfrom;
-                startFrom.Content = movemend.griperRotation.startfrom + " °";
+                startFrom.Content = "+ " + Math.Round(Arm.PwmToDegree(start.Value), 2) + " °";
+
+                double avalible = 180 - Arm.PwmToDegree(start.Value) - (180 - Arm.PwmToDegree(max.Value));
+                availableD.Content = Math.Round(avalible, 2).ToString() + " °";
             }
             else if (listBox.SelectedIndex == 5)
             {
-                availableD.Content = movemend.griper.maxAngle + " °";
-                max.Maximum = movemend.griper.maxAngle;
-                max.Value = movemend.griper.maxUseAngle;
-                maxUse.Content = movemend.griper.maxUseAngle + " °";
+                max.Maximum = Arm.max_Pwm;
+                max.Minimum = Arm.min_Pwm;
+                max.Value = movemend.griper.EndAt;
+                maxUse.Content= Math.Round(Arm.PwmToDegree(max.Value),2) + " °";
 
-                start.Maximum = movemend.griper.maxAngle;
+                start.Maximum = Arm.max_Pwm; ;
+                start.Minimum = Arm.min_Pwm; ;
                 start.Value = movemend.griper.startfrom;
-                startFrom.Content = movemend.griper.startfrom + " °";
+                startFrom.Content = "+ " + Math.Round(Arm.PwmToDegree(start.Value), 2) + " °";
+
+                double avalible = 180 - Arm.PwmToDegree(start.Value) - (180 - Arm.PwmToDegree(max.Value));
+                availableD.Content = Math.Round(avalible, 2).ToString() + " °";
             }
         }
 
         private void MaxUseSliderChange(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (listBox.SelectedIndex == 0)
+            if (loadingDone == true)
             {
-                movemend.elbow0.maxUseAngle = Math.Round(max.Value,2);
-                maxUse.Content = movemend.elbow0.maxUseAngle + " °";
-            }
-            else if (listBox.SelectedIndex == 1)
-            {
-                movemend.elbow1.maxUseAngle = Math.Round(max.Value, 2);
-                maxUse.Content = movemend.elbow1.maxUseAngle + " °";
-            }
-            else if (listBox.SelectedIndex == 2)
-            {
-                movemend.elbow2.maxUseAngle = Math.Round(max.Value, 2);
-                maxUse.Content = movemend.elbow2.maxUseAngle + " °";
-            }
-            else if (listBox.SelectedIndex == 3)
-            {
-                movemend.baseMovemend.maxUseAngle = Math.Round(max.Value, 2);
-                maxUse.Content = movemend.baseMovemend.maxUseAngle + " °";
-            }
-            else if (listBox.SelectedIndex == 4)
-            {
-                movemend.griperRotation.maxUseAngle = Math.Round(max.Value, 2);
-                maxUse.Content = movemend.griperRotation.maxUseAngle + " °";
-            }
-            else if (listBox.SelectedIndex == 5)
-            {
-                movemend.griper.maxUseAngle = Math.Round(max.Value, 2);
-                maxUse.Content = movemend.griper.maxUseAngle + " °";
+                if (listBox.SelectedIndex == 0)
+                {
+                    movemend.elbow0.EndAt = Math.Round(max.Value,2);
+                    maxUse.Content= Math.Round(Arm.PwmToDegree(max.Value),2) + " °";
+                    double avalible = 180 - Arm.PwmToDegree(start.Value) - (180 - Arm.PwmToDegree(max.Value));
+                    availableD.Content = Math.Round(avalible, 2).ToString() + " °";
+                }
+                else if (listBox.SelectedIndex == 1)
+                {
+                    movemend.elbow1.EndAt = Math.Round(max.Value, 2);
+                    maxUse.Content= Math.Round(Arm.PwmToDegree(max.Value),2) + " °";
+
+                    double avalible = 180 - Arm.PwmToDegree(start.Value) - (180 - Arm.PwmToDegree(max.Value));
+                    availableD.Content = Math.Round(avalible, 2).ToString() + " °";
+                }
+                else if (listBox.SelectedIndex == 2)
+                {
+                    movemend.elbow2.EndAt = Math.Round(max.Value, 2);
+                    maxUse.Content= Math.Round(Arm.PwmToDegree(max.Value),2) + " °";
+
+                    double avalible = 180 - Arm.PwmToDegree(start.Value) - (180 - Arm.PwmToDegree(max.Value));
+                    availableD.Content = Math.Round(avalible, 2).ToString() + " °";
+                }
+                else if (listBox.SelectedIndex == 3)
+                {
+                    movemend.baseMovemend.EndAt = Math.Round(max.Value, 2);
+                    maxUse.Content= Math.Round(Arm.PwmToDegree(max.Value),2) + " °";
+
+                    double avalible = 180 - Arm.PwmToDegree(start.Value) - (180 - Arm.PwmToDegree(max.Value));
+                    availableD.Content = Math.Round(avalible, 2).ToString() + " °";
+                }
+                else if (listBox.SelectedIndex == 4)
+                {
+                    movemend.griperRotation.EndAt = Math.Round(max.Value, 2);
+                    maxUse.Content= Math.Round(Arm.PwmToDegree(max.Value),2) + " °";
+
+                    double avalible = 180 - Arm.PwmToDegree(start.Value) - (180 - Arm.PwmToDegree(max.Value));
+                    availableD.Content = Math.Round(avalible, 2).ToString() + " °";
+                }
+                else if (listBox.SelectedIndex == 5)
+                {
+                    movemend.griper.EndAt = Math.Round(max.Value, 2);
+                    maxUse.Content= Math.Round(Arm.PwmToDegree(max.Value),2) + " °";
+
+                    double avalible = 180 - Arm.PwmToDegree(start.Value) - (180 - Arm.PwmToDegree(max.Value));
+                    availableD.Content = Math.Round(avalible, 2).ToString() + " °";
+                }
+
             }
         }
 
         private void StartFromSliderChange(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (listBox.SelectedIndex == 0)
+            if (loadingDone == true)
             {
-                movemend.elbow0.startfrom = Math.Round(start.Value, 2);
-                startFrom.Content = movemend.elbow0.startfrom + " °";
+                if (listBox.SelectedIndex == 0)
+                {
+                    movemend.elbow0.startfrom = Math.Round(start.Value, 2);
+                    startFrom.Content = "+ " + Math.Round(Arm.PwmToDegree(start.Value),2) + " °";
 
-            }
-            else if (listBox.SelectedIndex == 1)
-            {
-                movemend.elbow1.startfrom = Math.Round(start.Value, 2);
-                startFrom.Content = movemend.elbow1.startfrom + " °";
-            }
-            else if (listBox.SelectedIndex == 2)
-            {
-                movemend.elbow2.startfrom = Math.Round(start.Value, 2);
-                startFrom.Content = movemend.elbow2.startfrom + " °";
-            }
-            else if (listBox.SelectedIndex == 3)
-            {
-                movemend.baseMovemend.startfrom = Math.Round(start.Value, 2);
-                startFrom.Content = movemend.baseMovemend.startfrom + " °";
-            }
-            else if (listBox.SelectedIndex == 4)
-            {
-                movemend.griperRotation.startfrom = Math.Round(start.Value, 2);
-                startFrom.Content = movemend.griperRotation.startfrom + " °";
-            }
-            else if (listBox.SelectedIndex == 5)
-            {
-                movemend.griper.startfrom = Math.Round(start.Value, 2);
-                startFrom.Content = movemend.griper.startfrom + " °";
+                    double avalible = 180 - Arm.PwmToDegree(start.Value) - (180 - Arm.PwmToDegree(max.Value));
+                    availableD.Content = Math.Round(avalible, 2).ToString() + " °";
+                }
+                else if (listBox.SelectedIndex == 1)
+                {
+                    movemend.elbow1.startfrom = Math.Round(start.Value, 2);
+                    startFrom.Content = "+ " + Math.Round(Arm.PwmToDegree(start.Value),2) + " °";
+
+                    double avalible = 180 - Arm.PwmToDegree(start.Value) - (180 - Arm.PwmToDegree(max.Value));
+                    availableD.Content = Math.Round(avalible, 2).ToString() + " °";
+                }
+                else if (listBox.SelectedIndex == 2)
+                {
+                    movemend.elbow2.startfrom = Math.Round(start.Value, 2);
+                    startFrom.Content = "+ " + Math.Round(Arm.PwmToDegree(start.Value),2) + " °";
+
+                    double avalible = 180 - Arm.PwmToDegree(start.Value) - (180 - Arm.PwmToDegree(max.Value));
+                    availableD.Content = Math.Round(avalible, 2).ToString() + " °";
+                }
+                else if (listBox.SelectedIndex == 3)
+                {
+                    movemend.baseMovemend.startfrom = Math.Round(start.Value, 2);
+                    startFrom.Content = "+ " + Math.Round(Arm.PwmToDegree(start.Value),2) + " °";
+
+                    double avalible = 180 - Arm.PwmToDegree(start.Value) - (180 - Arm.PwmToDegree(max.Value));
+                    availableD.Content = Math.Round(avalible, 2).ToString() + " °";
+                }
+                else if (listBox.SelectedIndex == 4)
+                {
+                    movemend.griperRotation.startfrom = Math.Round(start.Value, 2);
+                    startFrom.Content = "+ " + Math.Round(Arm.PwmToDegree(start.Value),2) + " °";
+
+                    double avalible = 180 - Arm.PwmToDegree(start.Value) - (180 - Arm.PwmToDegree(max.Value));
+                    availableD.Content = Math.Round(avalible, 2).ToString() + " °";
+                }
+                else if (listBox.SelectedIndex == 5)
+                {
+                    movemend.griper.startfrom = Math.Round(start.Value, 2);
+                    startFrom.Content = "+ " + Math.Round(Arm.PwmToDegree(start.Value),2) + " °";
+
+                    double avalible = 180 - Arm.PwmToDegree(start.Value) - (180 - Arm.PwmToDegree(max.Value));
+                    availableD.Content = Math.Round(avalible,2).ToString() + " °";
+                }
             }
         }
 
@@ -498,7 +557,7 @@ namespace Robotic_Arm_Desktop
         }
 
         /*draw position data to the app and update 3d model*/
-        private void DrawDataAndUpdateModel()
+        public void DrawDataAndUpdateModel()
         {
             this.baseRa.Content = Math.Round(movemend.baseMovemend.AngleInDegree, 2) + " °";
             this.elb0a.Content = Math.Round(movemend.elbow0.AngleInDegree, 2) + " °";
@@ -557,8 +616,8 @@ namespace Robotic_Arm_Desktop
 
         private void CapturePressed(object sender, RoutedEventArgs e)
         {
-            string command = movemend.baseMovemend.AngleInHz + "*" + movemend.elbow0.AngleInHz + "*" + movemend.elbow1.AngleInHz + "*" 
-            + movemend.elbow2.AngleInHz + "*" + movemend.griperRotation.AngleInHz + "*" + movemend.griper.AngleInHz+"*"
+            string command = movemend.baseMovemend.AngleInPWM + "*" + movemend.elbow0.AngleInPWM + "*" + movemend.elbow1.AngleInPWM + "*" 
+            + movemend.elbow2.AngleInPWM + "*" + movemend.griperRotation.AngleInPWM + "*" + movemend.griper.AngleInPWM+"*"
             +Convert.ToInt16(WaitForTrigger)+"*"+delayTexBox.Text+"*"+templateSpeed.Text + "*" + Convert.ToInt16(fastMode);
 
             Commands.Add(command);

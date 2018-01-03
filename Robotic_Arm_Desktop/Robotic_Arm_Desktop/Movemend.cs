@@ -9,141 +9,89 @@ namespace Robotic_Arm_Desktop
 {
     class Arm
     {
-        public const double minF = 102;  //hz or dnk what is it
-        public const double maxF = 576;
-        public double AngleInHz = 102; //in that hz or what is that shit
+        private const double PwmPerDegree = 2.633333333333333333333333333333333;
+        public const double min_Pwm = 102;
+        public const double max_Pwm = 576;
+
+        public double AngleInPWM = 102; 
         public double AngleInDegree = 0;
-        public double maxAngle; // in angle
-        public double maxUseAngle; // in angle
-        public double startfrom = 0; // in angle
-        private double OneDegree;
 
-        public Arm(double maxAngle)
+        public double EndAt; 
+        public double startfrom;
+
+
+        public void SetPostionFromKeyboadrOrGamepad(double increment)
         {
-            this.maxAngle = maxAngle;
-            OneDegree = (maxF - minF) / maxAngle;
-        }
-
-        public void SetAngleFromKeyboadrOrGamepad(double increment,string part, NetworkCom netMove)
-        {
-            double MaxPosition = maxF;
-            if ((minF + AngleToHz(startfrom) + AngleToHz(maxUseAngle))< maxF)
+            if (AngleInPWM+increment >= startfrom && AngleInPWM+increment <= EndAt)
             {
-                MaxPosition = (minF + AngleToHz(startfrom) + AngleToHz(maxUseAngle));
-            }
-
-            if (AngleInHz+increment > (minF+AngleToHz(startfrom)) && AngleInHz+increment < MaxPosition)
-            {
-                AngleInHz += increment;
-                AngleInDegree = (AngleInHz-minF) / OneDegree;
-
-                if (part != "0")
-                {
-                    netMove.SendData("00"+part+AngleInHz.ToString());
-                }
-                else
-                {
-                    int Angle = (int)Math.Round(AngleInDegree);
-                    string sAngle;
-                    if (Angle<10)
-                    {
-                        sAngle = "00" + Angle.ToString();
-                    }
-                    else if (Angle<100)
-                    {
-                        sAngle = "0" + Angle.ToString();
-                    }
-                    else
-                    {
-                        sAngle = Angle.ToString();
-                    }
-                    netMove.SendData("00" + part + Angle);
-                    Console.WriteLine(sAngle);
-                }
-
-
-
+                Update(AngleInPWM + increment, 1);
             }
         }
 
-        public void SetAngle(double angle) //TODO: nastavit nastavovanie stupnou aj priamo. neskor to bude potrebne
+        public void Update(double pos,int mode) //mode: 0 angle 1 pwm
         {
-
+            if (mode == 0)
+            {
+                AngleInDegree = pos;
+                AngleInPWM = (pos * PwmPerDegree) + min_Pwm;
+            }
+            else
+            {
+                AngleInPWM = pos;
+                AngleInDegree = (pos - min_Pwm) / PwmPerDegree;
+            }
         }
 
-        public double AngleToHz(double angle)
+        public static double DegreeToPwm(double angle)
         {
-            return angle * OneDegree;
+            return min_Pwm + (angle * PwmPerDegree);
         }
 
-        public void updateAngle()
+        public static double PwmToDegree(double pwm)
         {
-            AngleInDegree = (AngleInHz-minF) / OneDegree;
+            return (pwm - min_Pwm) / PwmPerDegree;
         }
-
-        public void updateHz()
-        {
-            AngleInHz = (AngleInDegree * OneDegree) + minF;
-        }
-
     }
 
     class Movemend
     {
-        public Arm baseMovemend = new Arm(360);
-        public Arm elbow0 = new Arm(120);
-        public Arm elbow1 = new Arm(120);
-        public Arm elbow2 = new Arm(120);
-        public Arm griper = new Arm(180);
-        public Arm griperRotation = new Arm(180);
+
+        public Arm baseMovemend = new Arm();
+        public Arm elbow0 = new Arm();
+        public Arm elbow1 = new Arm();
+        public Arm elbow2 = new Arm();
+        public Arm griper = new Arm();
+        public Arm griperRotation = new Arm();
 
         public bool gamepadEnabled = true;
         public bool keyboardenabled = true;
-        public bool wrongMode = false;
 
-        public short keyboardMovingArm=0;
+        public short keyboardMovingArm=0; // moving with witch part of arm 0=el0 1=el1 2=el2 
 
         public float valueCountExp = (float)0.001;
         public float valueCount = 1; //on how much will value increment
 
-        public void StartAndQuitPosition() 
-        {
-            baseMovemend.AngleInDegree = 180;
-            elbow0.AngleInDegree = 0;
-            elbow1.AngleInDegree = 0;
-            elbow2.AngleInDegree = 20;
-            griper.AngleInDegree = 0;
-            griperRotation.AngleInDegree = 0;
 
-            baseMovemend.updateHz();
-            elbow0.updateHz();
-            elbow1.updateHz();
-            elbow2.updateHz();
-            griper.updateHz();
-            griperRotation.updateHz();
-
-        }
-
-        public void AnalizeData(GamepadState data,NetworkCom netMove) 
+        public void AnalizeData(GamepadState data) 
         {
                 //value 143yellow 79red 47green 31blue 6left 0up 2right 4down 15nothing|7. 0nothing 4left down 1left up 2right up 8 right down 16 select 32 start 64 right press 128 left press | 8. mode 64/192
             if(data.mode != 64)
             {
-                wrongMode = true;
+                Global.WrongMode = true;
             }
             else
             {
-                wrongMode = false;
+                Global.WrongMode = false;
             }
 
-            if (data.button == 0)
+            if (data.button == 0 && Global.WrongMode == false)
             {
                 if (valueCount+valueCountExp < 25)
                 {
                     valueCount += valueCountExp;
                 }
             }
-            else if (data.button == 4)
+            else if (data.button == 4 && Global.WrongMode == false)
             {
                 if (valueCount-valueCountExp>0)
                 {
@@ -151,139 +99,134 @@ namespace Robotic_Arm_Desktop
                 }
             }
 
-            if (data.frontButton==8)
+            if (data.frontButton==8 && Global.WrongMode == false)
             {
-                elbow0.SetAngleFromKeyboadrOrGamepad(valueCount,"1",netMove);
+                elbow0.SetPostionFromKeyboadrOrGamepad(valueCount);
             }
-            else if (data.frontButton == 4)
+            else if (data.frontButton == 4 && Global.WrongMode == false)
             {
-                elbow0.SetAngleFromKeyboadrOrGamepad(-(valueCount),"1",netMove);
+                elbow0.SetPostionFromKeyboadrOrGamepad(-(valueCount));
             }
-            else if (data.frontButton == 1)
+            else if (data.frontButton == 1 && Global.WrongMode == false)
             {
-                griper.SetAngleFromKeyboadrOrGamepad(-valueCount,"5", netMove);
+                griper.SetPostionFromKeyboadrOrGamepad(-valueCount);
             }
-            else if (data.frontButton == 2)
+            else if (data.frontButton == 2 && Global.WrongMode == false)
             {
-                griper.SetAngleFromKeyboadrOrGamepad(valueCount, "5", netMove);
-            }
-
-            if (data.leftStickVer>0)
-            {
-                elbow1.SetAngleFromKeyboadrOrGamepad(valueCount, "2", netMove);
-            }
-            else if (data.leftStickVer < 0)
-            {
-                elbow1.SetAngleFromKeyboadrOrGamepad(-(valueCount), "2", netMove);
+                griper.SetPostionFromKeyboadrOrGamepad(valueCount);
             }
 
-            if (data.rightStickVer > 0)
+            if (data.leftStickVer>0 && Global.WrongMode == false)
             {
-                elbow2.SetAngleFromKeyboadrOrGamepad(valueCount, "3", netMove);
+                elbow1.SetPostionFromKeyboadrOrGamepad(valueCount);
             }
-            else if (data.rightStickVer < 0)
+            else if (data.leftStickVer < 0 && Global.WrongMode == false)
             {
-                elbow2.SetAngleFromKeyboadrOrGamepad(-(valueCount), "3", netMove);
-            }
-
-            if (data.rightStickHor > 0)
-            {
-                griperRotation.SetAngleFromKeyboadrOrGamepad(valueCount, "4", netMove);
-            }
-            else if (data.rightStickHor < 0)
-            {
-                griperRotation.SetAngleFromKeyboadrOrGamepad(-(valueCount), "4", netMove);
+                elbow1.SetPostionFromKeyboadrOrGamepad(-(valueCount));
             }
 
-            if (data.leftStickHor > 0)
+            if (data.rightStickVer > 0 && Global.WrongMode == false)
             {
-                baseMovemend.SetAngleFromKeyboadrOrGamepad(valueCount, "0", netMove);
+                elbow2.SetPostionFromKeyboadrOrGamepad(valueCount);
             }
-            else if (data.leftStickHor < 0)
+            else if (data.rightStickVer < 0 && Global.WrongMode == false)
             {
-                baseMovemend.SetAngleFromKeyboadrOrGamepad(-(valueCount), "0", netMove);
+                elbow2.SetPostionFromKeyboadrOrGamepad(-(valueCount));
+            }
+
+            if (data.rightStickHor > 0 && Global.WrongMode == false)
+            {
+                griperRotation.SetPostionFromKeyboadrOrGamepad(valueCount);
+            }
+            else if (data.rightStickHor < 0 && Global.WrongMode == false)
+            {
+                griperRotation.SetPostionFromKeyboadrOrGamepad(-(valueCount));
+            }
+
+            if (data.leftStickHor > 0 && Global.WrongMode == false)
+            {
+                baseMovemend.SetPostionFromKeyboadrOrGamepad(valueCount);
+            }
+            else if (data.leftStickHor < 0 && Global.WrongMode == false)
+            {
+                baseMovemend.SetPostionFromKeyboadrOrGamepad(-(valueCount));
             }
 
         }
 
-        public void AnalizeData(Key key, NetworkCom netMove) //for keyboard
+        public void AnalizeData(Key key) //for keyboard
         {
 
             if (key == Key.R)
             {
                 if (valueCount + valueCountExp < 25)
                 {
-                    valueCount += (float)0.1;
+                    valueCount += valueCountExp;
                 }
             }
             else if (key == Key.F)
             {
                 if (valueCount - valueCountExp > 0)
                 {
-                    valueCount -= (float)0.1;
+                    valueCount -= valueCountExp;
                 }
             }
 
             if (key == Key.W && keyboardMovingArm ==0)
             {
-                elbow0.SetAngleFromKeyboadrOrGamepad(valueCount, "1", netMove);
+                elbow0.SetPostionFromKeyboadrOrGamepad(valueCount);
             }
             else if (key == Key.S && keyboardMovingArm == 0)
             {
-                elbow0.SetAngleFromKeyboadrOrGamepad(-(valueCount), "1", netMove);
+                elbow0.SetPostionFromKeyboadrOrGamepad(-(valueCount));
             }
 
 
             if (key == Key.W && keyboardMovingArm == 1)
             {
-                elbow1.SetAngleFromKeyboadrOrGamepad(valueCount, "2", netMove);
+                elbow1.SetPostionFromKeyboadrOrGamepad(valueCount);
             }
             else if (key == Key.S && keyboardMovingArm == 1)
             {
-                elbow1.SetAngleFromKeyboadrOrGamepad(-(valueCount), "2", netMove);
+                elbow1.SetPostionFromKeyboadrOrGamepad(-(valueCount));
             }
 
             if (key == Key.W && keyboardMovingArm == 2)
             {
-                elbow2.SetAngleFromKeyboadrOrGamepad(valueCount, "3", netMove);
+                elbow2.SetPostionFromKeyboadrOrGamepad(valueCount);
             }
             else if (key == Key.S && keyboardMovingArm == 2)
             {
-                elbow2.SetAngleFromKeyboadrOrGamepad(-(valueCount), "3", netMove);
+                elbow2.SetPostionFromKeyboadrOrGamepad(-(valueCount));
             }
 
             if (key == Key.LeftShift)
             {
-                griper.SetAngleFromKeyboadrOrGamepad(-valueCount, "5", netMove);
+                griper.SetPostionFromKeyboadrOrGamepad(-valueCount);
             }
             else if (key == Key.CrSel)
             {
-                griper.SetAngleFromKeyboadrOrGamepad(valueCount, "5", netMove);
+                griper.SetPostionFromKeyboadrOrGamepad(valueCount);
             }
 
             if (key == Key.E)
             {
-                griperRotation.SetAngleFromKeyboadrOrGamepad(valueCount, "4", netMove);
+                griperRotation.SetPostionFromKeyboadrOrGamepad(valueCount);
             }
             else if (key == Key.Q)
             {
-                griperRotation.SetAngleFromKeyboadrOrGamepad(-(valueCount), "4", netMove);
+                griperRotation.SetPostionFromKeyboadrOrGamepad(-(valueCount));
             }
 
             if (key == Key.A)
             {
-                baseMovemend.SetAngleFromKeyboadrOrGamepad(valueCount, "0", netMove);
+                baseMovemend.SetPostionFromKeyboadrOrGamepad(valueCount);
             }
             else if (key == Key.D)
             {
-                baseMovemend.SetAngleFromKeyboadrOrGamepad(-(valueCount), "0", netMove);
+                baseMovemend.SetPostionFromKeyboadrOrGamepad(-(valueCount));
             }
         }
-
-        /*public string dataString()
-        {
-            string s = " *e0 " + elbow0.value.ToString() + " *e1 " + elbow1.value.ToString() + " *e2 " + elbow2.value.ToString() + " *g " + griper.value.ToString() + " *gr " + griperRotation.value.ToString() + " value: "+ valueCount.ToString();
-            return s;
-        }*/
+        
     }
 }

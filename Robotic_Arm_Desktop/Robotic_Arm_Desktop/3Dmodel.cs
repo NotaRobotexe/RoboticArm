@@ -14,7 +14,7 @@ namespace Robotic_Arm_Desktop
         public Model3DGroup group;
         public Model3D elbow0, elbow1, elbow2, griper, baseHolder;
 
-        public double baserotation = -90, elbow0rot = 120, elbow1rot = 132, elbow2rot = 0, gripper0rot = 0;
+        public double baserotation = 0, elbow0rot = 180, elbow1rot = 15, elbow2rot = -90, gripper0rot = 90;
 
         RotateTransform3D rotate, rotate2;
         TranslateTransform3D translate;
@@ -52,17 +52,15 @@ namespace Robotic_Arm_Desktop
 
             CallUpdate();
 
-            baserotation = -90;
-            elbow0rot = 120;
-            elbow1rot = 132;
-            elbow2rot = 0;
-            gripper0rot = 0;
+            baserotation = 0;
+            elbow0rot = 180;
+            elbow1rot = 15;
+            elbow2rot = -90;
+            gripper0rot = 90;
         }
 
         private void CallUpdate()
         {
-
-
             Transform3DGroup tra1 = new Transform3DGroup();
             Transform3DGroup tra2 = new Transform3DGroup();
             Transform3DGroup tra3 = new Transform3DGroup();

@@ -40,16 +40,20 @@ string TempAndLoad = "26*83";
 
 int main(void)
 {
+	GPIO::Init();
+	GPIO::RedLed();
+
 	NetworkCom netCom(6969);
 	NetworkCom netData(6968);
 	NetworkCom netMove(6967);
 	NetworkCom netTrigger(6966);
 	NetworkCom netFan(6965);
 
+	GPIO::GreenLed();
+
 	bool launched = false;
 	string NetComMessage = "";
 
-	GPIO::Init();
 	do
 	{
 		NetComMessage = netCom.Recv();
@@ -148,6 +152,8 @@ void distanceTrigger(NetworkCom netTrigger) {
 	} while (ShutDownStart==false);
 }
 
+/*Movement*/
+
 void Movemend(NetworkCom netMove) {
 	PCA9685 pwm;
 	pwm.init(1, 0x40);
@@ -169,38 +175,38 @@ void Movemend(NetworkCom netMove) {
 }
 
 void ManualMovemend(PCA9685 pwm, string msg) {
+	GPIO::BlueLed();
+
+	int pos = stoi(msg.substr(3, 3));
+
 	if (msg.substr(2, 1) == "0")
 	{
-		GPIO::BaseMovemend(stoi(msg.substr(3, 3)));
-		cout << "base " + msg.substr(3, 3) << endl;
 	}
-	else if (msg.substr(2, 1) == "1") {
-		pwm.setPWM(ARM0a, stoi(msg.substr(3, 3)));
-		pwm.setPWM(ARM0b, (MAX_s + MIN_s) - stoi(msg.substr(3, 3)));
+	else if (msg.substr(2, 1) == "1" && pos >= MIN_s && pos <= MAX_s) {
+		pwm.setPWM(ARM0a, pos);
+		pwm.setPWM(ARM0b, (MAX_s + MIN_s) + 1 - pos);
+	}
+	else if (msg.substr(2, 1) == "2" && pos >= MIN_s && pos <= MAX_s) {
+		pwm.setPWM(ARM1, pos);
+	}
+	else if (msg.substr(2, 1) == "3" && pos >= MIN_s && pos <= MAX_s) {
+		pwm.setPWM(ARM2, pos);
+	}
+	else if (msg.substr(2, 1) == "4" && pos >= MIN_s && pos <= MAX_s) {
+		pwm.setPWM(GRIPPERR, pos);
+	}
+	else if (msg.substr(2, 1) == "5" && pos >= MIN_s && pos <= MAX_s) {
+		pwm.setPWM(GRIPPER, pos);
+	}
 
-		cout << "arm0 " + msg.substr(3, 3) << endl;
-	}
-	else if (msg.substr(2, 1) == "2") {
-		pwm.setPWM(ARM1, stoi(msg.substr(3, 3)));
-		cout << "arm1 " + msg.substr(3, 3) << endl;
-	}
-	else if (msg.substr(2, 1) == "3") {
-		pwm.setPWM(ARM2, stoi(msg.substr(3, 3)));
-		cout << "arm2 " + msg.substr(3, 3) << endl;
-	}
-	else if (msg.substr(2, 1) == "4") {
-		pwm.setPWM(GRIPPERR, stoi(msg.substr(3, 3)));
-		cout << "gripper r " + msg.substr(3, 3) << endl;
-	}
-	else if (msg.substr(2, 1) == "5") {
-		pwm.setPWM(GRIPPER, stoi(msg.substr(3, 3)));
-		cout << "gripper " + msg.substr(3, 3) << endl;
-	}
+	GPIO::GreenLed();
 }
 
 void AutoMovemend(PCA9685 pwm, string msg) {
 
 }
+
+
 
 void FanSpeed(NetworkCom fanSpeed) {
 	do

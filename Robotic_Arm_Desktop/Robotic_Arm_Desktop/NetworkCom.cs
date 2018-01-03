@@ -111,4 +111,9 @@ namespace Robotic_Arm_Desktop
             SendData("8");
         }*/
     }
+
+    public static class Move
+    {
+
+    }
 }
