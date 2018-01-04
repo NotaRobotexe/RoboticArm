@@ -1,16 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Motors>
   <Elbow0>
-    <MaxUse>543.86</MaxUse>
+    <MaxUse>576</MaxUse>
     <StartFrom>102</StartFrom>
   </Elbow0>
   <Elbow1>
-    <MaxUse>439.42</MaxUse>
-    <StartFrom>118.07</StartFrom>
+    <MaxUse>576</MaxUse>
+    <StartFrom>102</StartFrom>
   </Elbow1>
   <Elbow2>
-    <MaxUse>330.97</MaxUse>
-    <StartFrom>122.08</StartFrom>
+    <MaxUse>576</MaxUse>
+    <StartFrom>102</StartFrom>
   </Elbow2>
   <Base>
     <MaxUse>576</MaxUse>

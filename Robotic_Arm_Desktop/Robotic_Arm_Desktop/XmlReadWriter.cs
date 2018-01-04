@@ -171,59 +171,5 @@ namespace Robotic_Arm_Desktop
             return Commands;
         }
 
-        //position
-
-        public void LoadConfig()
-        {
-            if (!File.Exists("ConfigPos.xml"))
-            {
-                CreateIfNotExist();
-            }
-
-
-        }
-
-        public void UpdateCurrentPosition()
-        {
-
-        }
-
-        private void CreateIfNotExist()
-        {
-            using (XmlWriter writer = XmlWriter.Create("ConfigPos.xml"))
-            {
-                writer.WriteStartDocument();
-
-                writer.WriteStartElement("OffPos");
-                writer.WriteElementString("b",180.ToString());
-                writer.WriteElementString("e0", 450.ToString());
-                writer.WriteElementString("e1", 250.ToString());
-                writer.WriteElementString("e2", 150.ToString());
-                writer.WriteElementString("gr", 200.ToString());
-                writer.WriteElementString("g", 120.ToString());
-                writer.WriteEndElement();
-
-                writer.WriteStartElement("SteadyPos");
-                writer.WriteElementString("b", 180.ToString());
-                writer.WriteElementString("e0", 350.ToString());
-                writer.WriteElementString("e1", 180.ToString());
-                writer.WriteElementString("e2", 110.ToString());
-                writer.WriteElementString("gr", 200.ToString());
-                writer.WriteElementString("g", 120.ToString());
-                writer.WriteEndElement();
-
-                writer.WriteStartElement("LastPos");
-                writer.WriteElementString("b", 180.ToString());
-                writer.WriteElementString("e0", 102.ToString());
-                writer.WriteElementString("e1", 102.ToString());
-                writer.WriteElementString("e2", 102.ToString());
-                writer.WriteElementString("gr", 200.ToString());
-                writer.WriteElementString("g", 120.ToString());
-                writer.WriteEndElement();
-
-                writer.WriteEndDocument();
-            }
-        }
-
     }
 }

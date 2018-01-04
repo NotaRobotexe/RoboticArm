@@ -9,6 +9,8 @@ namespace Robotic_Arm_Desktop
 {
     class Arm
     {
+        public static event EventHandler PositonChange;
+
         private const double PwmPerDegree = 2.633333333333333333333333333333333;
         public const double min_Pwm = 102;
         public const double max_Pwm = 576;
@@ -25,6 +27,7 @@ namespace Robotic_Arm_Desktop
             if (AngleInPWM+increment >= startfrom && AngleInPWM+increment <= EndAt)
             {
                 Update(AngleInPWM + increment, 1);
+                OnPositionChange(EventArgs.Empty);
             }
         }
 
@@ -40,6 +43,7 @@ namespace Robotic_Arm_Desktop
                 AngleInPWM = pos;
                 AngleInDegree = (pos - min_Pwm) / PwmPerDegree;
             }
+            OnPositionChange(EventArgs.Empty);
         }
 
         public static double DegreeToPwm(double angle)
@@ -50,6 +54,15 @@ namespace Robotic_Arm_Desktop
         public static double PwmToDegree(double pwm)
         {
             return (pwm - min_Pwm) / PwmPerDegree;
+        }
+
+        protected virtual void OnPositionChange(EventArgs e)
+        {
+            EventHandler eventHandler = PositonChange;
+            if (eventHandler != null)
+            {
+                eventHandler(this, e);
+            }
         }
     }
 

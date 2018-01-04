@@ -112,8 +112,26 @@ namespace Robotic_Arm_Desktop
         }*/
     }
 
-    public static class Move
+    public class SendPosition
     {
+        NetworkCom NetMove;
+
+        struct positions
+        {
+            int BaseRotation;
+            int Elb0;
+            int Elb1;
+            int Elb2;
+            int GripperRot;
+            int Gripper;
+        } 
+
+        SendPosition( NetworkCom network)
+        {
+            NetMove = network;
+        }
+
+
 
     }
 }

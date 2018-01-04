@@ -50,10 +50,9 @@ namespace Robotic_Arm_Desktop
         bool loadingDone = false;
         bool CapturingTemplate = false;
         bool WaitForTrigger = false;
-        bool fastMode = false;
+
 
         DispatcherTimer ControllstatusTimer;
-        DispatcherTimer AutoModeAnimation;
 
         List<string> Commands = new List<string>(); //Template command
         Stopwatch stopWatch;
@@ -77,6 +76,8 @@ namespace Robotic_Arm_Desktop
             }
 
             movemend = new Movemend();
+            Arm.PositonChange += Arm_PositonChange;
+
             xrw = new XmlReadWriter();
             xrw.LoadSettings(movemend);
 
@@ -89,31 +90,17 @@ namespace Robotic_Arm_Desktop
             GetCPUandTemp();
             GetTrigger();
 
-            //test for stream
-            BitmapImage image = new BitmapImage(new Uri("icons/errorScreen.png", UriKind.Relative));
-            ImageSource errImage = image;
-            ViewFrame.Source = errImage;
-            OfflineVideoStream();
-
         }
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            ShowRes.Content = xres.Text + " px  " + yres.Text + " px";
-
             InitializeGamepad();
             helix.Content = model.group;
-
-            //Automatic Mode animation
-            AutoModeAnimation = new DispatcherTimer();
-            AutoModeAnimation.Tick += AutoModeAnimation_Tick ;
-            AutoModeAnimation.Interval = new TimeSpan(0, 0, 0, 0, 5);
 
             //keyboard animation 
             ControllstatusTimer = new DispatcherTimer();
             ControllstatusTimer.Tick += ControllstatusTimer_Tick;
             ControllstatusTimer.Interval = new TimeSpan(0, 0, 0, 0, 300);
-
 
             //set first value to motor calibration
             MotorCalibrationDisplay();
@@ -121,23 +108,13 @@ namespace Robotic_Arm_Desktop
             //load data to combobox
             LoadFilesToComboBox();
 
-
             StatTimersForStatsStuff();
 
-            DrawDataAndUpdateModel();
+            SetFirstPositionOfModel();
             loadingDone = true;
         }
 
-        private void Stop(object sender, RoutedEventArgs e)
-        {
-            //NetworkCom.StopMovemend();
-        }
-
         /*undone things*/
-        private void Start(object sender, RoutedEventArgs e)
-        {
-            //NetworkCom.StartMovemend();
-        }
 
         private void HUDclick(object sender, RoutedEventArgs e)
         {
@@ -186,6 +163,45 @@ namespace Robotic_Arm_Desktop
 
         private void Constrast_change(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
+        }
+        
+        /*buttons*/
+        private void Recovery_Click(object sender, RoutedEventArgs e)
+        {
+            List<string> instructionsRaw = Positions.RecoveryPos.Split('*').ToList();
+            List<double> instructions = new List<double>();
+
+            foreach (var item in instructionsRaw)
+            {
+                instructions.Add(Convert.ToDouble(item));
+            }
+
+            movemend.baseMovemend.Update(instructions[0],1);
+            movemend.elbow0.Update(instructions[1], 1);
+            movemend.elbow1.Update(instructions[2], 1);
+            movemend.elbow2.Update(instructions[3], 1);
+            movemend.griperRotation.Update(instructions[4], 1);
+            movemend.griper.Update(instructions[5], 1);
+
+            DrawDataAndUpdateModel();
+        }
+
+        private async void Start(object sender, RoutedEventArgs e)
+        {
+            await AutoModeTemplate.AnimationFromTemplate(Positions.SteadyPos, movemend);
+            latency.Content = "test";
+        }
+
+        private async void Stop(object sender, RoutedEventArgs e)
+        {
+            await AutoModeTemplate.AnimationFromTemplate(Positions.OffPos, movemend);
+            latency.Content = "test2";
+
+        }
+
+        private async void TurnOffPressed(object sender, RoutedEventArgs e)
+        {
+            await AutoModeTemplate.AnimationFromTemplate(Positions.OffPos, movemend);
         }
 
         /*manual mode stuff here*/
@@ -557,6 +573,16 @@ namespace Robotic_Arm_Desktop
         }
 
         /*draw position data to the app and update 3d model*/
+
+        private void Arm_PositonChange(object sender, EventArgs e)
+        {
+            Application.Current.Dispatcher.Invoke(
+            () =>
+             {
+                 DrawDataAndUpdateModel();
+            });
+        }
+
         public void DrawDataAndUpdateModel()
         {
             this.baseRa.Content = Math.Round(movemend.baseMovemend.AngleInDegree, 2) + " °";
@@ -576,6 +602,26 @@ namespace Robotic_Arm_Desktop
             }
 
             OnOffControllStatus(); //controll status just for effect
+        }
+
+        public void SetFirstPositionOfModel()
+        {
+            List<string> instructionsRaw = Positions.OffPos.Split('*').ToList();
+            List<double> instructions = new List<double>();
+
+            for (int i = 0; i < 6; i++)
+            {
+                instructions.Add(Convert.ToDouble(instructionsRaw[i]));
+            }
+
+            movemend.baseMovemend.Update(instructions[0], 1);
+            movemend.elbow0.Update(instructions[1], 1);
+            movemend.elbow1.Update(instructions[2], 1);
+            movemend.elbow2.Update(instructions[3], 1);
+            movemend.griperRotation.Update(instructions[4], 1);
+            movemend.griper.Update(instructions[5], 1);
+
+            DrawDataAndUpdateModel();
         }
 
         /*uppers tabs*/
@@ -601,7 +647,6 @@ namespace Robotic_Arm_Desktop
             delayTexBox.IsEnabled = true;
             triggerButton.IsEnabled = true;
             templateSpeed.IsEnabled = true;
-            fastmodetemplate.IsEnabled = true;
 
             if (tempname.Text != "Template name" && tempname.Text != "")
             {
@@ -616,9 +661,9 @@ namespace Robotic_Arm_Desktop
 
         private void CapturePressed(object sender, RoutedEventArgs e)
         {
-            string command = movemend.baseMovemend.AngleInPWM + "*" + movemend.elbow0.AngleInPWM + "*" + movemend.elbow1.AngleInPWM + "*" 
-            + movemend.elbow2.AngleInPWM + "*" + movemend.griperRotation.AngleInPWM + "*" + movemend.griper.AngleInPWM+"*"
-            +Convert.ToInt16(WaitForTrigger)+"*"+delayTexBox.Text+"*"+templateSpeed.Text + "*" + Convert.ToInt16(fastMode);
+            string command = movemend.baseMovemend.AngleInPWM + "*" + movemend.elbow0.AngleInPWM + "*" + movemend.elbow1.AngleInPWM + "*"
+            + movemend.elbow2.AngleInPWM + "*" + movemend.griperRotation.AngleInPWM + "*" + movemend.griper.AngleInPWM + "*"
+            + Convert.ToInt16(WaitForTrigger) + "*" + delayTexBox.Text + "*" + templateSpeed.Text;
 
             Commands.Add(command);
             WaitForTrigger = false;
@@ -640,9 +685,6 @@ namespace Robotic_Arm_Desktop
             delayTexBox.IsEnabled = false;
             triggerButton.IsEnabled = false;
             templateSpeed.IsEnabled = false;
-            fastmodetemplate.IsEnabled = false;
-
-            fastMode = false;
 
             Commands.Clear();
             LoadFilesToComboBox();
@@ -661,28 +703,13 @@ namespace Robotic_Arm_Desktop
 
             if (templateComboBox.SelectedItem != null)
             {
-                AutoModeAnimation.Start();
                 Global.autoModeRunning = true;
                 Commands = xrw.LoadCommands(templateComboBox.SelectedItem.ToString());
-                AutoModeTemplate.StartTemplateAsync(Commands,movemend,model,numOfLoop);
+                AutoModeTemplate.StartTemplateAsync(Commands,movemend,numOfLoop);
             }
             else
             {
                 MessageBox.Show("Select template");
-            }
-        }
-
-        private void FastmodeChanged(object sender, RoutedEventArgs e)
-        {
-            fastMode = !fastMode;
-        }
-
-        private void AutoModeAnimation_Tick(object sender, EventArgs e)
-        {
-            DrawDataAndUpdateModel();
-            if (Global.autoModeRunning == false)
-            {
-                AutoModeAnimation.Stop();
             }
         }
 
@@ -779,23 +806,6 @@ namespace Robotic_Arm_Desktop
                 netFan.SendData(speed.ToString());
             }
         }
-        
-
-
-        void OfflineVideoStream()
-        {
-            if (Global.OfflineVideo == true)
-            {
-                MessageBox.Show("buffer size " + (Convert.ToInt64(xres.Text) * Convert.ToInt64(yres.Text)) + " empty");
-            }
-        }
-
-
-
-        private void ReloadPressed(object sender, RoutedEventArgs e)
-        {
-            ShowRes.Content = xres.Text + " px  " +yres.Text + " px";
-        }
 
         /*SCRIPT editor*/
 
@@ -844,6 +854,7 @@ namespace Robotic_Arm_Desktop
             movemend.keyboardenabled = false;
             movemend.gamepadEnabled = false;
         }
+
 
         private void EnableMovementdAfterWriting(object sender, RoutedEventArgs e)
         {

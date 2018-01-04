@@ -85,6 +85,7 @@
     <Compile Include="BetterPopUpBox.xaml.cs">
       <DependentUpon>BetterPopUpBox.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Data.cs" />
     <Compile Include="Global.cs" />
     <Compile Include="NetworkCom.cs" />
     <Compile Include="Properties\Resources.Designer.cs">

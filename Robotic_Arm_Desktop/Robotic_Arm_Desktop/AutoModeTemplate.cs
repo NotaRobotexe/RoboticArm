@@ -1,19 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 
 namespace Robotic_Arm_Desktop
 {
-    static class AutoModeTemplate
+    internal static class AutoModeTemplate
     {
-        const int sleepTime = 15;
-        const int incrementation = 1;
+        private const int sleepTime = 15;
+        private const int incrementation = 1;
 
-        public static async Task StartTemplateAsync(List<string> commands,Movemend movemend, _3Dmodel model,TextBox textBox)
+        public static async Task StartTemplateAsync(List<string> commands, Movemend movemend, TextBox textBox)
         {
             int reps;
             if (textBox.Text == "inf")
@@ -33,20 +32,20 @@ namespace Robotic_Arm_Desktop
                     {
                         List<double> instructions = Deserialization(command);
 
-                        await Task.Run(() => {
+                        await Task.Run(() =>
+                        {
                             bool allMotorsOnPositions = false;
                             do
                             {
                                 if (Global.stop == false)
                                 {
                                     allMotorsOnPositions = Moving(instructions, movemend);
-                                            Thread.Sleep(sleepTime / Convert.ToInt16(instructions[8]));
+                                    Thread.Sleep(Convert.ToInt32(sleepTime / instructions[8]));
                                 }
                                 else
                                 {
                                     break;
                                 }
-
                             } while (allMotorsOnPositions == false);
 
                             if (instructions[6] == 1) //wait for trigger
@@ -84,21 +83,42 @@ namespace Robotic_Arm_Desktop
                     break;
                 }
 
-                textBox.Text = (reps-i).ToString();
+                textBox.Text = (reps - i).ToString();
             }
-            
+
             Global.autoModeRunning = false;
         }
 
-        static bool Moving(List<double> instruction, Movemend movemend)
+        public static async Task AnimationFromTemplate(string command, Movemend movemend)
+        {
+            List<string> instructionsRaw = command.Split('*').ToList();
+            List<double> instructions = new List<double>();
+
+            foreach (var item in instructionsRaw)
+            {
+                instructions.Add(Convert.ToDouble(item));
+            }
+
+            await Task.Run(() =>
+            {
+                bool allMotorsOnPositions = false;
+                do
+                {
+                    allMotorsOnPositions = Moving(instructions, movemend);
+                    Thread.Sleep(Convert.ToInt32(sleepTime / instructions[8]));
+                } while (allMotorsOnPositions == false);
+            });
+        }
+
+        private static bool Moving(List<double> instruction, Movemend movemend)
         {
             int onPosition = 0;
 
             if (instruction[1] > movemend.elbow0.AngleInPWM)
             {
-                if (movemend.elbow0.AngleInPWM+incrementation > instruction[1])
+                if (movemend.elbow0.AngleInPWM + incrementation > instruction[1])
                 {
-                    movemend.elbow0.Update(instruction[1],1);
+                    movemend.elbow0.Update(instruction[1], 1);
                 }
                 else
                 {
@@ -121,7 +141,6 @@ namespace Robotic_Arm_Desktop
                 onPosition++;
             }
 
-
             if (instruction[2] > movemend.elbow1.AngleInPWM)
             {
                 if (movemend.elbow1.AngleInPWM + incrementation > instruction[2])
@@ -132,7 +151,6 @@ namespace Robotic_Arm_Desktop
                 {
                     movemend.elbow1.Update(movemend.elbow1.AngleInPWM + incrementation, 1);
                 }
-
             }
             else if (instruction[2] < movemend.elbow1.AngleInPWM)
             {
@@ -160,7 +178,6 @@ namespace Robotic_Arm_Desktop
                 {
                     movemend.elbow2.Update(movemend.elbow2.AngleInPWM + incrementation, 1);
                 }
-
             }
             else if (instruction[3] < movemend.elbow2.AngleInPWM)
             {
@@ -188,7 +205,6 @@ namespace Robotic_Arm_Desktop
                 {
                     movemend.griperRotation.Update(movemend.griperRotation.AngleInPWM + incrementation, 1);
                 }
-
             }
             else if (instruction[4] < movemend.griperRotation.AngleInPWM)
             {
@@ -215,9 +231,7 @@ namespace Robotic_Arm_Desktop
                 else
                 {
                     movemend.griper.Update(movemend.griper.AngleInPWM + incrementation, 1);
-
                 }
-
             }
             else if (instruction[5] < movemend.griper.AngleInPWM)
             {
@@ -243,9 +257,8 @@ namespace Robotic_Arm_Desktop
                 }
                 else
                 {
-                    movemend.baseMovemend.Update(movemend.griper.AngleInPWM + incrementation, 1);
+                    movemend.baseMovemend.Update(movemend.baseMovemend.AngleInPWM + incrementation, 1);
                 }
-
             }
             else if (instruction[0] < movemend.baseMovemend.AngleInPWM)
             {
@@ -256,7 +269,6 @@ namespace Robotic_Arm_Desktop
                 else
                 {
                     movemend.baseMovemend.Update(movemend.baseMovemend.AngleInPWM - incrementation, 1);
-
                 }
             }
             else
@@ -274,7 +286,7 @@ namespace Robotic_Arm_Desktop
             }
         }
 
-        static List<double> Deserialization(string command)
+        private static List<double> Deserialization(string command)
         {
             List<string> instructionsRaw = command.Split('*').ToList();
             List<double> instructions = new List<double>();
@@ -286,6 +298,5 @@ namespace Robotic_Arm_Desktop
 
             return instructions;
         }
-
     }
 }

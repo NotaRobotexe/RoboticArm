@@ -14,7 +14,7 @@ namespace Robotic_Arm_Desktop
         public Model3DGroup group;
         public Model3D elbow0, elbow1, elbow2, griper, baseHolder;
 
-        public double baserotation = 0, elbow0rot = 180, elbow1rot = 15, elbow2rot = -90, gripper0rot = 90;
+        public double baserotation = 0, elbow0rot = 0, elbow1rot = 15, elbow2rot = -90, gripper0rot = 90;
 
         RotateTransform3D rotate, rotate2;
         TranslateTransform3D translate;
@@ -45,15 +45,15 @@ namespace Robotic_Arm_Desktop
         public void UpdateModel(Movemend movemend)
         {
             baserotation += movemend.baseMovemend.AngleInDegree;
-            elbow0rot -= movemend.elbow0.AngleInDegree;
-            elbow1rot -= movemend.elbow1.AngleInDegree;
-            elbow2rot -= movemend.elbow2.AngleInDegree;
+            elbow0rot += movemend.elbow0.AngleInDegree;
+            elbow1rot += movemend.elbow1.AngleInDegree;
+            elbow2rot += movemend.elbow2.AngleInDegree;
             gripper0rot += movemend.griperRotation.AngleInDegree;
 
             CallUpdate();
 
             baserotation = 0;
-            elbow0rot = 180;
+            elbow0rot = 0;
             elbow1rot = 15;
             elbow2rot = -90;
             gripper0rot = 90;
