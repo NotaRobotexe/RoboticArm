@@ -17,11 +17,11 @@
     <StartFrom>102</StartFrom>
   </Base>
   <Gripper0>
-    <MaxUse>527.8</MaxUse>
-    <StartFrom>130.12</StartFrom>
+    <MaxUse>576</MaxUse>
+    <StartFrom>102</StartFrom>
   </Gripper0>
   <Gripper1>
-    <MaxUse>515.75</MaxUse>
-    <StartFrom>146.19</StartFrom>
+    <MaxUse>576</MaxUse>
+    <StartFrom>102</StartFrom>
   </Gripper1>
 </Motors>

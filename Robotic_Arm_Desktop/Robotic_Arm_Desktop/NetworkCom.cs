@@ -115,23 +115,65 @@ namespace Robotic_Arm_Desktop
     public class SendPosition
     {
         NetworkCom NetMove;
+        Movemend moveData;
 
         struct positions
         {
-            int BaseRotation;
-            int Elb0;
-            int Elb1;
-            int Elb2;
-            int GripperRot;
-            int Gripper;
-        } 
-
-        SendPosition( NetworkCom network)
-        {
-            NetMove = network;
+            public int BaseRotation;
+            public int Elb0;
+            public int Elb1;
+            public int Elb2;
+            public int GripperRot;
+            public int Gripper;
         }
 
+        positions old;
+        positions actual;
 
+        public SendPosition( NetworkCom network, Movemend movemend )
+        {
+            NetMove = network;
+            moveData = movemend;
 
+            old.BaseRotation = Convert.ToInt32( Math.Round(moveData.baseMovemend.AngleInPWM));
+            old.Elb0 = Convert.ToInt32(Math.Round(moveData.elbow0.AngleInPWM));
+            old.Elb1 = Convert.ToInt32(Math.Round(moveData.elbow1.AngleInPWM));
+            old.Elb2 = Convert.ToInt32(Math.Round(moveData.elbow2.AngleInPWM));
+            old.GripperRot = Convert.ToInt32(Math.Round(moveData.griperRotation.AngleInPWM));
+            old.Gripper = Convert.ToInt32(Math.Round(moveData.griper.AngleInPWM));
+
+            actual = old;
+        }
+
+        public void AnalyzeAndSend()
+        {
+            actual.BaseRotation = Convert.ToInt32(Math.Round(moveData.baseMovemend.AngleInPWM));
+            actual.Elb0 = Convert.ToInt32(Math.Round(moveData.elbow0.AngleInPWM));
+            actual.Elb1 = Convert.ToInt32(Math.Round(moveData.elbow1.AngleInPWM));
+            actual.Elb2 = Convert.ToInt32(Math.Round(moveData.elbow2.AngleInPWM));
+            actual.GripperRot = Convert.ToInt32(Math.Round(moveData.griperRotation.AngleInPWM));
+            actual.Gripper = Convert.ToInt32(Math.Round(moveData.griper.AngleInPWM));
+
+            if (actual.BaseRotation != old.BaseRotation){
+                NetMove.SendData("0" + actual.BaseRotation.ToString());
+            }
+            if (actual.Elb0 != old.Elb0){
+                NetMove.SendData("1" + actual.Elb0.ToString());
+            }
+            if (actual.Elb1 != old.Elb1){
+                NetMove.SendData("2" + actual.Elb1.ToString());
+            }
+            if (actual.Elb2 != old.Elb2){
+                NetMove.SendData("3" + actual.Elb2.ToString());
+            }
+            if (actual.GripperRot != old.GripperRot){
+                NetMove.SendData("4" + actual.GripperRot.ToString());
+            }
+            if (actual.Gripper != old.Gripper){
+                NetMove.SendData("5" + actual.Gripper.ToString());
+            }
+
+            old = actual;
+        }
     }
 }

@@ -58,6 +58,7 @@ namespace Robotic_Arm_Desktop
         Stopwatch stopWatch;
         TimeSpan elapsed;
 
+        SendPosition send_pos;
         NetworkCom netCom;
         NetworkCom netData;
         NetworkCom netMove;
@@ -76,7 +77,6 @@ namespace Robotic_Arm_Desktop
             }
 
             movemend = new Movemend();
-            Arm.PositonChange += Arm_PositonChange;
 
             xrw = new XmlReadWriter();
             xrw.LoadSettings(movemend);
@@ -94,13 +94,17 @@ namespace Robotic_Arm_Desktop
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            InitializeGamepad();
-            helix.Content = model.group;
-
             //keyboard animation 
             ControllstatusTimer = new DispatcherTimer();
             ControllstatusTimer.Tick += ControllstatusTimer_Tick;
             ControllstatusTimer.Interval = new TimeSpan(0, 0, 0, 0, 300);
+
+            Arm.PositonChange += Arm_PositonChange;
+            movemend.IncrementationChange += Movemend_IncrementationChange;
+
+            InitializeGamepad();
+            helix.Content = model.group;
+
 
             //set first value to motor calibration
             MotorCalibrationDisplay();
@@ -110,26 +114,34 @@ namespace Robotic_Arm_Desktop
 
             StatTimersForStatsStuff();
 
+
             SetFirstPositionOfModel();
+            send_pos = new SendPosition(netMove, movemend);
+
+            buttonAnimationOnOff(HUDbutton, false);
+
             loadingDone = true;
         }
+
 
         /*undone things*/
 
         private void HUDclick(object sender, RoutedEventArgs e)
         {
-            /*if (hud == false)
+            hud = !hud;
+            buttonAnimationOnOff(HUDbutton, hud);
+
+            if (hud == true)
             {
-                HUDbutton.Content = "Enabled";
-                HUDbutton.Background = 
-                hud = true;
+                hudImage.Visibility = Visibility.Visible;
+                hudimage1.Visibility = Visibility.Visible;
             }
             else
             {
-                HUDbutton.Content = "Disabled";// "#FF2E2E2E"
-                HUDbutton.Background = Brushes.;
-                hud = false;
-            }*/
+                hudImage.Visibility = Visibility.Hidden;
+                hudimage1.Visibility = Visibility.Hidden;
+            }
+
         }
 
         private void Brighness_change(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -572,7 +584,7 @@ namespace Robotic_Arm_Desktop
             xrw.UpdateFile(movemend);
         }
 
-        /*draw position data to the app and update 3d model*/
+        /*draw position data to the app, update 3d model and send data to arm*/
 
         private void Arm_PositonChange(object sender, EventArgs e)
         {
@@ -581,6 +593,11 @@ namespace Robotic_Arm_Desktop
              {
                  DrawDataAndUpdateModel();
             });
+
+            if (loadingDone == true)
+            {
+                send_pos.AnalyzeAndSend();
+            }
         }
 
         public void DrawDataAndUpdateModel()
@@ -592,9 +609,13 @@ namespace Robotic_Arm_Desktop
             this.grra.Content = Math.Round(movemend.griperRotation.AngleInDegree, 2) + " °";
             this.gr.Content = Math.Round(movemend.griper.AngleInDegree, 2) + " °";
 
-            this.incLabel.Content = Math.Round(movemend.valueCount,3);
-
             model.UpdateModel(movemend);
+
+            if (hud == true)
+            {
+                RotateTransform rotateTransform = new RotateTransform(movemend.griperRotation.AngleInDegree-90);
+                hudImage.RenderTransform = rotateTransform;
+            }
 
             if (CapturingTemplate == true)
             {
@@ -622,6 +643,11 @@ namespace Robotic_Arm_Desktop
             movemend.griper.Update(instructions[5], 1);
 
             DrawDataAndUpdateModel();
+        }
+
+        private void Movemend_IncrementationChange(object sender, EventArgs e)
+        {
+            this.incLabel.Content = Math.Round(movemend.valueCount,3);
         }
 
         /*uppers tabs*/

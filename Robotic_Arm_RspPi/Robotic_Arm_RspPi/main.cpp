@@ -32,7 +32,6 @@ void ShutDown(NetworkCom b, NetworkCom a, NetworkCom c, NetworkCom d, NetworkCom
 void Movemend(NetworkCom netMove);
 void FanSpeed(NetworkCom fanSpeed);
 void ManualMovemend(PCA9685 pwm, string msg);
-void AutoMovemend(PCA9685 pwm, string msg);
 string getTemp();
 string getCPULoad();
 
@@ -81,6 +80,7 @@ int main(void)
 
 	} while (NetComMessage.substr(0, 1) != "7");
 	
+	GPIO::RedLed();
 	ShutDown(netCom,netMove,netData,netFan,netTrigger);
 	return 0;
 }
@@ -162,50 +162,35 @@ void Movemend(NetworkCom netMove) {
 	do
 	{
 		string msg = netMove.Recv();
-		if (msg.substr(1, 1) == MANUALMOVE)
-		{
-			ManualMovemend(pwm, msg);
-		}
-		else if (msg.substr(1, 1) == AUTOMOVE)
-		{
-			AutoMovemend(pwm, msg);
-		}
-
+		GPIO::BlueLed();
+		ManualMovemend(pwm, msg);
+		GPIO::GreenLed();
 	} while (ShutDownStart == false);
 }
 
 void ManualMovemend(PCA9685 pwm, string msg) {
-	GPIO::BlueLed();
+	int pos = stoi(msg.substr(1, 3));
 
-	int pos = stoi(msg.substr(3, 3));
-
-	if (msg.substr(2, 1) == "0")
+	if (msg.substr(0, 1) == "0")
 	{
 	}
-	else if (msg.substr(2, 1) == "1" && pos >= MIN_s && pos <= MAX_s) {
+	else if (msg.substr(0, 1) == "1" && pos >= MIN_s && pos <= MAX_s) {
 		pwm.setPWM(ARM0a, pos);
 		pwm.setPWM(ARM0b, (MAX_s + MIN_s) + 1 - pos);
 	}
-	else if (msg.substr(2, 1) == "2" && pos >= MIN_s && pos <= MAX_s) {
+	else if (msg.substr(0, 1) == "2" && pos >= MIN_s && pos <= MAX_s) {
 		pwm.setPWM(ARM1, pos);
 	}
-	else if (msg.substr(2, 1) == "3" && pos >= MIN_s && pos <= MAX_s) {
+	else if (msg.substr(0, 1) == "3" && pos >= MIN_s && pos <= MAX_s) {
 		pwm.setPWM(ARM2, pos);
 	}
-	else if (msg.substr(2, 1) == "4" && pos >= MIN_s && pos <= MAX_s) {
+	else if (msg.substr(0, 1) == "4" && pos >= MIN_s && pos <= MAX_s) {
 		pwm.setPWM(GRIPPERR, pos);
 	}
-	else if (msg.substr(2, 1) == "5" && pos >= MIN_s && pos <= MAX_s) {
+	else if (msg.substr(0, 1) == "5" && pos >= MIN_s && pos <= MAX_s) {
 		pwm.setPWM(GRIPPER, pos);
 	}
-
-	GPIO::GreenLed();
 }
-
-void AutoMovemend(PCA9685 pwm, string msg) {
-
-}
-
 
 
 void FanSpeed(NetworkCom fanSpeed) {

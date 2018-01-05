@@ -15,13 +15,6 @@ namespace Robotic_Arm_Desktop
         private BitmapSource bmp;
         int bytesRead;
 
-        void OfflineVideoStream()
-        {
-            if(Global.OfflineVideo == true)
-            {
-            }
-        }
-
         private void procesinit()
         {
             process = new Process();

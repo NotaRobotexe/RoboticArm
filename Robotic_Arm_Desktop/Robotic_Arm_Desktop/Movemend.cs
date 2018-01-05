@@ -7,7 +7,7 @@ using System.Windows.Input;
 
 namespace Robotic_Arm_Desktop
 {
-    class Arm
+    public class Arm
     {
         public static event EventHandler PositonChange;
 
@@ -66,8 +66,9 @@ namespace Robotic_Arm_Desktop
         }
     }
 
-    class Movemend
+    public class Movemend
     {
+        public event EventHandler IncrementationChange;
 
         public Arm baseMovemend = new Arm();
         public Arm elbow0 = new Arm();
@@ -102,6 +103,7 @@ namespace Robotic_Arm_Desktop
                 if (valueCount+valueCountExp < 25)
                 {
                     valueCount += valueCountExp;
+                    OnIncrementationChange(EventArgs.Empty);
                 }
             }
             else if (data.button == 4 && Global.WrongMode == false)
@@ -109,6 +111,7 @@ namespace Robotic_Arm_Desktop
                 if (valueCount-valueCountExp>0)
                 {
                     valueCount -= valueCountExp;
+                    OnIncrementationChange(EventArgs.Empty);
                 }
             }
 
@@ -175,6 +178,7 @@ namespace Robotic_Arm_Desktop
                 if (valueCount + valueCountExp < 25)
                 {
                     valueCount += valueCountExp;
+                    OnIncrementationChange(EventArgs.Empty);
                 }
             }
             else if (key == Key.F)
@@ -182,6 +186,7 @@ namespace Robotic_Arm_Desktop
                 if (valueCount - valueCountExp > 0)
                 {
                     valueCount -= valueCountExp;
+                    OnIncrementationChange(EventArgs.Empty);
                 }
             }
 
@@ -240,6 +245,15 @@ namespace Robotic_Arm_Desktop
                 baseMovemend.SetPostionFromKeyboadrOrGamepad(-(valueCount));
             }
         }
-        
+
+        protected virtual void OnIncrementationChange(EventArgs e)
+        {
+            EventHandler eventHandler = IncrementationChange;
+            if (eventHandler != null)
+            {
+                eventHandler(this, e);
+            }
+        }
+
     }
 }
