@@ -144,9 +144,9 @@
             <Label x:Name="manualModeStatus" Content="Enabled" HorizontalAlignment="Left" Margin="232,141,0,0" VerticalAlignment="Top" FontSize="15" Foreground="#FF63D2FA" FontWeight="Bold"/>
             <Ellipse x:Name="ManualModeStatusEllipse" Fill="#FF252526" HorizontalAlignment="Left" Height="12" Margin="303,151,0,0" VerticalAlignment="Top" Width="12" RenderTransformOrigin="-0.6,0.533"/>
         </Grid>
-        <Image x:Name="ViewFrame" HorizontalAlignment="Left" Height="607" Margin="815,20,0,0" VerticalAlignment="Top" Width="1080" Panel.ZIndex="-2" />
+        <Image x:Name="ViewFrame" HorizontalAlignment="Left" Height="607" Margin="815,20,0,0" VerticalAlignment="Top" Width="1080" Panel.ZIndex="-3" />
         <Image Name="hudimage1" HorizontalAlignment="Left" Height="92" Margin="1289,278,0,0" VerticalAlignment="Top" Width="132" Source="icons/hud1.png" Visibility="Hidden" />
-        <Image x:Name="hudImage" HorizontalAlignment="Left" Height="445" Margin="815,99,0,0" VerticalAlignment="Top"  Width="1080" Source="icons/hud2.png" RenderTransformOrigin="0.5,0.5" Panel.ZIndex="-5" Visibility="Hidden">
+        <Image x:Name="hudImage" HorizontalAlignment="Left" Height="445" Margin="815,99,0,0" VerticalAlignment="Top"  Width="1080" Source="icons/hud2.png" RenderTransformOrigin="0.5,0.5" Panel.ZIndex="-2" Visibility="Hidden">
             <Image.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform/>

@@ -41,6 +41,7 @@ namespace Robotic_Arm_Desktop
         _3Dmodel model;
         Gamepad gamepad;
         XmlReadWriter xrw;
+        VideoStream stream;
 
         string ScriptPath = "";
 
@@ -114,39 +115,20 @@ namespace Robotic_Arm_Desktop
 
             StatTimersForStatsStuff();
 
-
             SetFirstPositionOfModel();
             send_pos = new SendPosition(netMove, movemend);
+
+            //start video stream
+            stream = new VideoStream();
+            stream.procesinit();
+            stream.NewFrame += Stream_NewFrame;
 
             buttonAnimationOnOff(HUDbutton, false);
 
             loadingDone = true;
         }
 
-
         /*undone things*/
-
-        private void HUDclick(object sender, RoutedEventArgs e)
-        {
-            hud = !hud;
-            buttonAnimationOnOff(HUDbutton, hud);
-
-            if (hud == true)
-            {
-                hudImage.Visibility = Visibility.Visible;
-                hudimage1.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                hudImage.Visibility = Visibility.Hidden;
-                hudimage1.Visibility = Visibility.Hidden;
-            }
-
-        }
-
-        private void Brighness_change(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-        }
 
         private void EnableAutoMode_Click(object sender, RoutedEventArgs e)
         {
@@ -173,6 +155,40 @@ namespace Robotic_Arm_Desktop
             }
         }
 
+
+        /*video stream and other with image control*/
+
+        private void Stream_NewFrame(object sender, EventArgs e)
+        {
+            Application.Current.Dispatcher.Invoke(
+            () =>
+            {
+                ViewFrame.Source = Global.Frame;
+            });
+        }
+
+        private void HUDclick(object sender, RoutedEventArgs e)
+        {
+            hud = !hud;
+            buttonAnimationOnOff(HUDbutton, hud);
+
+            if (hud == true)
+            {
+                hudImage.Visibility = Visibility.Visible;
+                hudimage1.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                hudImage.Visibility = Visibility.Hidden;
+                hudimage1.Visibility = Visibility.Hidden;
+            }
+
+        }
+        
+        private void Brighness_change(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+        }
+       
         private void Constrast_change(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
         }
@@ -293,6 +309,8 @@ namespace Robotic_Arm_Desktop
                 }
             }
         }
+
+        public static object GC { get; internal set; }
 
         /*gamepad and keyboard basic input*/
         private void InitializeGamepad()
@@ -602,6 +620,7 @@ namespace Robotic_Arm_Desktop
 
         public void DrawDataAndUpdateModel()
         {
+            
             this.baseRa.Content = Math.Round(movemend.baseMovemend.AngleInDegree, 2) + " °";
             this.elb0a.Content = Math.Round(movemend.elbow0.AngleInDegree, 2) + " °";
             this.elb1a.Content = Math.Round(movemend.elbow1.AngleInDegree, 2) + " °";

@@ -4,22 +4,25 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace Robotic_Arm_Desktop
 {
-    class VideoStream //UNDONE:ten ffmpeg sa randomne od seba vymaze WUT???? dokym sa to nefixne tak vzdicky treba mat kopiu ffmpegu lebo ja uz neviem ako. 
-    {   
+    class VideoStream
+    {
         private Process process;
         private BitmapSource bmp;
-        int bytesRead;
+        private int bytesRead;
 
-        private void procesinit()
+        public event EventHandler NewFrame;
+
+        public void procesinit()
         {
             process = new Process();
-            process.StartInfo.FileName = @"C:\Users\mt2si\Desktop\ffmpeg-20171031-88c7aa1-win64-static\ffmpeg-20171031-88c7aa1-win64-static\bin\ffmpeg.exe";
-            process.StartInfo.Arguments = @"-i rtsp://169.254.45.53:8554/unicast  -c:v copy -r 200 -f image2pipe -pix_fmt rgb24 -vcodec rawvideo -"; //rtsp://192.168.1.12:8554/unicast
+            process.StartInfo.FileName = Global.FfmpegPath;
+            process.StartInfo.Arguments = @"-i rtsp://"+Global.ipaddres+":8554/unicast  -c:v copy -r 60 -f image2pipe -pix_fmt rgb24 -vcodec rawvideo -";
             process.StartInfo.UseShellExecute = false;
             process.StartInfo.RedirectStandardOutput = true;
             process.StartInfo.CreateNoWindow = true;
@@ -34,32 +37,59 @@ namespace Robotic_Arm_Desktop
                 var bytesPerPixel = (PixelFormats.Rgb24.BitsPerPixel + 7) / 8;
                 var stride = bytesPerPixel * 640;
 
-                int bufferSize = 900 * 600 * 3;
-                int maxFfmpegBufferSize = 32768;
+                int bufferSize = 640 * 480 * 3;
+                const int maxFfmpegBufferSize = 32768;
                 byte[] buffer = new byte[bufferSize];
                 byte[] rawBuffer = new byte[maxFfmpegBufferSize];     //this is max size of buffer what will ffmpeg return
                 int bytesReaded = 0;
                 var ffmpegOut = process.StandardOutput.BaseStream;
                 bytesRead = 0;
-                using (BinaryReader reader = new BinaryReader(ffmpegOut))   //UNDONE: chcelo by to dat nejaky security check. ak dojde len o 1 bit menej alebo viac zo ffmpegu vsetko padne. treba sa na to niekedy pozriet
+
+                byte NumberOfFullRawBuffers = (byte)Math.Floor((double)bufferSize / (double)maxFfmpegBufferSize);
+                int LastRawBufferSize = bufferSize - (NumberOfFullRawBuffers * maxFfmpegBufferSize);
+
+                bool ErrorCatch = false;
+                using (BinaryReader reader = new BinaryReader(ffmpegOut))   
                 {
                     do
                     {
-                        do
+                        IncorectValue:
+                        for (int i = 0; i < NumberOfFullRawBuffers; i++)
                         {
-                            bytesRead = reader.Read(rawBuffer, 0, maxFfmpegBufferSize);
-                            Array.Copy(rawBuffer, 0, buffer, bytesReaded, bytesRead);
+                            if (ErrorCatch == false)
+                            {
+                                bytesRead = reader.Read(rawBuffer, 0, maxFfmpegBufferSize);
+                                Array.Copy(rawBuffer, 0, buffer, bytesReaded, bytesRead);
+                            }
+                            else
+                            {
+                                Array.Copy(rawBuffer, 0, buffer, bytesReaded, bytesRead);
+                                ErrorCatch = false;
+                            }
                             bytesReaded += bytesRead;
-                        } while (bytesReaded != bufferSize);
+                        }
+                        bytesRead = reader.Read(rawBuffer, 0, maxFfmpegBufferSize);
+                        if (bytesRead == LastRawBufferSize)
+                        {
+                            Array.Copy(rawBuffer, 0, buffer, bytesReaded, bytesRead);
+                            bytesReaded = 0;
+                        }
+                        else
+                        {
+                            ErrorCatch = true;
+                            Console.WriteLine("error ");
+                            bytesReaded = 0;
+                            goto IncorectValue;
+                        }
 
-                        bytesReaded = 0;
-
-                        bmp = BitmapImage.Create(900, 600, 96, 96, PixelFormats.Rgb24, null, buffer, stride);
+                        bmp = BitmapImage.Create(640, 480, 96, 96, PixelFormats.Rgb24, null, buffer, stride);
                         bmp.Freeze();
 
-                        Action action = new Action(updateDisplay);
-                        //System.Windows.Threading.Dispatcher.BeginInvoke(action);
+                        Global.Frame = bmp;
+                        OnNewFrame(EventArgs.Empty);
 
+
+                        GC.Collect(); //for whatever reason garbage collection wont free memory but when i call him it W.O.R.K.S   
                     } while (bytesRead != 0);
                 }
             });
@@ -67,9 +97,14 @@ namespace Robotic_Arm_Desktop
             thread.Start();
         }
 
-        private void updateDisplay()
+        protected virtual void OnNewFrame(EventArgs e)
         {
-           // test.Source = bmp;
+            EventHandler eventHandler = NewFrame;
+            if (eventHandler != null)
+            {
+                eventHandler(this, e);
+            }
         }
+
     }
 }

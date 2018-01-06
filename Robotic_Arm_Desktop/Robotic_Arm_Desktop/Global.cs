@@ -8,9 +8,12 @@ namespace Robotic_Arm_Desktop
 {
     public static class Global
     {
-        public static string ipaddres = "169.254.110.51";
+        
+        public static System.Windows.Media.Imaging.BitmapSource Frame;
+        public static string ipaddres = "169.254.147.73";
         public static bool connected = false;
         public static bool WrongMode = false;
+        public static string FfmpegPath = @"C:\Users\mt2si\Desktop\ffmpeg\ffmpeg.exe";
 
         public static bool stop = false; // manual mode stop all action
         public static bool triggered = false;
@@ -21,5 +24,6 @@ namespace Robotic_Arm_Desktop
 
         //debug only 
         public static bool DebugMode = true;
+        public static bool ActvateStream = false;
     }
 }
