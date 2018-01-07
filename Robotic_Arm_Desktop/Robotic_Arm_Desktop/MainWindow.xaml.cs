@@ -24,8 +24,6 @@ using Microsoft.Win32;
 
 namespace Robotic_Arm_Desktop
 {
-    //TODO: implementovat video stream
-    //TODO: HUD, contrast ostatne
     //TODO: Safety control - taktiez netreba moc
     //TODO: fixnut ostatne buggy
     //TODO: responzivnost - nepotrebne fullHD staci
@@ -51,9 +49,10 @@ namespace Robotic_Arm_Desktop
         bool loadingDone = false;
         bool CapturingTemplate = false;
         bool WaitForTrigger = false;
-
+        int framerate = 0;
 
         DispatcherTimer ControllstatusTimer;
+        DispatcherTimer FrameRateCounter;
 
         List<string> Commands = new List<string>(); //Template command
         Stopwatch stopWatch;
@@ -100,6 +99,7 @@ namespace Robotic_Arm_Desktop
             ControllstatusTimer.Tick += ControllstatusTimer_Tick;
             ControllstatusTimer.Interval = new TimeSpan(0, 0, 0, 0, 300);
 
+            
             Arm.PositonChange += Arm_PositonChange;
             movemend.IncrementationChange += Movemend_IncrementationChange;
 
@@ -119,9 +119,16 @@ namespace Robotic_Arm_Desktop
             send_pos = new SendPosition(netMove, movemend);
 
             //start video stream
+
             stream = new VideoStream();
-            stream.procesinit();
-            stream.NewFrame += Stream_NewFrame;
+            SetStreamSettings();
+            VideoStream.NewFrame += Stream_NewFrame;
+
+            //framerateCounter
+            FrameRateCounter = new DispatcherTimer();
+            FrameRateCounter.Tick += FrameRateCounter_Tick;
+            FrameRateCounter.Interval = new TimeSpan(0, 0, 1);
+            FrameRateCounter.Start();
 
             buttonAnimationOnOff(HUDbutton, false);
 
@@ -155,18 +162,69 @@ namespace Robotic_Arm_Desktop
             }
         }
 
-
         /*video stream and other with image control*/
+        private async void SetStreamSettings()
+        {
+            if (loadingDone==true){
+                stream.ProcesEnd();
+                stream = new VideoStream();
+            }
+
+            Global.StreamWidth = Convert.ToInt32(widthL.Text);
+            Global.StreamHight = Convert.ToInt32(highL.Text);
+
+            string StreammSetting = "v4l2-ctl --set-ctrl=color_effects="+ Math.Round(ColSlid.Value) +" --set-ctrl=contrast="+ Math.Round(Contrast.Value)+" --set-ctrl=brightness="+ Math.Round(brighness.Value);
+            string Slenght = StreammSetting.Length.ToString();
+            string _width, _high;
+
+            if (widthL.Text.Length<4){
+                _width = "0" + widthL.Text;
+            }
+            else{
+                _width = widthL.Text;
+            }
+            if (highL.Text.Length < 4){
+                _high = "0" + highL.Text;
+            }
+            else{
+                _high = highL.Text;
+            }
+
+            string res = _width + _high;
+            netCom.SendData("2"+res+ Slenght + StreammSetting);
+            await NonBlockSleep();
+            stream.Procesinit();
+        }
+
+        public async Task NonBlockSleep()
+        {
+            await Task.Run(() =>
+            {
+                Thread.Sleep(2000);
+            });
+        } 
 
         private void Stream_NewFrame(object sender, EventArgs e)
         {
             Application.Current.Dispatcher.Invoke(
             () =>
             {
+                ViewFrame.Stretch = Stretch.Fill;
+                framerate++;
                 ViewFrame.Source = Global.Frame;
             });
         }
 
+        private void StreamSetting_Click(object sender, RoutedEventArgs e)
+        {
+            SetStreamSettings();
+        }
+
+        private void FrameRateCounter_Tick(object sender, EventArgs e)
+        {
+            FrameLab.Content = framerate.ToString() + " fps";
+            framerate = 0;
+        }
         private void HUDclick(object sender, RoutedEventArgs e)
         {
             hud = !hud;
@@ -185,15 +243,21 @@ namespace Robotic_Arm_Desktop
 
         }
         
-        private void Brighness_change(object sender, RoutedPropertyChangedEventArgs<double> e)
+        /*controls buttons*/
+        private async void ExitWin(object sender, RoutedEventArgs e)
         {
+            FrameRateCounter.Stop();
+            stream.ProcesEnd();
+            await AutoModeTemplate.AnimationFromTemplate(Positions.OffPos, movemend);
+            netCom.SendData("7");
+            Application.Current.Shutdown();
         }
-       
-        private void Constrast_change(object sender, RoutedPropertyChangedEventArgs<double> e)
+
+        private void MinWin(object sender, RoutedEventArgs e)
         {
+            WindowState = WindowState.Minimized;
         }
-        
-        /*buttons*/
+
         private void Recovery_Click(object sender, RoutedEventArgs e)
         {
             List<string> instructionsRaw = Positions.RecoveryPos.Split('*').ToList();
@@ -670,17 +734,6 @@ namespace Robotic_Arm_Desktop
         }
 
         /*uppers tabs*/
-        private void ExitWin(object sender, RoutedEventArgs e)
-        {
-            netCom.SendData("7");
-            Application.Current.Shutdown();
-        }
-
-        private void MinWin(object sender, RoutedEventArgs e)
-        {
-            WindowState = WindowState.Minimized;
-        }
-
         /*template mode*/
 
         private void CreateNewTemplate(object sender, RoutedEventArgs e)
@@ -899,7 +952,6 @@ namespace Robotic_Arm_Desktop
             movemend.keyboardenabled = false;
             movemend.gamepadEnabled = false;
         }
-
 
         private void EnableMovementdAfterWriting(object sender, RoutedEventArgs e)
         {

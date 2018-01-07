@@ -3,6 +3,9 @@
 #include <thread>
 #include <vector>
 #include <chrono>
+#include <unistd.h>
+#include <sys/types.h>
+#include <signal.h>
 
 #include "GPIO.h"
 #include "NetworkCom.h"
@@ -32,13 +35,19 @@ void ShutDown(NetworkCom b, NetworkCom a, NetworkCom c, NetworkCom d, NetworkCom
 void Movemend(NetworkCom netMove);
 void FanSpeed(NetworkCom fanSpeed);
 void ManualMovemend(PCA9685 pwm, string msg);
+void LaunchStream();
+
 string getTemp();
 string getCPULoad();
 
 string TempAndLoad = "26*83";
+int StreamW = 900;
+int StreamH = 600;
+const char* homeDir;
 
 int main(void)
 {
+	system("sudo modprobe -v bcm2835-v4l2");
 	GPIO::Init();
 	GPIO::RedLed();
 
@@ -50,7 +59,7 @@ int main(void)
 
 	GPIO::GreenLed();
 
-	bool launched = false;
+	bool StreamLaunched = false;
 	string NetComMessage = "";
 
 	do
@@ -60,7 +69,6 @@ int main(void)
 
 		if (NetComMessage.substr(0,1)=="1") //launch all thread
 		{
-
 			thread th_dataMessaging(GetTempAndLoad, netData);
 			th_dataMessaging.detach();
 
@@ -75,14 +83,37 @@ int main(void)
 		}
 		else if (NetComMessage.substr(0, 1) == "2") //launch or relaunch stream
 		{
+			if (StreamLaunched==false){
+				StreamLaunched = true;
+			}
+			else{
+				system("pkill -f v4l2rtspserver"); //kill video sstream
+			}
 
+			StreamW = stoi(NetComMessage.substr(1, 4));
+			StreamH = stoi(NetComMessage.substr(5, 4));
+
+			int Slengh = stoi(NetComMessage.substr(9,2));
+			string SettingCom = NetComMessage.substr(11,Slengh);
+
+			cout << SettingCom + " " + to_string(StreamW) << endl;
+			system(SettingCom.c_str());
+
+			thread th_Stream(LaunchStream);
+			th_Stream.detach();
 		}
 
 	} while (NetComMessage.substr(0, 1) != "7");
-	
+	system("pkill -f v4l2rtspserver"); //kill video sstream
+
 	GPIO::RedLed();
 	ShutDown(netCom,netMove,netData,netFan,netTrigger);
 	return 0;
+}
+
+void LaunchStream() {
+	string command = "/home/pi/v4l2rtspserver/v4l2rtspserver -H "+to_string(StreamH)+" -W "+to_string(StreamW);
+	system(command.c_str());
 }
 
 /* temperature and cpu load*/
@@ -100,6 +131,7 @@ string getCPULoad() {
 		}
 	}
 	return load;
+	
 }
 
 string getTemp() {
@@ -192,17 +224,12 @@ void ManualMovemend(PCA9685 pwm, string msg) {
 	}
 }
 
-
 void FanSpeed(NetworkCom fanSpeed) {
 	do
 	{
 		int speed = stoi(fanSpeed.Recv());
 		GPIO::FanSpeed(speed);
 	} while (ShutDownStart == false);
-}
-
-void LaunchStream() {
-
 }
 
 void ShutDown(NetworkCom b, NetworkCom a, NetworkCom c, NetworkCom d, NetworkCom e) {

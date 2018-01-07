@@ -8,12 +8,15 @@ namespace Robotic_Arm_Desktop
 {
     public static class Global
     {
-        
+        public static bool StreamOn = false;
         public static System.Windows.Media.Imaging.BitmapSource Frame;
-        public static string ipaddres = "169.254.147.73";
+        public static string ipaddres = "169.254.121.6";
         public static bool connected = false;
         public static bool WrongMode = false;
         public static string FfmpegPath = @"C:\Users\mt2si\Desktop\ffmpeg\ffmpeg.exe";
+
+        public static int StreamWidth = 900;
+        public static int StreamHight = 600;
 
         public static bool stop = false; // manual mode stop all action
         public static bool triggered = false;
@@ -24,6 +27,5 @@ namespace Robotic_Arm_Desktop
 
         //debug only 
         public static bool DebugMode = true;
-        public static bool ActvateStream = false;
     }
 }
