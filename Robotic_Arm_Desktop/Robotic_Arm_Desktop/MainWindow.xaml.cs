@@ -162,7 +162,7 @@ namespace Robotic_Arm_Desktop
             }
         }
 
-        /*video stream and other with image control*/
+        /*video stream and other thing with image control*/
         private async void SetStreamSettings()
         {
             if (loadingDone==true){
@@ -733,7 +733,6 @@ namespace Robotic_Arm_Desktop
             this.incLabel.Content = Math.Round(movemend.valueCount,3);
         }
 
-        /*uppers tabs*/
         /*template mode*/
 
         private void CreateNewTemplate(object sender, RoutedEventArgs e)
@@ -795,7 +794,7 @@ namespace Robotic_Arm_Desktop
             templateComboBox.ItemsSource = ComboBoxData;
         }
 
-        private void StartTemplate(object sender, RoutedEventArgs e) //TODO: nech to zacne na nejakej basic pozicii;
+        private void StartTemplate(object sender, RoutedEventArgs e) 
         {
             Global.stop = false;
 
@@ -930,14 +929,15 @@ namespace Robotic_Arm_Desktop
             
                 startScript.IsEnabled = true;
             }
+
         }
 
         private void RunScript(object sender, RoutedEventArgs e)
         {
             Process pythone = new Process();
             pythone.StartInfo.FileName = ScriptPath;
-            pythone.StartInfo.UseShellExecute = false;
-            pythone.StartInfo.RedirectStandardOutput = true;
+            pythone.StartInfo.UseShellExecute = true;
+            pythone.StartInfo.RedirectStandardOutput = false;
             pythone.StartInfo.CreateNoWindow = true;
             pythone.Start();
         }
@@ -959,5 +959,7 @@ namespace Robotic_Arm_Desktop
             movemend.keyboardenabled = ValueBeforeTiping1;
             movemend.gamepadEnabled = ValueBeforeTiping2;
         }
+
+
     }
 }

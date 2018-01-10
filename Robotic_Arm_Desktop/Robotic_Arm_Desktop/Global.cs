@@ -27,5 +27,6 @@ namespace Robotic_Arm_Desktop
 
         //debug only 
         public static bool DebugMode = true;
+
     }
 }

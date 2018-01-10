@@ -176,4 +176,9 @@ namespace Robotic_Arm_Desktop
             old = actual;
         }
     }
+
+    public class ScriptNetwork
+    {
+        public string ip = "127.0.0.1";
+    }
 }

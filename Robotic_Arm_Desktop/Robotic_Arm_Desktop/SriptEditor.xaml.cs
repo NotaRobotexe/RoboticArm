@@ -34,12 +34,12 @@ namespace Robotic_Arm_Desktop
             SaveFileDialog saveFileDialog = new SaveFileDialog();
             saveFileDialog.Title = "Save a Script";
             saveFileDialog.InitialDirectory = System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\RoboticArm\\Scripts";
-            saveFileDialog.FileName = "Script.ArmScript";
+            saveFileDialog.FileName = "Script.py";
             saveFileDialog.ShowDialog();
 
             string path = saveFileDialog.FileName;
 
-            if (path != "Script.ArmScript")
+            if (path != "Script.py")
             {
                 File.WriteAllText(path, content);
                 saved = true;
