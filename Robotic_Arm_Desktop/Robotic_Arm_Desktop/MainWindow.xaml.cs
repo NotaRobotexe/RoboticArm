@@ -105,7 +105,8 @@ namespace Robotic_Arm_Desktop
 
             InitializeGamepad();
             helix.Content = model.group;
-
+            HelixViewport3D.Camera.Position = new Point3D(0,75,85);
+            HelixViewport3D.Camera.LookDirection = new Vector3D(0, -1, -1);
 
             //set first value to motor calibration
             MotorCalibrationDisplay();

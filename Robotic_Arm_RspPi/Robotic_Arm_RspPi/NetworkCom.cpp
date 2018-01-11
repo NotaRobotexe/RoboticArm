@@ -62,7 +62,7 @@ void NetworkCom::Send(std::string msg)
 	send(new_sck, buf, len, 0);
 }
 
-std::string NetworkCom::Recv() //TODO: TREBA to prerobit aby to bolo totalne schopne prisjmat aj partial packety
+std::string NetworkCom::Recv() 
 {
 	char buf[100];
 	int bytes_read;

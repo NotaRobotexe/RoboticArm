@@ -21,6 +21,7 @@ namespace Robotic_Arm_Desktop
 
         public _3Dmodel()   //UNDONE: dorobit aj zatvaranie a otvaranie griperu
         {
+
             SolidColorBrush brush = new SolidColorBrush(Color.FromRgb(64,64,64));
             Material material = new DiffuseMaterial(brush);
 
