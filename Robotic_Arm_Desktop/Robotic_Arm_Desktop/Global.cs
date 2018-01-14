@@ -8,6 +8,10 @@ namespace Robotic_Arm_Desktop
 {
     public static class Global
     {
+        public static int MovingSpeed = 15;
+        public static bool ScriptEnabled = false;
+        public static bool IsMoving = false;
+
         public static bool StreamOn = false;
         public static System.Windows.Media.Imaging.BitmapSource Frame;
         public static string ipaddres = "169.254.121.6";

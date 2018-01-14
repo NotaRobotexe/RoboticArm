@@ -64,6 +64,8 @@ namespace Robotic_Arm_Desktop
                 eventHandler(this, e);
             }
         }
+
+
     }
 
     public class Movemend

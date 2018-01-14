@@ -65,6 +65,9 @@ namespace Robotic_Arm_Desktop
         NetworkCom netTrigger;
         NetworkCom netFan;
 
+        ScriptNetwork scriptCom;
+        Process pythone;
+
         public MainWindow()
         {
 
@@ -935,12 +938,45 @@ namespace Robotic_Arm_Desktop
 
         private void RunScript(object sender, RoutedEventArgs e)
         {
-            Process pythone = new Process();
-            pythone.StartInfo.FileName = ScriptPath;
-            pythone.StartInfo.UseShellExecute = true;
-            pythone.StartInfo.RedirectStandardOutput = false;
-            pythone.StartInfo.CreateNoWindow = true;
-            pythone.Start();
+            if (ScriptPath != "")
+            {
+
+                pythone = new Process();
+                pythone.StartInfo.FileName = ScriptPath;
+                pythone.StartInfo.UseShellExecute = true;
+                pythone.StartInfo.RedirectStandardOutput = false;
+                pythone.StartInfo.CreateNoWindow = true;
+                pythone.EnableRaisingEvents = true;
+                //pythone.Start();
+                pythone.Exited += Pythone_Exited;
+
+
+                Global.ScriptEnabled = true;
+                scriptCom = new ScriptNetwork();
+                scriptCom.InitCom("127.0.0.1",movemend);
+                scriptCom.Communication();
+                scriptCom.ScriptRunning = true;
+            }
+        }
+
+        private void InputSend_Click(object sender, RoutedEventArgs e)
+        {
+            if (input_.Text != "")
+            {
+                scriptCom.InputMsg = input_.Text;
+                input_.Text = "";
+            }
+        }
+
+        private void Pythone_Exited(object sender, EventArgs e)
+        {
+            scriptCom.EndCom();
+        }
+
+        private void ScriptStop_Click(object sender, RoutedEventArgs e)
+        {
+            Global.ScriptEnabled = false;
+            pythone.Close();
         }
 
         bool ValueBeforeTiping1, ValueBeforeTiping2;

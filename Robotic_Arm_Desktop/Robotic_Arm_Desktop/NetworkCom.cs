@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
 
 namespace Robotic_Arm_Desktop
 {
@@ -12,7 +13,7 @@ namespace Robotic_Arm_Desktop
     {
         private Socket socket;
 
-        public int InitCom( int port)
+        public int InitCom(int port)
         {
             if (Global.connected == true)
             {
@@ -63,53 +64,6 @@ namespace Robotic_Arm_Desktop
             return "";
         }
 
-        /*
-
-        public static async void CheckTrigger()
-        {
-            SendData("2");
-
-            string trigger = await ReceiveData();
-            if (!(trigger.Any(char.IsDigit)))
-            {
-                if (trigger == "false")
-                {
-                    Global.triggered = false;
-                }
-                else
-                {
-                    Global.triggered = true;
-                }
-            }
-
-        }
-
-        public static void StartMovemend()
-        {
-            SendData("3");
-        }
-
-        public static void StopMovemend()
-        {
-            SendData("4");
-        }
-
-        public static async void GetData()
-        {
-            SendData("5");
-            string data = await ReceiveData();
-            Stats.getData(data);
-        }
-
-        public static void Move(String position, String mode)
-        {
-            SendData("6" + mode + position);
-        }
-
-        public static void SetFanSpeed()
-        {
-            SendData("8");
-        }*/
     }
 
     public class SendPosition
@@ -130,12 +84,12 @@ namespace Robotic_Arm_Desktop
         positions old;
         positions actual;
 
-        public SendPosition( NetworkCom network, Movemend movemend )
+        public SendPosition(NetworkCom network, Movemend movemend)
         {
             NetMove = network;
             moveData = movemend;
 
-            old.BaseRotation = Convert.ToInt32( Math.Round(moveData.baseMovemend.AngleInPWM));
+            old.BaseRotation = Convert.ToInt32(Math.Round(moveData.baseMovemend.AngleInPWM));
             old.Elb0 = Convert.ToInt32(Math.Round(moveData.elbow0.AngleInPWM));
             old.Elb1 = Convert.ToInt32(Math.Round(moveData.elbow1.AngleInPWM));
             old.Elb2 = Convert.ToInt32(Math.Round(moveData.elbow2.AngleInPWM));
@@ -154,22 +108,28 @@ namespace Robotic_Arm_Desktop
             actual.GripperRot = Convert.ToInt32(Math.Round(moveData.griperRotation.AngleInPWM));
             actual.Gripper = Convert.ToInt32(Math.Round(moveData.griper.AngleInPWM));
 
-            if (actual.BaseRotation != old.BaseRotation){
+            if (actual.BaseRotation != old.BaseRotation)
+            {
                 NetMove.SendData("0" + actual.BaseRotation.ToString());
             }
-            if (actual.Elb0 != old.Elb0){
+            if (actual.Elb0 != old.Elb0)
+            {
                 NetMove.SendData("1" + actual.Elb0.ToString());
             }
-            if (actual.Elb1 != old.Elb1){
+            if (actual.Elb1 != old.Elb1)
+            {
                 NetMove.SendData("2" + actual.Elb1.ToString());
             }
-            if (actual.Elb2 != old.Elb2){
+            if (actual.Elb2 != old.Elb2)
+            {
                 NetMove.SendData("3" + actual.Elb2.ToString());
             }
-            if (actual.GripperRot != old.GripperRot){
+            if (actual.GripperRot != old.GripperRot)
+            {
                 NetMove.SendData("4" + actual.GripperRot.ToString());
             }
-            if (actual.Gripper != old.Gripper){
+            if (actual.Gripper != old.Gripper)
+            {
                 NetMove.SendData("5" + actual.Gripper.ToString());
             }
 
@@ -179,6 +139,121 @@ namespace Robotic_Arm_Desktop
 
     public class ScriptNetwork
     {
-        public string ip = "127.0.0.1";
+        private Movemend movemend;
+        private Socket socket;
+        public bool ScriptRunning = false;
+        public string InputMsg = "";
+
+        public int InitCom(string ip, Movemend m)
+        {
+            socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            movemend = m;
+            try
+            {
+                socket.Connect(IPAddress.Parse(ip), 6972);
+                return 0;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+                return -1;
+            }
+        }
+
+        private void SendData(string s)
+        {
+            byte[] buffer = Encoding.ASCII.GetBytes(s);
+
+            Task.Run(() =>
+            {
+                socket.Send(buffer);
+            }
+            );
+        }
+
+        private string ReceiveData()
+        {
+            byte[] buffer = new byte[100];
+
+            socket.Receive(buffer);
+            string message = Encoding.UTF8.GetString(buffer);
+            return message;
+        }
+
+        public async void Communication()
+        {
+            await Task.Run(() =>
+            {
+                while (ScriptRunning)
+                {
+                    string msg_raw = ReceiveData();
+                    string msg = msg_raw.Substring(0, msg_raw.IndexOf('\0'));
+                    if (msg == "")
+                    {
+                        break;
+                    }
+
+                    byte ScriptMessage = Convert.ToByte(msg.Substring(0, 1));
+
+                    switch (ScriptMessage)
+                    {
+                        case 1:
+                            //trigger
+                            break;
+
+                        case 2:
+                            InputMessaging();
+                            break;
+
+                        case 3:
+                            AutoModeTemplate.ScriptDefaultMovemend(msg, movemend);
+                            break;
+                        case 4:
+                            MovingStatus();
+                            break;
+
+                        case 5:
+                            SetMovSpeed(msg);
+                            break;
+
+                        default:
+                            break;
+                    }
+                }
+            }
+            );
+        }
+
+        private void SetMovSpeed(string msg)
+        {
+            int time = Convert.ToInt32(msg.Substring(1));
+            Global.MovingSpeed = time;
+        }
+
+        private void InputMessaging()
+        {
+            while (InputMsg == "")
+            {
+                Thread.Sleep(100);
+            }
+            SendData(InputMsg);
+            InputMsg = "";
+        }
+
+        private void MovingStatus()
+        {
+            if (Global.IsMoving == false){
+                SendData("0");
+            }
+            else{
+                SendData("1");
+            }
+        }
+
+        public void EndCom()
+        {
+            socket.Close();
+        }
+
     }
 }
