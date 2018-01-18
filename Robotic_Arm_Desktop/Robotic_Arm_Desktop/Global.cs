@@ -14,7 +14,7 @@ namespace Robotic_Arm_Desktop
 
         public static bool StreamOn = false;
         public static System.Windows.Media.Imaging.BitmapSource Frame;
-        public static string ipaddres = "169.254.121.6";
+        public static string ipaddres = "169.254.78.138";
         public static bool connected = false;
         public static bool WrongMode = false;
         public static string FfmpegPath = @"C:\Users\mt2si\Desktop\ffmpeg\ffmpeg.exe";
@@ -30,7 +30,7 @@ namespace Robotic_Arm_Desktop
         public static bool BetterMessageBoxLauched = false;
 
         //debug only 
-        public static bool DebugMode = true;
+        public static bool DebugMode = false;
 
     }
 }
