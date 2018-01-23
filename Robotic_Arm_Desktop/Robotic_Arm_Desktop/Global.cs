@@ -11,6 +11,7 @@ namespace Robotic_Arm_Desktop
         public static int MovingSpeed = 15;
         public static bool ScriptEnabled = false;
         public static bool IsMoving = false;
+        public static bool InverseKinematicMovement = false;
 
         public static bool StreamOn = false;
         public static System.Windows.Media.Imaging.BitmapSource Frame;
@@ -30,7 +31,7 @@ namespace Robotic_Arm_Desktop
         public static bool BetterMessageBoxLauched = false;
 
         //debug only 
-        public static bool DebugMode = false;
+        public static bool DebugMode = true;
 
     }
 }

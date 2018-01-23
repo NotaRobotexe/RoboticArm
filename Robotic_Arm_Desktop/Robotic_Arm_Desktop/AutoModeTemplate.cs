@@ -12,7 +12,7 @@ namespace Robotic_Arm_Desktop
         private const int sleepTime = 15;
         private const int incrementation = 1;
 
-        public static async Task StartTemplateAsync(List<string> commands, Movemend movemend, TextBox textBox)
+        public static async Task StartTemplateAsync(List<string> commands, Movement movement, TextBox textBox)
         {
             int reps;
             if (textBox.Text == "inf")
@@ -39,7 +39,7 @@ namespace Robotic_Arm_Desktop
                             {
                                 if (Global.stop == false)
                                 {
-                                    allMotorsOnPositions = Moving(instructions, movemend);
+                                    allMotorsOnPositions = Moving(instructions, movement);
                                     Thread.Sleep(Convert.ToInt32(sleepTime / instructions[8]));
                                 }
                                 else
@@ -89,7 +89,7 @@ namespace Robotic_Arm_Desktop
             Global.autoModeRunning = false;
         }
 
-        public static async Task AnimationFromTemplate(string command, Movemend movemend)
+        public static async Task AnimationFromTemplate(string command, Movement movement)
         {
             List<string> instructionsRaw = command.Split('*').ToList();
             List<double> instructions = new List<double>();
@@ -104,13 +104,13 @@ namespace Robotic_Arm_Desktop
                 bool allMotorsOnPositions = false;
                 do
                 {
-                    allMotorsOnPositions = Moving(instructions, movemend);
+                    allMotorsOnPositions = Moving(instructions, movement);
                     Thread.Sleep(Convert.ToInt32(sleepTime / instructions[8]));
                 } while (allMotorsOnPositions == false);
             });
         }
 
-        public static async Task ScriptDefaultMovemend(string rawcommand, Movemend movemend)
+        public static async Task ScriptDefaultMovemend(string rawcommand, Movement movement)
         {
             Global.IsMoving = true;
 
@@ -124,7 +124,7 @@ namespace Robotic_Arm_Desktop
             }
 
             if (instructions[0] == -1){
-                instructions[0] = movemend.baseMovemend.AngleInPWM;
+                instructions[0] = movement.baseMovemend.AngleInPWM;
             }
             else{
                 instructions[0] = Arm.DegreeToPwm(instructions[0]);
@@ -132,7 +132,7 @@ namespace Robotic_Arm_Desktop
 
             if (instructions[1] == -1)
             {
-                instructions[1] = movemend.elbow0.AngleInPWM;
+                instructions[1] = movement.elbow0.AngleInPWM;
             }
             else
             {
@@ -141,7 +141,7 @@ namespace Robotic_Arm_Desktop
 
             if (instructions[2] == -1)
             {
-                instructions[2] = movemend.elbow1.AngleInPWM;
+                instructions[2] = movement.elbow1.AngleInPWM;
             }
             else
             {
@@ -150,7 +150,7 @@ namespace Robotic_Arm_Desktop
 
             if (instructions[3] == -1)
             {
-                instructions[3] = movemend.elbow2.AngleInPWM;
+                instructions[3] = movement.elbow2.AngleInPWM;
             }
             else
             {
@@ -159,7 +159,7 @@ namespace Robotic_Arm_Desktop
 
             if (instructions[4] == -1)
             {
-                instructions[4] = movemend.griperRotation.AngleInPWM;
+                instructions[4] = movement.griperRotation.AngleInPWM;
             }
             else
             {
@@ -168,7 +168,7 @@ namespace Robotic_Arm_Desktop
 
             if (instructions[5] == -1)
             {
-                instructions[5] = movemend.griper.AngleInPWM;
+                instructions[5] = movement.griper.AngleInPWM;
             }
             else
             {
@@ -180,7 +180,7 @@ namespace Robotic_Arm_Desktop
                 bool allMotorsOnPositions = false;
                 do
                 {
-                    allMotorsOnPositions = Moving(instructions, movemend);
+                    allMotorsOnPositions = Moving(instructions, movement);
                     Thread.Sleep(Global.MovingSpeed);
 
                     if (Global.ScriptEnabled == false){
@@ -192,31 +192,31 @@ namespace Robotic_Arm_Desktop
             });
         }
 
-        private static bool Moving(List<double> instruction, Movemend movemend)
+        private static bool Moving(List<double> instruction, Movement movement)
         {
             int onPosition = 0;
-            if (instruction[1]>= movemend.elbow0.startfrom && instruction[1]<= movemend.elbow0.EndAt)
+            if (instruction[1]>= movement.elbow0.startfrom && instruction[1]<= movement.elbow0.EndAt)
             {
-                if (instruction[1] > movemend.elbow0.AngleInPWM)
+                if (instruction[1] > movement.elbow0.AngleInPWM)
                 {
-                    if (movemend.elbow0.AngleInPWM + incrementation > instruction[1])
+                    if (movement.elbow0.AngleInPWM + incrementation > instruction[1])
                     {
-                        movemend.elbow0.Update(instruction[1], 1);
+                        movement.elbow0.Update(instruction[1], 1);
                     }
                     else
                     {
-                        movemend.elbow0.Update(movemend.elbow0.AngleInPWM + incrementation, 1);
+                        movement.elbow0.Update(movement.elbow0.AngleInPWM + incrementation, 1);
                     }
                 }
-                else if (instruction[1] < movemend.elbow0.AngleInPWM)
+                else if (instruction[1] < movement.elbow0.AngleInPWM)
                 {
-                    if (movemend.elbow0.AngleInPWM - incrementation < instruction[1])
+                    if (movement.elbow0.AngleInPWM - incrementation < instruction[1])
                     {
-                        movemend.elbow0.Update(instruction[1], 1);
+                        movement.elbow0.Update(instruction[1], 1);
                     }
                     else
                     {
-                        movemend.elbow0.Update(movemend.elbow0.AngleInPWM - incrementation, 1);
+                        movement.elbow0.Update(movement.elbow0.AngleInPWM - incrementation, 1);
                     }
                 }
                 else
@@ -225,28 +225,28 @@ namespace Robotic_Arm_Desktop
                 }
             }
 
-            if (instruction[2] >= movemend.elbow1.startfrom && instruction[2] <= movemend.elbow1.EndAt)
+            if (instruction[2] >= movement.elbow1.startfrom && instruction[2] <= movement.elbow1.EndAt)
             {
-                if (instruction[2] > movemend.elbow1.AngleInPWM)
+                if (instruction[2] > movement.elbow1.AngleInPWM)
                 {
-                    if (movemend.elbow1.AngleInPWM + incrementation > instruction[2])
+                    if (movement.elbow1.AngleInPWM + incrementation > instruction[2])
                     {
-                        movemend.elbow1.Update(instruction[2], 1);
+                        movement.elbow1.Update(instruction[2], 1);
                     }
                     else
                     {
-                        movemend.elbow1.Update(movemend.elbow1.AngleInPWM + incrementation, 1);
+                        movement.elbow1.Update(movement.elbow1.AngleInPWM + incrementation, 1);
                     }
                 }
-                else if (instruction[2] < movemend.elbow1.AngleInPWM)
+                else if (instruction[2] < movement.elbow1.AngleInPWM)
                 {
-                    if (movemend.elbow1.AngleInPWM - incrementation < instruction[2])
+                    if (movement.elbow1.AngleInPWM - incrementation < instruction[2])
                     {
-                        movemend.elbow1.Update(instruction[2], 1);
+                        movement.elbow1.Update(instruction[2], 1);
                     }
                     else
                     {
-                        movemend.elbow1.Update(movemend.elbow1.AngleInPWM - incrementation, 1);
+                        movement.elbow1.Update(movement.elbow1.AngleInPWM - incrementation, 1);
                     }
                 }
                 else
@@ -255,28 +255,28 @@ namespace Robotic_Arm_Desktop
                 }
             }
 
-            if (instruction[3] >= movemend.elbow2.startfrom && instruction[3] <= movemend.elbow2.EndAt)
+            if (instruction[3] >= movement.elbow2.startfrom && instruction[3] <= movement.elbow2.EndAt)
             {
-                if (instruction[3] > movemend.elbow2.AngleInPWM)
+                if (instruction[3] > movement.elbow2.AngleInPWM)
                 {
-                    if (movemend.elbow2.AngleInPWM + incrementation > instruction[3])
+                    if (movement.elbow2.AngleInPWM + incrementation > instruction[3])
                     {
-                        movemend.elbow2.Update(instruction[3], 1);
+                        movement.elbow2.Update(instruction[3], 1);
                     }
                     else
                     {
-                        movemend.elbow2.Update(movemend.elbow2.AngleInPWM + incrementation, 1);
+                        movement.elbow2.Update(movement.elbow2.AngleInPWM + incrementation, 1);
                     }
                 }
-                else if (instruction[3] < movemend.elbow2.AngleInPWM)
+                else if (instruction[3] < movement.elbow2.AngleInPWM)
                 {
-                    if (movemend.elbow2.AngleInPWM - incrementation < instruction[3])
+                    if (movement.elbow2.AngleInPWM - incrementation < instruction[3])
                     {
-                        movemend.elbow2.AngleInPWM = instruction[3];
+                        movement.elbow2.AngleInPWM = instruction[3];
                     }
                     else
                     {
-                        movemend.elbow2.Update(movemend.elbow2.AngleInPWM - incrementation, 1);
+                        movement.elbow2.Update(movement.elbow2.AngleInPWM - incrementation, 1);
                     }
                 }
                 else
@@ -285,28 +285,28 @@ namespace Robotic_Arm_Desktop
                 }
             }
 
-            if (instruction[4] >= movemend.griperRotation.startfrom && instruction[4] <= movemend.griperRotation.EndAt)
+            if (instruction[4] >= movement.griperRotation.startfrom && instruction[4] <= movement.griperRotation.EndAt)
             {
-                if (instruction[4] > movemend.griperRotation.AngleInPWM)
+                if (instruction[4] > movement.griperRotation.AngleInPWM)
                 {
-                    if (movemend.griperRotation.AngleInPWM + incrementation > instruction[4])
+                    if (movement.griperRotation.AngleInPWM + incrementation > instruction[4])
                     {
-                        movemend.griperRotation.AngleInPWM = instruction[4];
+                        movement.griperRotation.AngleInPWM = instruction[4];
                     }
                     else
                     {
-                        movemend.griperRotation.Update(movemend.griperRotation.AngleInPWM + incrementation, 1);
+                        movement.griperRotation.Update(movement.griperRotation.AngleInPWM + incrementation, 1);
                     }
                 }
-                else if (instruction[4] < movemend.griperRotation.AngleInPWM)
+                else if (instruction[4] < movement.griperRotation.AngleInPWM)
                 {
-                    if (movemend.griperRotation.AngleInPWM - incrementation < instruction[4])
+                    if (movement.griperRotation.AngleInPWM - incrementation < instruction[4])
                     {
-                        movemend.griperRotation.AngleInPWM = instruction[4];
+                        movement.griperRotation.AngleInPWM = instruction[4];
                     }
                     else
                     {
-                        movemend.griperRotation.Update(movemend.griperRotation.AngleInPWM - incrementation, 1);
+                        movement.griperRotation.Update(movement.griperRotation.AngleInPWM - incrementation, 1);
                     }
                 }
                 else
@@ -315,28 +315,28 @@ namespace Robotic_Arm_Desktop
                 }
             }
 
-            if (instruction[5] >= movemend.griper.startfrom && instruction[5] <= movemend.griper.EndAt)
+            if (instruction[5] >= movement.griper.startfrom && instruction[5] <= movement.griper.EndAt)
             {
-                if (instruction[5] > movemend.griper.AngleInPWM)
+                if (instruction[5] > movement.griper.AngleInPWM)
                 {
-                    if (movemend.griper.AngleInPWM + incrementation > instruction[5])
+                    if (movement.griper.AngleInPWM + incrementation > instruction[5])
                     {
-                        movemend.griper.AngleInPWM = instruction[5];
+                        movement.griper.AngleInPWM = instruction[5];
                     }
                     else
                     {
-                        movemend.griper.Update(movemend.griper.AngleInPWM + incrementation, 1);
+                        movement.griper.Update(movement.griper.AngleInPWM + incrementation, 1);
                     }
                 }
-                else if (instruction[5] < movemend.griper.AngleInPWM)
+                else if (instruction[5] < movement.griper.AngleInPWM)
                 {
-                    if (movemend.griper.AngleInPWM - incrementation < instruction[5])
+                    if (movement.griper.AngleInPWM - incrementation < instruction[5])
                     {
-                        movemend.griper.AngleInPWM = instruction[5];
+                        movement.griper.AngleInPWM = instruction[5];
                     }
                     else
                     {
-                        movemend.griper.Update(movemend.griper.AngleInPWM - incrementation, 1);
+                        movement.griper.Update(movement.griper.AngleInPWM - incrementation, 1);
                     }
                 }
                 else
@@ -345,28 +345,28 @@ namespace Robotic_Arm_Desktop
                 }
             }
 
-            if (instruction[0] >= movemend.baseMovemend.startfrom && instruction[0] <= movemend.baseMovemend.EndAt)
+            if (instruction[0] >= movement.baseMovemend.startfrom && instruction[0] <= movement.baseMovemend.EndAt)
             {
-                if (instruction[0] > movemend.baseMovemend.AngleInPWM)
+                if (instruction[0] > movement.baseMovemend.AngleInPWM)
                 {
-                    if (movemend.baseMovemend.AngleInPWM + incrementation > instruction[0])
+                    if (movement.baseMovemend.AngleInPWM + incrementation > instruction[0])
                     {
-                        movemend.baseMovemend.AngleInPWM = instruction[0];
+                        movement.baseMovemend.AngleInPWM = instruction[0];
                     }
                     else
                     {
-                        movemend.baseMovemend.Update(movemend.baseMovemend.AngleInPWM + incrementation, 1);
+                        movement.baseMovemend.Update(movement.baseMovemend.AngleInPWM + incrementation, 1);
                     }
                 }
-                else if (instruction[0] < movemend.baseMovemend.AngleInPWM)
+                else if (instruction[0] < movement.baseMovemend.AngleInPWM)
                 {
-                    if (movemend.baseMovemend.AngleInPWM - incrementation < instruction[0])
+                    if (movement.baseMovemend.AngleInPWM - incrementation < instruction[0])
                     {
-                        movemend.baseMovemend.AngleInPWM = instruction[0];
+                        movement.baseMovemend.AngleInPWM = instruction[0];
                     }
                     else
                     {
-                        movemend.baseMovemend.Update(movemend.baseMovemend.AngleInPWM - incrementation, 1);
+                        movement.baseMovemend.Update(movement.baseMovemend.AngleInPWM - incrementation, 1);
                     }
                 }
                 else

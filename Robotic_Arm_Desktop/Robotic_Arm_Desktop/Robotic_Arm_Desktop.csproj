@@ -87,6 +87,7 @@
     </Compile>
     <Compile Include="Data.cs" />
     <Compile Include="Global.cs" />
+    <Compile Include="InverseKinematic.cs" />
     <Compile Include="NetworkCom.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -130,7 +131,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Movemend.cs" />
+    <Compile Include="Movement.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

@@ -103,7 +103,6 @@ namespace Robotic_Arm_Desktop
                     } while (bytesRead != 0);
                 }
             });
-            Console.WriteLine("error sema");
             thread.Start();
         }
 

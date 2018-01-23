@@ -43,13 +43,13 @@ namespace Robotic_Arm_Desktop
             group.Children.Add(griper);
         }
 
-        public void UpdateModel(Movemend movemend)
+        public void UpdateModel(Movement movement)
         {
-            baserotation += movemend.baseMovemend.AngleInDegree;
-            elbow0rot += movemend.elbow0.AngleInDegree;
-            elbow1rot += movemend.elbow1.AngleInDegree;
-            elbow2rot += movemend.elbow2.AngleInDegree;
-            gripper0rot += movemend.griperRotation.AngleInDegree;
+            baserotation += movement.baseMovemend.AngleInDegree;
+            elbow0rot += movement.elbow0.AngleInDegree;
+            elbow1rot += movement.elbow1.AngleInDegree;
+            elbow2rot += movement.elbow2.AngleInDegree;
+            gripper0rot += movement.griperRotation.AngleInDegree;
 
             CallUpdate();
 

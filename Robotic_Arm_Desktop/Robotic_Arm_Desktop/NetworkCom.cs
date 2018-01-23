@@ -69,7 +69,7 @@ namespace Robotic_Arm_Desktop
     public class SendPosition
     {
         NetworkCom NetMove;
-        Movemend moveData;
+        Movement moveData;
 
         struct positions
         {
@@ -84,10 +84,10 @@ namespace Robotic_Arm_Desktop
         positions old;
         positions actual;
 
-        public SendPosition(NetworkCom network, Movemend movemend)
+        public SendPosition(NetworkCom network, Movement movement)
         {
             NetMove = network;
-            moveData = movemend;
+            moveData = movement;
 
             old.BaseRotation = Convert.ToInt32(Math.Round(moveData.baseMovemend.AngleInPWM));
             old.Elb0 = Convert.ToInt32(Math.Round(moveData.elbow0.AngleInPWM));
@@ -139,15 +139,15 @@ namespace Robotic_Arm_Desktop
 
     public class ScriptNetwork
     {
-        private Movemend movemend;
+        private Movement movement;
         private Socket socket;
         public bool ScriptRunning = false;
         public string InputMsg = "";
 
-        public int InitCom(string ip, Movemend m)
+        public int InitCom(string ip, Movement m)
         {
             socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            movemend = m;
+            movement = m;
             try
             {
                 socket.Connect(IPAddress.Parse(ip), 6972);
@@ -206,7 +206,7 @@ namespace Robotic_Arm_Desktop
                             break;
 
                         case 3:
-                            AutoModeTemplate.ScriptDefaultMovemend(msg, movemend);
+                            AutoModeTemplate.ScriptDefaultMovemend(msg, movement);
                             break;
                         case 4:
                             MovingStatus();

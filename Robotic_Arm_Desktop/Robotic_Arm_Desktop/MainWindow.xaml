@@ -170,6 +170,7 @@
             <TextBox Name="input_" HorizontalAlignment="Left" Height="23" Margin="74,172,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="116" Background="#FF2E2E2E" BorderThickness="2" BorderBrush="#FFD7D8D8" Foreground="#FFEAEAEA" FontSize="16" FontStyle="Italic" TextDecorations="{x:Null}" FontFamily="Segoe UI Emoji" GotFocus="DisableMovemendWhenWriting" LostFocus="EnableMovementdAfterWriting"/>
             <Label Content="Input :" HorizontalAlignment="Left" Margin="10,166,0,0" VerticalAlignment="Top" Foreground="#FFECECEC" FontSize="16" FontWeight="Bold" RenderTransformOrigin="0.559,1.129"/>
             <Button Content="Send" HorizontalAlignment="Left" Margin="203,172,0,0" VerticalAlignment="Top" Width="76" Click="InputSend_Click"/>
+            <Button Content="test" HorizontalAlignment="Left" Margin="178,251,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click"/>
         </Grid>
 
 

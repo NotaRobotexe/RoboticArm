@@ -35,11 +35,12 @@ namespace Robotic_Arm_Desktop
     public partial class MainWindow : Window
     {
         GamepadState gamepadData;
-        Movemend movemend;
+        Movement movement;
         _3Dmodel model;
         Gamepad gamepad;
         XmlReadWriter xrw;
         VideoStream stream;
+        InverseKinematic inverse;
 
         string ScriptPath = "";
 
@@ -53,6 +54,7 @@ namespace Robotic_Arm_Desktop
 
         DispatcherTimer ControllstatusTimer;
         DispatcherTimer FrameRateCounter;
+        DispatcherTimer IK_timer;
 
         List<string> Commands = new List<string>(); //Template command
         Stopwatch stopWatch;
@@ -79,10 +81,10 @@ namespace Robotic_Arm_Desktop
                 Stats.GetPingAndTryConnection();//TODO: nech sa to overi este pri zadavani ip adresi
             }
 
-            movemend = new Movemend();
+            movement = new Movement();
 
             xrw = new XmlReadWriter();
-            xrw.LoadSettings(movemend);
+            xrw.LoadSettings(movement);
 
             this.Loaded += MainWindow_Loaded; //some method need be call after window is loaded like gamepad because it need window handler 
             model = new _3Dmodel();
@@ -104,7 +106,7 @@ namespace Robotic_Arm_Desktop
 
             
             Arm.PositonChange += Arm_PositonChange;
-            movemend.IncrementationChange += Movemend_IncrementationChange;
+            movement.IncrementationChange += Movemend_IncrementationChange;
 
             InitializeGamepad();
             helix.Content = model.group;
@@ -120,7 +122,7 @@ namespace Robotic_Arm_Desktop
             StatTimersForStatsStuff();
 
             SetFirstPositionOfModel();
-            send_pos = new SendPosition(netMove, movemend);
+            send_pos = new SendPosition(netMove, movement);
 
             //start video stream
 
@@ -157,12 +159,12 @@ namespace Robotic_Arm_Desktop
                 ManualModeStatusEllipse.Fill = new SolidColorBrush(Color.FromRgb(37, 37, 38));
             }
 
-            movemend.keyboardenabled = !movemend.keyboardenabled;
-            buttonAnimationOnOff(keyboardEnalbeButton, movemend.keyboardenabled);
+            movement.keyboardenabled = !movement.keyboardenabled;
+            buttonAnimationOnOff(keyboardEnalbeButton, movement.keyboardenabled);
             if (gamepad.gamepadConnected == true )
             {
-                movemend.gamepadEnabled = !movemend.gamepadEnabled;
-                buttonAnimationOnOff(GamepadEnalbeButton, movemend.gamepadEnabled);
+                movement.gamepadEnabled = !movement.gamepadEnabled;
+                buttonAnimationOnOff(GamepadEnalbeButton, movement.gamepadEnabled);
             }
         }
 
@@ -252,7 +254,7 @@ namespace Robotic_Arm_Desktop
         {
             FrameRateCounter.Stop();
             stream.ProcesEnd();
-            await AutoModeTemplate.AnimationFromTemplate(Positions.OffPos, movemend);
+            await AutoModeTemplate.AnimationFromTemplate(Positions.OffPos, movement);
             netCom.SendData("7");
             Application.Current.Shutdown();
         }
@@ -272,32 +274,32 @@ namespace Robotic_Arm_Desktop
                 instructions.Add(Convert.ToDouble(item));
             }
 
-            movemend.baseMovemend.Update(instructions[0],1);
-            movemend.elbow0.Update(instructions[1], 1);
-            movemend.elbow1.Update(instructions[2], 1);
-            movemend.elbow2.Update(instructions[3], 1);
-            movemend.griperRotation.Update(instructions[4], 1);
-            movemend.griper.Update(instructions[5], 1);
+            movement.baseMovemend.Update(instructions[0],1);
+            movement.elbow0.Update(instructions[1], 1);
+            movement.elbow1.Update(instructions[2], 1);
+            movement.elbow2.Update(instructions[3], 1);
+            movement.griperRotation.Update(instructions[4], 1);
+            movement.griper.Update(instructions[5], 1);
 
             DrawDataAndUpdateModel();
         }
 
         private async void Start(object sender, RoutedEventArgs e)
         {
-            await AutoModeTemplate.AnimationFromTemplate(Positions.SteadyPos, movemend);
+            await AutoModeTemplate.AnimationFromTemplate(Positions.SteadyPos, movement);
             latency.Content = "test";
         }
 
         private async void Stop(object sender, RoutedEventArgs e)
         {
-            await AutoModeTemplate.AnimationFromTemplate(Positions.OffPos, movemend);
+            await AutoModeTemplate.AnimationFromTemplate(Positions.OffPos, movement);
             latency.Content = "test2";
 
         }
 
         private async void TurnOffPressed(object sender, RoutedEventArgs e)
         {
-            await AutoModeTemplate.AnimationFromTemplate(Positions.OffPos, movemend);
+            await AutoModeTemplate.AnimationFromTemplate(Positions.OffPos, movement);
         }
 
         /*manual mode stuff here*/
@@ -322,8 +324,8 @@ namespace Robotic_Arm_Desktop
         {
             if (AutoMode == false)
             {
-                movemend.keyboardenabled = !movemend.keyboardenabled;
-                buttonAnimationOnOff(keyboardEnalbeButton, movemend.keyboardenabled);
+                movement.keyboardenabled = !movement.keyboardenabled;
+                buttonAnimationOnOff(keyboardEnalbeButton, movement.keyboardenabled);
             }
         }
 
@@ -331,8 +333,8 @@ namespace Robotic_Arm_Desktop
         {
             if (gamepad.gamepadConnected == true && AutoMode == false)
             {
-                movemend.gamepadEnabled = !movemend.gamepadEnabled;
-                buttonAnimationOnOff(GamepadEnalbeButton, movemend.gamepadEnabled);
+                movement.gamepadEnabled = !movement.gamepadEnabled;
+                buttonAnimationOnOff(GamepadEnalbeButton, movement.gamepadEnabled);
             }
         }
 
@@ -394,14 +396,14 @@ namespace Robotic_Arm_Desktop
 
         private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled) //gamepad input
         {
-            if (movemend.gamepadEnabled == true)
+            if (movement.gamepadEnabled == true)
             {
                 switch (msg)
                 {
                     case 0x00ff:
                         {
                             gamepadData = Gamepad.GamepadProcesing(lParam);
-                            movemend.AnalizeData(gamepadData);
+                            movement.AnalizeData(gamepadData);
                             gamepadConnected = true;
                         }
                         break;
@@ -431,23 +433,23 @@ namespace Robotic_Arm_Desktop
 
         private void KeyboardEvent(object sender, KeyEventArgs e)
         {
-            if (movemend.keyboardenabled == true)
+            if (movement.keyboardenabled == true)
             {
                 if (e.Key != Key.D1 && e.Key != Key.D2 && e.Key != Key.D3)
                 {
-                    movemend.AnalizeData(e.Key);
+                    movement.AnalizeData(e.Key);
                 }
-                else if (e.Key == Key.D1 && movemend.keyboardMovingArm != 0)
+                else if (e.Key == Key.D1 && movement.keyboardMovingArm != 0)
                 {
-                    movemend.keyboardMovingArm = 0;
+                    movement.keyboardMovingArm = 0;
                 }
-                else if (e.Key == Key.D2 && movemend.keyboardMovingArm != 1)
+                else if (e.Key == Key.D2 && movement.keyboardMovingArm != 1)
                 {
-                    movemend.keyboardMovingArm = 1;
+                    movement.keyboardMovingArm = 1;
                 }
-                else if (e.Key == Key.D3 && movemend.keyboardMovingArm != 2)
+                else if (e.Key == Key.D3 && movement.keyboardMovingArm != 2)
                 {
-                    movemend.keyboardMovingArm = 2;
+                    movement.keyboardMovingArm = 2;
                 }
             }
         }
@@ -467,12 +469,12 @@ namespace Robotic_Arm_Desktop
             {
                 max.Maximum = Arm.max_Pwm;
                 max.Minimum = Arm.min_Pwm;
-                max.Value= movemend.elbow0.EndAt; 
+                max.Value= movement.elbow0.EndAt; 
                 maxUse.Content=  Math.Round(Arm.PwmToDegree(max.Value),2) + " °";
 
                 start.Maximum = Arm.max_Pwm; ;
                 start.Minimum = Arm.min_Pwm; ;
-                start.Value = movemend.elbow0.startfrom;
+                start.Value = movement.elbow0.startfrom;
                 startFrom.Content = "+ " + Math.Round(Arm.PwmToDegree(start.Value),2) + " °";
 
                 double avalible = 180 - Arm.PwmToDegree(start.Value) - (180 - Arm.PwmToDegree(max.Value));
@@ -482,12 +484,12 @@ namespace Robotic_Arm_Desktop
             {
                 max.Maximum = Arm.max_Pwm;
                 max.Minimum = Arm.min_Pwm;
-                max.Value = movemend.elbow1.EndAt;
+                max.Value = movement.elbow1.EndAt;
                 maxUse.Content= Math.Round(Arm.PwmToDegree(max.Value),2) + " °";
 
                 start.Maximum = Arm.max_Pwm; ;
                 start.Minimum = Arm.min_Pwm; ;
-                start.Value = movemend.elbow1.startfrom;
+                start.Value = movement.elbow1.startfrom;
                 startFrom.Content = "+ " + Math.Round(Arm.PwmToDegree(start.Value),2) + " °";
 
                 double avalible = 180 - Arm.PwmToDegree(start.Value) - (180 - Arm.PwmToDegree(max.Value));
@@ -497,12 +499,12 @@ namespace Robotic_Arm_Desktop
             {
                 max.Maximum = Arm.max_Pwm;
                 max.Minimum = Arm.min_Pwm;
-                max.Value = movemend.elbow2.EndAt;
+                max.Value = movement.elbow2.EndAt;
                 maxUse.Content= Math.Round(Arm.PwmToDegree(max.Value),2) + " °";
 
                 start.Maximum = Arm.max_Pwm; ;
                 start.Minimum = Arm.min_Pwm; ;
-                start.Value = movemend.elbow2.startfrom;
+                start.Value = movement.elbow2.startfrom;
                 startFrom.Content = "+ " + Math.Round(Arm.PwmToDegree(start.Value),2) + " °";
 
                 double avalible = 180 - Arm.PwmToDegree(start.Value) - (180 - Arm.PwmToDegree(max.Value));
@@ -512,12 +514,12 @@ namespace Robotic_Arm_Desktop
             {
                 max.Maximum = Arm.max_Pwm;
                 max.Minimum = Arm.min_Pwm;
-                max.Value = movemend.baseMovemend.EndAt;
+                max.Value = movement.baseMovemend.EndAt;
                 maxUse.Content= Math.Round(Arm.PwmToDegree(max.Value),2) + " °";
 
                 start.Maximum = Arm.max_Pwm; ;
                 start.Minimum = Arm.min_Pwm; ;
-                start.Value = movemend.baseMovemend.startfrom;
+                start.Value = movement.baseMovemend.startfrom;
                 startFrom.Content = "+ " + Math.Round(Arm.PwmToDegree(start.Value),2) + " °";
 
                 double avalible = 180 - Arm.PwmToDegree(start.Value) - (180 - Arm.PwmToDegree(max.Value));
@@ -527,12 +529,12 @@ namespace Robotic_Arm_Desktop
             {
                 max.Maximum = Arm.max_Pwm;
                 max.Minimum = Arm.min_Pwm;
-                max.Value = movemend.griperRotation.EndAt;
+                max.Value = movement.griperRotation.EndAt;
                 maxUse.Content= Math.Round(Arm.PwmToDegree(max.Value),2) + " °";
 
                 start.Maximum = Arm.max_Pwm; ;
                 start.Minimum = Arm.min_Pwm; ;
-                start.Value = movemend.griperRotation.startfrom;
+                start.Value = movement.griperRotation.startfrom;
                 startFrom.Content = "+ " + Math.Round(Arm.PwmToDegree(start.Value), 2) + " °";
 
                 double avalible = 180 - Arm.PwmToDegree(start.Value) - (180 - Arm.PwmToDegree(max.Value));
@@ -542,12 +544,12 @@ namespace Robotic_Arm_Desktop
             {
                 max.Maximum = Arm.max_Pwm;
                 max.Minimum = Arm.min_Pwm;
-                max.Value = movemend.griper.EndAt;
+                max.Value = movement.griper.EndAt;
                 maxUse.Content= Math.Round(Arm.PwmToDegree(max.Value),2) + " °";
 
                 start.Maximum = Arm.max_Pwm; ;
                 start.Minimum = Arm.min_Pwm; ;
-                start.Value = movemend.griper.startfrom;
+                start.Value = movement.griper.startfrom;
                 startFrom.Content = "+ " + Math.Round(Arm.PwmToDegree(start.Value), 2) + " °";
 
                 double avalible = 180 - Arm.PwmToDegree(start.Value) - (180 - Arm.PwmToDegree(max.Value));
@@ -561,14 +563,14 @@ namespace Robotic_Arm_Desktop
             {
                 if (listBox.SelectedIndex == 0)
                 {
-                    movemend.elbow0.EndAt = Math.Round(max.Value,2);
+                    movement.elbow0.EndAt = Math.Round(max.Value,2);
                     maxUse.Content= Math.Round(Arm.PwmToDegree(max.Value),2) + " °";
                     double avalible = 180 - Arm.PwmToDegree(start.Value) - (180 - Arm.PwmToDegree(max.Value));
                     availableD.Content = Math.Round(avalible, 2).ToString() + " °";
                 }
                 else if (listBox.SelectedIndex == 1)
                 {
-                    movemend.elbow1.EndAt = Math.Round(max.Value, 2);
+                    movement.elbow1.EndAt = Math.Round(max.Value, 2);
                     maxUse.Content= Math.Round(Arm.PwmToDegree(max.Value),2) + " °";
 
                     double avalible = 180 - Arm.PwmToDegree(start.Value) - (180 - Arm.PwmToDegree(max.Value));
@@ -576,7 +578,7 @@ namespace Robotic_Arm_Desktop
                 }
                 else if (listBox.SelectedIndex == 2)
                 {
-                    movemend.elbow2.EndAt = Math.Round(max.Value, 2);
+                    movement.elbow2.EndAt = Math.Round(max.Value, 2);
                     maxUse.Content= Math.Round(Arm.PwmToDegree(max.Value),2) + " °";
 
                     double avalible = 180 - Arm.PwmToDegree(start.Value) - (180 - Arm.PwmToDegree(max.Value));
@@ -584,7 +586,7 @@ namespace Robotic_Arm_Desktop
                 }
                 else if (listBox.SelectedIndex == 3)
                 {
-                    movemend.baseMovemend.EndAt = Math.Round(max.Value, 2);
+                    movement.baseMovemend.EndAt = Math.Round(max.Value, 2);
                     maxUse.Content= Math.Round(Arm.PwmToDegree(max.Value),2) + " °";
 
                     double avalible = 180 - Arm.PwmToDegree(start.Value) - (180 - Arm.PwmToDegree(max.Value));
@@ -592,7 +594,7 @@ namespace Robotic_Arm_Desktop
                 }
                 else if (listBox.SelectedIndex == 4)
                 {
-                    movemend.griperRotation.EndAt = Math.Round(max.Value, 2);
+                    movement.griperRotation.EndAt = Math.Round(max.Value, 2);
                     maxUse.Content= Math.Round(Arm.PwmToDegree(max.Value),2) + " °";
 
                     double avalible = 180 - Arm.PwmToDegree(start.Value) - (180 - Arm.PwmToDegree(max.Value));
@@ -600,7 +602,7 @@ namespace Robotic_Arm_Desktop
                 }
                 else if (listBox.SelectedIndex == 5)
                 {
-                    movemend.griper.EndAt = Math.Round(max.Value, 2);
+                    movement.griper.EndAt = Math.Round(max.Value, 2);
                     maxUse.Content= Math.Round(Arm.PwmToDegree(max.Value),2) + " °";
 
                     double avalible = 180 - Arm.PwmToDegree(start.Value) - (180 - Arm.PwmToDegree(max.Value));
@@ -616,7 +618,7 @@ namespace Robotic_Arm_Desktop
             {
                 if (listBox.SelectedIndex == 0)
                 {
-                    movemend.elbow0.startfrom = Math.Round(start.Value, 2);
+                    movement.elbow0.startfrom = Math.Round(start.Value, 2);
                     startFrom.Content = "+ " + Math.Round(Arm.PwmToDegree(start.Value),2) + " °";
 
                     double avalible = 180 - Arm.PwmToDegree(start.Value) - (180 - Arm.PwmToDegree(max.Value));
@@ -624,7 +626,7 @@ namespace Robotic_Arm_Desktop
                 }
                 else if (listBox.SelectedIndex == 1)
                 {
-                    movemend.elbow1.startfrom = Math.Round(start.Value, 2);
+                    movement.elbow1.startfrom = Math.Round(start.Value, 2);
                     startFrom.Content = "+ " + Math.Round(Arm.PwmToDegree(start.Value),2) + " °";
 
                     double avalible = 180 - Arm.PwmToDegree(start.Value) - (180 - Arm.PwmToDegree(max.Value));
@@ -632,7 +634,7 @@ namespace Robotic_Arm_Desktop
                 }
                 else if (listBox.SelectedIndex == 2)
                 {
-                    movemend.elbow2.startfrom = Math.Round(start.Value, 2);
+                    movement.elbow2.startfrom = Math.Round(start.Value, 2);
                     startFrom.Content = "+ " + Math.Round(Arm.PwmToDegree(start.Value),2) + " °";
 
                     double avalible = 180 - Arm.PwmToDegree(start.Value) - (180 - Arm.PwmToDegree(max.Value));
@@ -640,7 +642,7 @@ namespace Robotic_Arm_Desktop
                 }
                 else if (listBox.SelectedIndex == 3)
                 {
-                    movemend.baseMovemend.startfrom = Math.Round(start.Value, 2);
+                    movement.baseMovemend.startfrom = Math.Round(start.Value, 2);
                     startFrom.Content = "+ " + Math.Round(Arm.PwmToDegree(start.Value),2) + " °";
 
                     double avalible = 180 - Arm.PwmToDegree(start.Value) - (180 - Arm.PwmToDegree(max.Value));
@@ -648,7 +650,7 @@ namespace Robotic_Arm_Desktop
                 }
                 else if (listBox.SelectedIndex == 4)
                 {
-                    movemend.griperRotation.startfrom = Math.Round(start.Value, 2);
+                    movement.griperRotation.startfrom = Math.Round(start.Value, 2);
                     startFrom.Content = "+ " + Math.Round(Arm.PwmToDegree(start.Value),2) + " °";
 
                     double avalible = 180 - Arm.PwmToDegree(start.Value) - (180 - Arm.PwmToDegree(max.Value));
@@ -656,7 +658,7 @@ namespace Robotic_Arm_Desktop
                 }
                 else if (listBox.SelectedIndex == 5)
                 {
-                    movemend.griper.startfrom = Math.Round(start.Value, 2);
+                    movement.griper.startfrom = Math.Round(start.Value, 2);
                     startFrom.Content = "+ " + Math.Round(Arm.PwmToDegree(start.Value),2) + " °";
 
                     double avalible = 180 - Arm.PwmToDegree(start.Value) - (180 - Arm.PwmToDegree(max.Value));
@@ -667,7 +669,7 @@ namespace Robotic_Arm_Desktop
 
         private void SaveMotorsStats(object sender, RoutedEventArgs e)
         {
-            xrw.UpdateFile(movemend);
+            xrw.UpdateFile(movement);
         }
 
         /*draw position data to the app, update 3d model and send data to arm*/
@@ -689,18 +691,18 @@ namespace Robotic_Arm_Desktop
         public void DrawDataAndUpdateModel()
         {
             
-            this.baseRa.Content = Math.Round(movemend.baseMovemend.AngleInDegree, 2) + " °";
-            this.elb0a.Content = Math.Round(movemend.elbow0.AngleInDegree, 2) + " °";
-            this.elb1a.Content = Math.Round(movemend.elbow1.AngleInDegree, 2) + " °";
-            this.elb2a.Content = Math.Round(movemend.elbow2.AngleInDegree, 2) + " °";
-            this.grra.Content = Math.Round(movemend.griperRotation.AngleInDegree, 2) + " °";
-            this.gr.Content = Math.Round(movemend.griper.AngleInDegree, 2) + " °";
+            this.baseRa.Content = Math.Round(movement.baseMovemend.AngleInDegree, 2) + " °";
+            this.elb0a.Content = Math.Round(movement.elbow0.AngleInDegree, 2) + " °";
+            this.elb1a.Content = Math.Round(movement.elbow1.AngleInDegree, 2) + " °";
+            this.elb2a.Content = Math.Round(movement.elbow2.AngleInDegree, 2) + " °";
+            this.grra.Content = Math.Round(movement.griperRotation.AngleInDegree, 2) + " °";
+            this.gr.Content = Math.Round(movement.griper.AngleInDegree, 2) + " °";
 
-            model.UpdateModel(movemend);
+            model.UpdateModel(movement);
 
             if (hud == true)
             {
-                RotateTransform rotateTransform = new RotateTransform(movemend.griperRotation.AngleInDegree-90);
+                RotateTransform rotateTransform = new RotateTransform(movement.griperRotation.AngleInDegree-90);
                 hudImage.RenderTransform = rotateTransform;
             }
 
@@ -722,20 +724,40 @@ namespace Robotic_Arm_Desktop
                 instructions.Add(Convert.ToDouble(instructionsRaw[i]));
             }
 
-            movemend.baseMovemend.Update(instructions[0], 1);
-            movemend.elbow0.Update(instructions[1], 1);
-            movemend.elbow1.Update(instructions[2], 1);
-            movemend.elbow2.Update(instructions[3], 1);
-            movemend.griperRotation.Update(instructions[4], 1);
-            movemend.griper.Update(instructions[5], 1);
+            movement.baseMovemend.Update(instructions[0], 1);
+            movement.elbow0.Update(instructions[1], 1);
+            movement.elbow1.Update(instructions[2], 1);
+            movement.elbow2.Update(instructions[3], 1);
+            movement.griperRotation.Update(instructions[4], 1);
+            movement.griper.Update(instructions[5], 1);
 
             DrawDataAndUpdateModel();
         }
 
         private void Movemend_IncrementationChange(object sender, EventArgs e)
         {
-            this.incLabel.Content = Math.Round(movemend.valueCount,3);
+            this.incLabel.Content = Math.Round(movement.valueCount,3);
         }
+
+        /*bug fixes*/
+        bool ValueBeforeTiping1, ValueBeforeTiping2;
+
+        private void DisableMovemendWhenWriting(object sender, RoutedEventArgs e)
+        {
+            ValueBeforeTiping1 = movement.keyboardenabled;
+            ValueBeforeTiping2 = movement.gamepadEnabled;
+
+            movement.keyboardenabled = false;
+            movement.gamepadEnabled = false;
+        }
+
+        private void EnableMovementdAfterWriting(object sender, RoutedEventArgs e)
+        {
+
+            movement.keyboardenabled = ValueBeforeTiping1;
+            movement.gamepadEnabled = ValueBeforeTiping2;
+        }
+
 
         /*template mode*/
 
@@ -762,8 +784,8 @@ namespace Robotic_Arm_Desktop
 
         private void CapturePressed(object sender, RoutedEventArgs e)
         {
-            string command = movemend.baseMovemend.AngleInPWM + "*" + movemend.elbow0.AngleInPWM + "*" + movemend.elbow1.AngleInPWM + "*"
-            + movemend.elbow2.AngleInPWM + "*" + movemend.griperRotation.AngleInPWM + "*" + movemend.griper.AngleInPWM + "*"
+            string command = movement.baseMovemend.AngleInPWM + "*" + movement.elbow0.AngleInPWM + "*" + movement.elbow1.AngleInPWM + "*"
+            + movement.elbow2.AngleInPWM + "*" + movement.griperRotation.AngleInPWM + "*" + movement.griper.AngleInPWM + "*"
             + Convert.ToInt16(WaitForTrigger) + "*" + delayTexBox.Text + "*" + templateSpeed.Text;
 
             Commands.Add(command);
@@ -806,7 +828,7 @@ namespace Robotic_Arm_Desktop
             {
                 Global.autoModeRunning = true;
                 Commands = xrw.LoadCommands(templateComboBox.SelectedItem.ToString());
-                AutoModeTemplate.StartTemplateAsync(Commands,movemend,numOfLoop);
+                AutoModeTemplate.StartTemplateAsync(Commands,movement,numOfLoop);
             }
             else
             {
@@ -953,7 +975,7 @@ namespace Robotic_Arm_Desktop
 
                 Global.ScriptEnabled = true;
                 scriptCom = new ScriptNetwork();
-                scriptCom.InitCom("127.0.0.1",movemend);
+                scriptCom.InitCom("127.0.0.1",movement);
                 scriptCom.Communication();
                 scriptCom.ScriptRunning = true;
             }
@@ -973,30 +995,38 @@ namespace Robotic_Arm_Desktop
             scriptCom.EndCom();
         }
 
+
         private void ScriptStop_Click(object sender, RoutedEventArgs e)
         {
             Global.ScriptEnabled = false;
             pythone.Close();
         }
 
-        bool ValueBeforeTiping1, ValueBeforeTiping2;
+        /*INVERSE kinematic*/
 
-        private void DisableMovemendWhenWriting(object sender, RoutedEventArgs e)
+        private void Button_Click(object sender, RoutedEventArgs e)
         {
-            ValueBeforeTiping1 = movemend.keyboardenabled;
-            ValueBeforeTiping2 = movemend.gamepadEnabled;
+            inverse = new InverseKinematic(movement, model);
+            Global.InverseKinematicMovement = true;
 
-            movemend.keyboardenabled = false;
-            movemend.gamepadEnabled = false;
+            IK_timer = new DispatcherTimer();
+            IK_timer.Tick += IK_timer_Tick;
+            IK_timer.Interval = new TimeSpan(0, 0, 0, 0, 1);
+            IK_timer.Start();
+
         }
 
-        private void EnableMovementdAfterWriting(object sender, RoutedEventArgs e)
+        private void IK_timer_Tick(object sender, EventArgs e)
         {
-
-            movemend.keyboardenabled = ValueBeforeTiping1;
-            movemend.gamepadEnabled = ValueBeforeTiping2;
+            if (Global.InverseKinematicMovement == true)
+            {
+                inverse.InverseKinematics();
+            }
+            else
+            {
+                IK_timer.Stop();
+            }
         }
-
-
     }
 }
+

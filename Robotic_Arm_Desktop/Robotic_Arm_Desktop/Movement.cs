@@ -68,7 +68,7 @@ namespace Robotic_Arm_Desktop
 
     }
 
-    public class Movemend
+    public class Movement
     {
         public event EventHandler IncrementationChange;
 

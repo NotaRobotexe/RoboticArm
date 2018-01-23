@@ -15,7 +15,7 @@ namespace Robotic_Arm_Desktop
         
         // movement settings
 
-        private void CreateFile(Movemend movemend)
+        private void CreateFile(Movement movement)
         {
             using (XmlWriter writer = XmlWriter.Create("MotorCalibration.xml"))
             {
@@ -23,33 +23,33 @@ namespace Robotic_Arm_Desktop
                 writer.WriteStartElement("Motors");
 
                 writer.WriteStartElement("Elbow0");
-                writer.WriteElementString("MaxUse", movemend.elbow0.EndAt.ToString());
-                writer.WriteElementString("StartFrom", movemend.elbow0.startfrom.ToString());
+                writer.WriteElementString("MaxUse", movement.elbow0.EndAt.ToString());
+                writer.WriteElementString("StartFrom", movement.elbow0.startfrom.ToString());
                 writer.WriteEndElement();
 
                 writer.WriteStartElement("Elbow1");
-                writer.WriteElementString("MaxUse", movemend.elbow1.EndAt.ToString());
-                writer.WriteElementString("StartFrom", movemend.elbow1.startfrom.ToString());
+                writer.WriteElementString("MaxUse", movement.elbow1.EndAt.ToString());
+                writer.WriteElementString("StartFrom", movement.elbow1.startfrom.ToString());
                 writer.WriteEndElement();
 
                 writer.WriteStartElement("Elbow2");
-                writer.WriteElementString("MaxUse", movemend.elbow2.EndAt.ToString());
-                writer.WriteElementString("StartFrom", movemend.elbow2.startfrom.ToString());
+                writer.WriteElementString("MaxUse", movement.elbow2.EndAt.ToString());
+                writer.WriteElementString("StartFrom", movement.elbow2.startfrom.ToString());
                 writer.WriteEndElement();
 
                 writer.WriteStartElement("Base");
-                writer.WriteElementString("MaxUse", movemend.baseMovemend.EndAt.ToString());
-                writer.WriteElementString("StartFrom", movemend.baseMovemend.startfrom.ToString());
+                writer.WriteElementString("MaxUse", movement.baseMovemend.EndAt.ToString());
+                writer.WriteElementString("StartFrom", movement.baseMovemend.startfrom.ToString());
                 writer.WriteEndElement();
 
                 writer.WriteStartElement("Gripper0");
-                writer.WriteElementString("MaxUse", movemend.griperRotation.EndAt.ToString());
-                writer.WriteElementString("StartFrom", movemend.griperRotation.startfrom.ToString());
+                writer.WriteElementString("MaxUse", movement.griperRotation.EndAt.ToString());
+                writer.WriteElementString("StartFrom", movement.griperRotation.startfrom.ToString());
                 writer.WriteEndElement();
 
                 writer.WriteStartElement("Gripper1");
-                writer.WriteElementString("MaxUse", movemend.griper.EndAt.ToString());
-                writer.WriteElementString("StartFrom", movemend.griper.startfrom.ToString());
+                writer.WriteElementString("MaxUse", movement.griper.EndAt.ToString());
+                writer.WriteElementString("StartFrom", movement.griper.startfrom.ToString());
                 writer.WriteEndElement();
 
                 writer.WriteEndElement();
@@ -57,89 +57,89 @@ namespace Robotic_Arm_Desktop
             }
         }
 
-        public void UpdateFile(Movemend movemend)
+        public void UpdateFile(Movement movement)
         {
             XmlNode node = doc.SelectSingleNode("Motors/Elbow0/MaxUse");
-            node.InnerText = movemend.elbow0.EndAt.ToString();
+            node.InnerText = movement.elbow0.EndAt.ToString();
             node = doc.SelectSingleNode("Motors/Elbow0/StartFrom");
-            node.InnerText = movemend.elbow0.startfrom.ToString();
+            node.InnerText = movement.elbow0.startfrom.ToString();
 
             node = doc.SelectSingleNode("Motors/Elbow1/MaxUse");
-            node.InnerText = movemend.elbow1.EndAt.ToString();
+            node.InnerText = movement.elbow1.EndAt.ToString();
             node = doc.SelectSingleNode("Motors/Elbow1/StartFrom");
-            node.InnerText = movemend.elbow1.startfrom.ToString();
+            node.InnerText = movement.elbow1.startfrom.ToString();
 
             node = doc.SelectSingleNode("Motors/Elbow2/MaxUse");
-            node.InnerText = movemend.elbow2.EndAt.ToString();
+            node.InnerText = movement.elbow2.EndAt.ToString();
             node = doc.SelectSingleNode("Motors/Elbow2/StartFrom");
-            node.InnerText = movemend.elbow2.startfrom.ToString();
+            node.InnerText = movement.elbow2.startfrom.ToString();
 
             node = doc.SelectSingleNode("Motors/Base/MaxUse");
-            node.InnerText = movemend.baseMovemend.EndAt.ToString();
+            node.InnerText = movement.baseMovemend.EndAt.ToString();
             node = doc.SelectSingleNode("Motors/Base/StartFrom");
-            node.InnerText = movemend.baseMovemend.startfrom.ToString();
+            node.InnerText = movement.baseMovemend.startfrom.ToString();
 
             node = doc.SelectSingleNode("Motors/Gripper0/MaxUse");
-            node.InnerText = movemend.griperRotation.EndAt.ToString();
+            node.InnerText = movement.griperRotation.EndAt.ToString();
             node = doc.SelectSingleNode("Motors/Gripper0/StartFrom");
-            node.InnerText = movemend.griperRotation.startfrom.ToString();
+            node.InnerText = movement.griperRotation.startfrom.ToString();
 
             node = doc.SelectSingleNode("Motors/Gripper1/MaxUse");
-            node.InnerText = movemend.griper.EndAt.ToString();
+            node.InnerText = movement.griper.EndAt.ToString();
             node = doc.SelectSingleNode("Motors/Gripper1/StartFrom");
-            node.InnerText = movemend.griper.startfrom.ToString();
+            node.InnerText = movement.griper.startfrom.ToString();
 
             doc.Save("MotorCalibration.xml");
         }
 
-        public void LoadSettings(Movemend movemend)
+        public void LoadSettings(Movement movement)
         {
             doc = new XmlDocument();
 
             try
             {
                 doc.Load("MotorCalibration.xml");
-                ReadData(movemend);
+                ReadData(movement);
             }
             catch (Exception)
             {
-                CreateFile(movemend);
-                ReadData(movemend);
+                CreateFile(movement);
+                ReadData(movement);
             }
 
         }
 
-        private void ReadData(Movemend movemend)
+        private void ReadData(Movement movement)
         {
             XmlNode node = doc.SelectSingleNode("Motors/Elbow0/MaxUse");
-            movemend.elbow0.EndAt = Convert.ToDouble(node.InnerText);
+            movement.elbow0.EndAt = Convert.ToDouble(node.InnerText);
             node = doc.SelectSingleNode("Motors/Elbow0/StartFrom");
-            movemend.elbow0.startfrom= Convert.ToDouble(node.InnerText);
+            movement.elbow0.startfrom= Convert.ToDouble(node.InnerText);
 
             node = doc.SelectSingleNode("Motors/Elbow1/MaxUse");
-            movemend.elbow1.EndAt=Convert.ToDouble(node.InnerText);
+            movement.elbow1.EndAt=Convert.ToDouble(node.InnerText);
             node = doc.SelectSingleNode("Motors/Elbow1/StartFrom");
-            movemend.elbow1.startfrom=Convert.ToDouble(node.InnerText);
+            movement.elbow1.startfrom=Convert.ToDouble(node.InnerText);
 
             node = doc.SelectSingleNode("Motors/Elbow2/MaxUse");
-            movemend.elbow2.EndAt=Convert.ToDouble(node.InnerText);
+            movement.elbow2.EndAt=Convert.ToDouble(node.InnerText);
             node = doc.SelectSingleNode("Motors/Elbow2/StartFrom");
-            movemend.elbow2.startfrom=Convert.ToDouble(node.InnerText);
+            movement.elbow2.startfrom=Convert.ToDouble(node.InnerText);
 
             node = doc.SelectSingleNode("Motors/Base/MaxUse");
-            movemend.baseMovemend.EndAt=Convert.ToDouble(node.InnerText);
+            movement.baseMovemend.EndAt=Convert.ToDouble(node.InnerText);
             node = doc.SelectSingleNode("Motors/Base/StartFrom");
-            movemend.baseMovemend.startfrom=Convert.ToDouble(node.InnerText);
+            movement.baseMovemend.startfrom=Convert.ToDouble(node.InnerText);
 
             node = doc.SelectSingleNode("Motors/Gripper0/MaxUse");
-            movemend.griperRotation.EndAt=Convert.ToDouble(node.InnerText);
+            movement.griperRotation.EndAt=Convert.ToDouble(node.InnerText);
             node = doc.SelectSingleNode("Motors/Gripper0/StartFrom");
-            movemend.griperRotation.startfrom=Convert.ToDouble(node.InnerText);
+            movement.griperRotation.startfrom=Convert.ToDouble(node.InnerText);
 
             node = doc.SelectSingleNode("Motors/Gripper1/MaxUse");
-            movemend.griper.EndAt=Convert.ToDouble(node.InnerText);
+            movement.griper.EndAt=Convert.ToDouble(node.InnerText);
             node = doc.SelectSingleNode("Motors/Gripper1/StartFrom");
-            movemend.griper.startfrom=Convert.ToDouble(node.InnerText);
+            movement.griper.startfrom=Convert.ToDouble(node.InnerText);
         }
 
         //template mode
