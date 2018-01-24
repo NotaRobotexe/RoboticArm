@@ -17,12 +17,15 @@ namespace Robotic_Arm_Desktop
         double[,] angles;
         Vector3D target;
         Vector3D point;
+        public bool MidpointReached = true;
 
         public InverseKinematic(Movement mv,_3Dmodel gripper)
         {
             angles = new double[3,3];
             movement = mv;
             this.gripper = gripper;
+
+            //debug later delete
             target.X = -32.987374785963;
             target.Y = -7.45200511932373;
             target.Z = 22.1720001023346;
@@ -33,9 +36,11 @@ namespace Robotic_Arm_Desktop
         {
             GetAngle();
 
-            if (DistanceFromTarget() < 1)  //distance treshild je tolerancia 
+            //debug later delete
+            if (DistanceFromTarget() < 0.1)  //distance treshild je tolerancia 
             {
-                Global.InverseKinematicMovement = false;
+                MidpointReached = true;
+                //Global.InverseKinematicMovement = false;
             }
 
             /*if (Global.triggered == true)  
@@ -79,7 +84,7 @@ namespace Robotic_Arm_Desktop
             return gradient;
         }
 
-        public double DistanceFromTarget()
+        private double DistanceFromTarget()
         {
             point.X = gripper.griper.Bounds.Location.X;
             point.Y = gripper.griper.Bounds.Location.Y;
@@ -87,6 +92,21 @@ namespace Robotic_Arm_Desktop
 
             return Math.Sqrt(Math.Pow((point.X - target.X), 2.0) + Math.Pow((point.Y - target.Y), 2.0) + Math.Pow((point.Z - target.Z), 2.0));
         }
+
+        public void RealoadTarger()
+        {
+            //Vector3D arget = new Vector3D();
+
+            target.X = gripper.endpoint.Bounds.Location.X;
+            target.Y = gripper.endpoint.Bounds.Location.Y;
+            target.Z = gripper.endpoint.Bounds.Location.Z; 
+
+
+            //TranslateTransform3D translate = new TranslateTransform3D(target.X +xx, target.Y, target.Z -yy);
+
+            //gripper.elbow5.Transform = translate;
+        }
+
 
         private void GetAngle()
         {

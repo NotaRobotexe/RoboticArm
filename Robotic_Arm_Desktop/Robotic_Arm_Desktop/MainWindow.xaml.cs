@@ -1018,14 +1018,22 @@ namespace Robotic_Arm_Desktop
 
         private void IK_timer_Tick(object sender, EventArgs e)
         {
-            if (Global.InverseKinematicMovement == true)
+            if (inverse.MidpointReached==true)
             {
+                inverse.MidpointReached = false;
+                inverse.RealoadTarger();
+            }
+
+            inverse.InverseKinematics();
+            /*if (Global.InverseKinematicMovement == true)
+            {
+                inverse.RealoadTarger();
                 inverse.InverseKinematics();
             }
             else
             {
                 IK_timer.Stop();
-            }
+            }*/
         }
     }
 }
