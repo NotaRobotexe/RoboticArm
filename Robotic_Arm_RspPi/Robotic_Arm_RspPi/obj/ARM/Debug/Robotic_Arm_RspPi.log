@@ -4,6 +4,9 @@
   Starting remote build
   Compiling sources:
   main.cpp
+  NetworkCom.cpp
+C:\Users\mt2si\Desktop\projekty\S.O.C Robotic Arm\Robotic Arm\Robotic_Arm_RspPi\Robotic_Arm_RspPi\NetworkCom.cpp(41,24): warning : conversion to ‘uint16_t {aka short unsigned int}’ from ‘int’ may alter its value [-Wconversion]
+C:\Users\mt2si\Desktop\projekty\S.O.C Robotic Arm\Robotic Arm\Robotic_Arm_RspPi\Robotic_Arm_RspPi\NetworkCom.cpp(72,23): warning : comparison between signed and unsigned integer expressions [-Wsign-compare]
   Linking objects
   /usr/bin/ld: /home/pi/projects/Robotic_Arm_RspPi/obj/ARM/Debug/main.o: undefined reference to symbol 'pthread_create@@GLIBC_2.4'
   //lib/arm-linux-gnueabihf/libpthread.so.0: error adding symbols: DSO missing from command line

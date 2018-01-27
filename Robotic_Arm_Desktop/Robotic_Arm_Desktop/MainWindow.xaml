@@ -105,8 +105,8 @@
             <Label  Content="Start from :" HorizontalAlignment="Left" Margin="142,99,0,0" VerticalAlignment="Top" Foreground="#FFEAEAEA" FontSize="18" FontWeight="Bold" />
             <Label Name="startFrom"  Content="err" HorizontalAlignment="Left" Margin="268,100,0,0" VerticalAlignment="Top" FontSize="17" Foreground="#FF63D2FA" FontWeight="Bold"/>
             <Slider Name="start" HorizontalAlignment="Left"  Minimum="0" Margin="152,133,0,0" VerticalAlignment="Top" Width="129" ValueChanged="StartFromSliderChange"/>
-            <Label Content="Speed ratio :" HorizontalAlignment="Left" Margin="142,220,0,0" VerticalAlignment="Top" Foreground="#FFEAEAEA" FontSize="18" FontWeight="Bold"/>
-            <TextBox HorizontalAlignment="Left" Height="27" Margin="268,227,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="38"  Background="#FF2E2E2E" BorderThickness="2" BorderBrush="#FFD7D8D8" Foreground="#FFEAEAEA" FontSize="18" TextAlignment="Center" />
+            <Label Content="Speed limit:" HorizontalAlignment="Left" Margin="142,220,0,0" VerticalAlignment="Top" Foreground="#FFEAEAEA" FontSize="18" FontWeight="Bold"/>
+            <TextBox HorizontalAlignment="Left" Name="speedR" Height="27" Margin="268,227,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="38"  Background="#FF2E2E2E" BorderThickness="2" BorderBrush="#FFD7D8D8" Foreground="#FFEAEAEA" FontSize="16" TextAlignment="Center" />
         </Grid>
         <Grid HorizontalAlignment="Left" Height="206" Margin="646,854,0,0" VerticalAlignment="Top" Width="390" Background="#FF252526">
 

@@ -12,7 +12,7 @@ namespace Robotic_Arm_Desktop
     class _3Dmodel
     {
         public Model3DGroup group;
-        public Model3D elbow0, elbow1, elbow2, griper, baseHolder, endpoint;
+        public Model3D elbow0, elbow1, elbow2, griper, baseHolder, test;
 
         public double baserotation = 0, elbow0rot = 0, elbow1rot = 15, elbow2rot = -90, gripper0rot = 90;
 
@@ -31,7 +31,7 @@ namespace Robotic_Arm_Desktop
             elbow2 = importer.Load(@"ArmModel/elbow2.stl");
             baseHolder = importer.Load(@"ArmModel/base.obj"); 
             griper = importer.Load(@"ArmModel/graper.stl");
-            endpoint = importer.Load(@"ArmModel/graper.stl");
+            //test = importer.Load(@"ArmModel/graper.stl");
 
             CallUpdate();
 
@@ -41,7 +41,7 @@ namespace Robotic_Arm_Desktop
             group.Children.Add(elbow2);
             group.Children.Add(baseHolder);
             group.Children.Add(griper);
-            group.Children.Add(endpoint);
+            //group.Children.Add(test);
         }
 
         public void UpdateModel(Movement movement)
@@ -68,7 +68,7 @@ namespace Robotic_Arm_Desktop
             Transform3DGroup tra3 = new Transform3DGroup();
             Transform3DGroup tra4 = new Transform3DGroup();
             Transform3DGroup tra5 = new Transform3DGroup();
-            Transform3DGroup tra6 = new Transform3DGroup();
+            //Transform3DGroup tra6 = new Transform3DGroup();
 
             //set position of models
             translate = new TranslateTransform3D(0, -4, 0);
@@ -103,18 +103,18 @@ namespace Robotic_Arm_Desktop
             tra5.Children.Add(rotate);
             tra5.Children.Add(tra4);
 
-            translate = new TranslateTransform3D(-5, 0, 0);
-            rotate = new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(1, 0, 0), 0), new Point3D(0, 41, 0.86));
-            tra6.Children.Add(translate);
-            tra6.Children.Add(rotate);
-            tra6.Children.Add(tra4);
 
             baseHolder.Transform = tra1;
             elbow0.Transform = tra2;
             elbow1.Transform = tra3;
             elbow2.Transform = tra4;
             griper.Transform = tra5;
-            endpoint.Transform = tra6;
+
+            /*tra6.Children.Add(new TranslateTransform3D(25.4931449890137, -39.7999992370605, 2.23200511932373));
+            tra6.Children.Add(new TranslateTransform3D(-90, 0, -42));
+            test.Transform = tra6;
+
+            Console.WriteLine(test.Bounds.Location);*/
         }
     }
 }

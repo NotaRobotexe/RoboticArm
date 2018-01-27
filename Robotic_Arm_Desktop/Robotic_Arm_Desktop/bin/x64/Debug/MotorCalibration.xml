@@ -2,26 +2,32 @@
 <Motors>
   <Elbow0>
     <MaxUse>576</MaxUse>
-    <StartFrom>102</StartFrom>
+    <StartFrom>0</StartFrom>
+    <Speed>10</Speed>
   </Elbow0>
   <Elbow1>
-    <MaxUse>372.97</MaxUse>
-    <StartFrom>102</StartFrom>
+    <MaxUse>576</MaxUse>
+    <StartFrom>0</StartFrom>
+    <Speed>0</Speed>
   </Elbow1>
   <Elbow2>
-    <MaxUse>343.02</MaxUse>
-    <StartFrom>102</StartFrom>
+    <MaxUse>576</MaxUse>
+    <StartFrom>0</StartFrom>
+    <Speed>0</Speed>
   </Elbow2>
   <Base>
     <MaxUse>576</MaxUse>
-    <StartFrom>102</StartFrom>
+    <StartFrom>0</StartFrom>
+    <Speed>0</Speed>
   </Base>
   <Gripper0>
     <MaxUse>576</MaxUse>
-    <StartFrom>102</StartFrom>
+    <StartFrom>0</StartFrom>
+    <Speed>0</Speed>
   </Gripper0>
   <Gripper1>
     <MaxUse>576</MaxUse>
-    <StartFrom>102</StartFrom>
+    <StartFrom>0</StartFrom>
+    <Speed>0</Speed>
   </Gripper1>
 </Motors>

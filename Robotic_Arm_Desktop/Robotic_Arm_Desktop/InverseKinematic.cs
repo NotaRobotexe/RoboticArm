@@ -97,9 +97,9 @@ namespace Robotic_Arm_Desktop
         {
             //Vector3D arget = new Vector3D();
 
-            target.X = gripper.endpoint.Bounds.Location.X;
+            /*target.X = gripper.endpoint.Bounds.Location.X;
             target.Y = gripper.endpoint.Bounds.Location.Y;
-            target.Z = gripper.endpoint.Bounds.Location.Z; 
+            target.Z = gripper.endpoint.Bounds.Location.Z; */
 
 
             //TranslateTransform3D translate = new TranslateTransform3D(target.X +xx, target.Y, target.Z -yy);

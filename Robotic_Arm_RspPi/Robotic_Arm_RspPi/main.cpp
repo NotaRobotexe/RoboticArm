@@ -105,9 +105,14 @@ int main(void)
 
 	} while (NetComMessage.substr(0, 1) != "7");
 	system("pkill -f v4l2rtspserver"); //kill video sstream
-
 	GPIO::RedLed();
 	ShutDown(netCom,netMove,netData,netFan,netTrigger);
+	
+	this_thread::sleep_for(chrono::milliseconds(8000));
+
+	if (NetComMessage.substr(1, 1) != "0"){
+		system("sudo shutdown -t now");
+	}
 	return 0;
 }
 

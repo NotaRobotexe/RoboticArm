@@ -40,7 +40,7 @@ namespace Robotic_Arm_Desktop
         Gamepad gamepad;
         XmlReadWriter xrw;
         VideoStream stream;
-        InverseKinematic inverse;
+        BruteForceMovement ForceMovement;
 
         string ScriptPath = "";
 
@@ -54,7 +54,6 @@ namespace Robotic_Arm_Desktop
 
         DispatcherTimer ControllstatusTimer;
         DispatcherTimer FrameRateCounter;
-        DispatcherTimer IK_timer;
 
         List<string> Commands = new List<string>(); //Template command
         Stopwatch stopWatch;
@@ -137,6 +136,8 @@ namespace Robotic_Arm_Desktop
             FrameRateCounter.Start();
 
             buttonAnimationOnOff(HUDbutton, false);
+
+            ForceMovement = new BruteForceMovement(movement, model);
 
             loadingDone = true;
         }
@@ -455,6 +456,8 @@ namespace Robotic_Arm_Desktop
         }
 
         /*Motors calibration and settings */
+        int OpenListbox;
+
         private void ListboxChange(object sender, SelectionChangedEventArgs e)
         {
             if (loadingDone==true)
@@ -479,6 +482,10 @@ namespace Robotic_Arm_Desktop
 
                 double avalible = 180 - Arm.PwmToDegree(start.Value) - (180 - Arm.PwmToDegree(max.Value));
                 availableD.Content = Math.Round(avalible, 2).ToString() + " °";
+
+                speedR.Text = movement.elbow0.SpeedBoost.ToString();
+
+                OpenListbox = 0;
             }
             else if(listBox.SelectedIndex == 1)
             {
@@ -494,6 +501,10 @@ namespace Robotic_Arm_Desktop
 
                 double avalible = 180 - Arm.PwmToDegree(start.Value) - (180 - Arm.PwmToDegree(max.Value));
                 availableD.Content = Math.Round(avalible, 2).ToString() + " °";
+
+                speedR.Text = movement.elbow1.SpeedBoost.ToString();
+
+                OpenListbox = 1;
             }
             else if (listBox.SelectedIndex == 2)
             {
@@ -509,6 +520,10 @@ namespace Robotic_Arm_Desktop
 
                 double avalible = 180 - Arm.PwmToDegree(start.Value) - (180 - Arm.PwmToDegree(max.Value));
                 availableD.Content = Math.Round(avalible, 2).ToString() + " °";
+
+                speedR.Text = movement.elbow2.SpeedBoost.ToString();
+
+                OpenListbox = 2;
             }
             else if (listBox.SelectedIndex == 3)
             {
@@ -524,6 +539,10 @@ namespace Robotic_Arm_Desktop
 
                 double avalible = 180 - Arm.PwmToDegree(start.Value) - (180 - Arm.PwmToDegree(max.Value));
                 availableD.Content = Math.Round(avalible, 2).ToString() + " °";
+
+                speedR.Text = movement.baseMovemend.SpeedBoost.ToString();
+
+                OpenListbox = 3;
             }
             else if (listBox.SelectedIndex == 4)
             {
@@ -539,6 +558,10 @@ namespace Robotic_Arm_Desktop
 
                 double avalible = 180 - Arm.PwmToDegree(start.Value) - (180 - Arm.PwmToDegree(max.Value));
                 availableD.Content = Math.Round(avalible, 2).ToString() + " °";
+
+                speedR.Text = movement.griperRotation.SpeedBoost.ToString();
+
+                OpenListbox = 4;
             }
             else if (listBox.SelectedIndex == 5)
             {
@@ -554,6 +577,10 @@ namespace Robotic_Arm_Desktop
 
                 double avalible = 180 - Arm.PwmToDegree(start.Value) - (180 - Arm.PwmToDegree(max.Value));
                 availableD.Content = Math.Round(avalible, 2).ToString() + " °";
+
+                speedR.Text = movement.griper.SpeedBoost.ToString();
+
+                OpenListbox = 5;
             }
         }
 
@@ -669,6 +696,28 @@ namespace Robotic_Arm_Desktop
 
         private void SaveMotorsStats(object sender, RoutedEventArgs e)
         {
+            switch (OpenListbox)
+            {
+                case 0:
+                    movement.elbow0.SpeedBoost = Convert.ToDouble(speedR.Text);
+                    break;
+                case 1:
+                    movement.elbow1.SpeedBoost = Convert.ToDouble(speedR.Text);
+                    break;
+                case 2:
+                    movement.elbow2.SpeedBoost = Convert.ToDouble(speedR.Text);
+                    break;
+                case 3:
+                    movement.baseMovemend.SpeedBoost = Convert.ToDouble(speedR.Text);
+                    break;
+                case 4:
+                    movement.griperRotation.SpeedBoost = Convert.ToDouble(speedR.Text);
+                    break;
+                case 5:
+                    movement.griper.SpeedBoost = Convert.ToDouble(speedR.Text);
+                    break;
+            }
+
             xrw.UpdateFile(movement);
         }
 
@@ -1002,9 +1051,9 @@ namespace Robotic_Arm_Desktop
             pythone.Close();
         }
 
-        /*INVERSE kinematic*/
+        /*INVERSE kinematic         Not what I wanned  but it is really cool and can be use later*/  
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        /*private void Button_Click(object sender, RoutedEventArgs e)
         {
             inverse = new InverseKinematic(movement, model);
             Global.InverseKinematicMovement = true;
@@ -1025,7 +1074,7 @@ namespace Robotic_Arm_Desktop
             }
 
             inverse.InverseKinematics();
-            /*if (Global.InverseKinematicMovement == true)
+            if (Global.InverseKinematicMovement == true)
             {
                 inverse.RealoadTarger();
                 inverse.InverseKinematics();
@@ -1033,8 +1082,19 @@ namespace Robotic_Arm_Desktop
             else
             {
                 IK_timer.Stop();
-            }*/
+            }
+        }*/
+
+        /*Brute Force "Fake inverse kinematic"*/
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            ForceMovement.InitBRM();
+            MessageBox.Show("end");
+
         }
+
+
     }
 }
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
@@ -20,7 +21,7 @@ namespace Robotic_Arm_Desktop
 
         public double EndAt; 
         public double startfrom;
-
+        public double SpeedBoost = 0;
 
         public void SetPostionFromKeyboadrOrGamepad(double increment)
         {
@@ -43,6 +44,7 @@ namespace Robotic_Arm_Desktop
                 AngleInPWM = pos;
                 AngleInDegree = (pos - min_Pwm) / PwmPerDegree;
             }
+            Thread.Sleep((int)SpeedBoost);
             OnPositionChange(EventArgs.Empty);
         }
 
