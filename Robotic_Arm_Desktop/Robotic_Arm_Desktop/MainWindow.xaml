@@ -163,14 +163,18 @@
             <Label Content="Script Name : " HorizontalAlignment="Left" Margin="10,92,0,0" VerticalAlignment="Top" Foreground="#FFECECEC" FontSize="16" FontWeight="Bold"/>
             <Button Style="{DynamicResource ButtonStyle1}" Content="Load Script" HorizontalAlignment="Left" Margin="10,61,0,323" Width="90" Height="26" Background="#FF2E2E2E" BorderBrush="Gainsboro" BorderThickness="2" FontSize="15" FontFamily="Segoe UI Semibold" ForceCursor="True" Foreground="#FFF1F1F1" Click="LoadScript"/>
             <Button x:Name="ScriptEditor" Content="open script editor" HorizontalAlignment="Left" Margin="24,231,0,0" VerticalAlignment="Top" Width="76" Click="OpenScriptEditor"/>
-            <Button x:Name="EnableAutoMode" Content="Enable auto mode" HorizontalAlignment="Left" Margin="36,334,0,0" VerticalAlignment="Top" Width="74" Click="EnableAutoMode_Click"/>
+            <Button x:Name="EnableAutoMode" Content="Enable auto mode" HorizontalAlignment="Left" Margin="26,277,0,0" VerticalAlignment="Top" Width="74" Click="EnableAutoMode_Click"/>
             <Label x:Name="scriptName" Content="Label" HorizontalAlignment="Left" Margin="131,92,0,0" VerticalAlignment="Top" FontSize="15" Foreground="#FF63D2FA" FontWeight="Bold" RenderTransformOrigin="-2.533,0.6"/>
             <Label Content="Script mode" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Foreground="#FFEAEAEA" FontSize="22" FontWeight="Bold"/>
             <Button Style="{DynamicResource ButtonStyle1}" Content="Stop" HorizontalAlignment="Left" Margin="189,128,0,0" VerticalAlignment="Top" Width="90" Height="26" Background="#FF2E2E2E" BorderBrush="Gainsboro" BorderThickness="2" FontSize="15" FontFamily="Segoe UI Semibold" ForceCursor="True" Foreground="#FFF1F1F1" Click="ScriptStop_Click"/>
             <TextBox Name="input_" HorizontalAlignment="Left" Height="23" Margin="74,172,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="116" Background="#FF2E2E2E" BorderThickness="2" BorderBrush="#FFD7D8D8" Foreground="#FFEAEAEA" FontSize="16" FontStyle="Italic" TextDecorations="{x:Null}" FontFamily="Segoe UI Emoji" GotFocus="DisableMovemendWhenWriting" LostFocus="EnableMovementdAfterWriting"/>
             <Label Content="Input :" HorizontalAlignment="Left" Margin="10,166,0,0" VerticalAlignment="Top" Foreground="#FFECECEC" FontSize="16" FontWeight="Bold" RenderTransformOrigin="0.559,1.129"/>
             <Button Content="Send" HorizontalAlignment="Left" Margin="203,172,0,0" VerticalAlignment="Top" Width="76" Click="InputSend_Click"/>
-            <Button Content="test" HorizontalAlignment="Left" Margin="178,251,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click"/>
+            <Button Content="test" HorizontalAlignment="Left" Margin="189,216,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click"/>
+            <Button Content="remote execution" HorizontalAlignment="Left" Margin="165,314,0,0" VerticalAlignment="Top" Width="75" Click="RemoteExecution_Change"/>
+            <Label Content="Output" HorizontalAlignment="Left" Margin="10,202,0,0" VerticalAlignment="Top"/>
+            <TextBox HorizontalAlignment="Left" Height="23" Margin="74,208,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
+            <TextBox Name="targetIp" HorizontalAlignment="Left" Height="23" Margin="100,339,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
         </Grid>
 
 

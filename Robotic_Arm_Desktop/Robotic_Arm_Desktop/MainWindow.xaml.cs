@@ -41,6 +41,7 @@ namespace Robotic_Arm_Desktop
         XmlReadWriter xrw;
         VideoStream stream;
         BruteForceMovement ForceMovement;
+        RemoteNetwork remoteNetwork;
 
         string ScriptPath = "";
 
@@ -1012,21 +1013,48 @@ namespace Robotic_Arm_Desktop
             if (ScriptPath != "")
             {
 
-                pythone = new Process();
-                pythone.StartInfo.FileName = ScriptPath;
-                pythone.StartInfo.UseShellExecute = true;
-                pythone.StartInfo.RedirectStandardOutput = false;
-                pythone.StartInfo.CreateNoWindow = true;
-                pythone.EnableRaisingEvents = true;
-                //pythone.Start();
-                pythone.Exited += Pythone_Exited;
+                if (Global.RemoteExc == false)
+                {
+                    pythone = new Process();
+                    pythone.StartInfo.FileName = ScriptPath;
+                    pythone.StartInfo.UseShellExecute = true;
+                    pythone.StartInfo.RedirectStandardOutput = false;
+                    pythone.StartInfo.CreateNoWindow = true;
+                    pythone.EnableRaisingEvents = true;
+                    pythone.Start();
+                    pythone.Exited += Pythone_Exited;
 
 
-                Global.ScriptEnabled = true;
-                scriptCom = new ScriptNetwork();
-                scriptCom.InitCom("127.0.0.1",movement);
-                scriptCom.Communication();
-                scriptCom.ScriptRunning = true;
+                    Global.ScriptEnabled = true;
+                    scriptCom = new ScriptNetwork();
+                    scriptCom.InitCom("127.0.0.1",movement);
+                    scriptCom.Communication();
+                    scriptCom.ScriptRunning = true;
+                }
+                else //start script on remote computer
+                {
+                    remoteNetwork = new RemoteNetwork();
+                    string ip = targetIp.Text;
+                    remoteNetwork.InitCom(ip, movement);
+
+                    string script = File.ReadAllText(ScriptPath);
+
+                    if (script != null)
+                    {
+                        remoteNetwork.UploadScript(script);
+                        string ack = remoteNetwork.Acknowlage();
+
+                        if (ack.Substring(0,1) == "k")
+                        {
+                            Global.ScriptEnabled = true;
+                            scriptCom = new ScriptNetwork();
+                            scriptCom.InitCom(ip, movement);
+                            scriptCom.Communication();
+                            scriptCom.ScriptRunning = true;
+                        }
+                    }
+                }
+
             }
         }
 
@@ -1044,14 +1072,26 @@ namespace Robotic_Arm_Desktop
             scriptCom.EndCom();
         }
 
-
         private void ScriptStop_Click(object sender, RoutedEventArgs e)
         {
-            Global.ScriptEnabled = false;
-            pythone.Close();
+            if (Global.RemoteExc == true)
+            {
+                remoteNetwork.QuitScript();
+            }
+            else
+            {
+                Global.ScriptEnabled = false;
+                pythone.Close();
+            }
+
         }
 
-        /*INVERSE kinematic         Not what I wanned  but it is really cool and can be use later*/  
+        private void RemoteExecution_Change(object sender, RoutedEventArgs e)
+        {
+            Global.RemoteExc = !Global.RemoteExc;
+        }
+
+        /*INVERSE kinematic         Not what I wanned  but it is really cool and can be use later*/
 
         /*private void Button_Click(object sender, RoutedEventArgs e)
         {

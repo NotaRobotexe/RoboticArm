@@ -256,4 +256,63 @@ namespace Robotic_Arm_Desktop
         }
 
     }
+
+    public class RemoteNetwork
+    {
+        private Movement movement;
+        private Socket socket;
+
+        public int InitCom(string ip, Movement m)
+        {
+            socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            movement = m;
+            try
+            {
+                socket.Connect(IPAddress.Parse(ip), 6973);
+                return 0;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+                return -1;
+            }
+        }
+
+        public string Acknowlage()
+        {
+            byte[] buffer = new byte[10];
+
+            socket.Receive(buffer);
+            string message = Encoding.UTF8.GetString(buffer);
+            Console.WriteLine(message);
+            return message;
+        }
+
+        public void UploadScript(string s)
+        {
+            byte[] buffer = Encoding.ASCII.GetBytes(s);
+
+            Task.Run(() =>
+            {
+                socket.Send(buffer);
+            }
+            );
+        }
+
+        public void QuitScript()
+        {
+            byte[] buffer = Encoding.ASCII.GetBytes("END");
+
+            Task.Run(() =>
+            {
+                socket.Send(buffer);
+            }
+            );
+        }
+
+        public void EndCom()
+        {
+            socket.Close();
+        }
+    }
 }

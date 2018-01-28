@@ -8,6 +8,8 @@ namespace Robotic_Arm_Desktop
 {
     public static class Global
     {
+        public static bool RemoteExc = false;
+
         public static int MovingSpeed = 15;
         public static bool ScriptEnabled = false;
         public static bool IsMoving = false;
