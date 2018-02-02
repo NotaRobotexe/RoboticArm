@@ -140,11 +140,11 @@ namespace Robotic_Arm_Desktop
             angle = movement.elbow0.AngleInDegree + movement.elbow1.AngleInDegree + movement.elbow2.AngleInDegree-22;
 
             startPoin = model.griper.Bounds.Location;
-            startPoin.X = Math.Round(startPoin.X, 2);
-            startPoin.Z = Math.Round(startPoin.Z, 2);
+            startPoin.X = Math.Round(startPoin.X, 3);
+            startPoin.Z = Math.Round(startPoin.Z, 3);
 
-            EndPoin.X =Math.Round( startPoin.X + (Math.Cos(DegreeToRadian(angle)) *distance),2);
-            EndPoin.Z = Math.Round( startPoin.Z + (Math.Sin(DegreeToRadian(angle)) * distance),2);
+            EndPoin.X =Math.Round( startPoin.X + (Math.Cos(DegreeToRadian(angle)) *distance),3);
+            EndPoin.Z = Math.Round( startPoin.Z + (Math.Sin(DegreeToRadian(angle)) * distance),3);
 
             fA = (EndPoin.Z - startPoin.Z) / (EndPoin.X - startPoin.X);
             fB = startPoin.Z - (startPoin.X * fA);

@@ -145,7 +145,7 @@
         </Grid>
         <Image x:Name="ViewFrame" HorizontalAlignment="Left" Height="607" Margin="815,20,0,0" VerticalAlignment="Top" Width="1080" Panel.ZIndex="-3" />
         <Image Name="hudimage1" HorizontalAlignment="Left" Height="92" Margin="1289,278,0,0" VerticalAlignment="Top" Width="132" Source="icons/hud1.png" Visibility="Hidden" />
-        <Image x:Name="hudImage" HorizontalAlignment="Left" Height="445" Margin="815,99,0,0" VerticalAlignment="Top"  Width="1080" Source="icons/hud2.png" RenderTransformOrigin="0.5,0.5" Panel.ZIndex="-2" Visibility="Hidden">
+        <Image x:Name="hudImage" HorizontalAlignment="Left" Height="444" Margin="815,88,0,0" VerticalAlignment="Top"  Width="1080" Source="icons/hud2.png" RenderTransformOrigin="0.498,0.654" Panel.ZIndex="-2" Visibility="Hidden">
             <Image.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform/>

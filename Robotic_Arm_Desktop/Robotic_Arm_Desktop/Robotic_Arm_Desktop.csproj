@@ -174,5 +174,9 @@
   <ItemGroup>
     <Resource Include="icons\hud2.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="icons\hud move.png" />
+    <Resource Include="icons\hud static.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

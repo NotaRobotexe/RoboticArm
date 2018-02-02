@@ -27,7 +27,6 @@ namespace Robotic_Arm_Desktop
     //TODO: Safety control - taktiez netreba moc
     //TODO: fixnut ostatne buggy
     //TODO: responzivnost - nepotrebne fullHD staci
-    //TODO: SCRIPT module - hot hot hot hot
     //TODO: Spracovanie obrazu a vsetky tie blbosti - hot hot hot hot
     //TODO: spiest sa ako babovka #1 #2 #3
     //TODO: Prestat pridavat TODO
@@ -55,6 +54,7 @@ namespace Robotic_Arm_Desktop
 
         DispatcherTimer ControllstatusTimer;
         DispatcherTimer FrameRateCounter;
+        DispatcherTimer IK_timer;
 
         List<string> Commands = new List<string>(); //Template command
         Stopwatch stopWatch;
@@ -69,6 +69,7 @@ namespace Robotic_Arm_Desktop
 
         ScriptNetwork scriptCom;
         Process pythone;
+        InverseKinematic inverse;
 
         public MainWindow()
         {
@@ -1093,7 +1094,7 @@ namespace Robotic_Arm_Desktop
 
         /*INVERSE kinematic         Not what I wanned  but it is really cool and can be use later*/
 
-        /*private void Button_Click(object sender, RoutedEventArgs e)
+        private void Button_Click(object sender, RoutedEventArgs e)
         {
             inverse = new InverseKinematic(movement, model);
             Global.InverseKinematicMovement = true;
@@ -1107,34 +1108,32 @@ namespace Robotic_Arm_Desktop
 
         private void IK_timer_Tick(object sender, EventArgs e)
         {
-            if (inverse.MidpointReached==true)
+            /*if (inverse.MidpointReached==true)
             {
                 inverse.MidpointReached = false;
                 inverse.RealoadTarger();
-            }
+            }*/
 
-            inverse.InverseKinematics();
+            //inverse.InverseKinematics();
             if (Global.InverseKinematicMovement == true)
             {
-                inverse.RealoadTarger();
+                //inverse.RealoadTarger();
                 inverse.InverseKinematics();
             }
             else
             {
                 IK_timer.Stop();
             }
-        }*/
+        }
 
         /*Brute Force "Fake inverse kinematic"*/
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        /*private void Button_Click(object sender, RoutedEventArgs e)
         {
             ForceMovement.InitBRM();
             MessageBox.Show("end");
-
-        }
-
-
+            
+        }*/
     }
 }
 

@@ -10,37 +10,63 @@ namespace Robotic_Arm_Desktop
     class InverseKinematic
     {
         Movement movement;
-        _3Dmodel gripper;
-        const double LearningRate = 1;
+        _3Dmodel model;
+        const double LearningRate = 0.5;
         const double SamplingDistance = 0.15;
-        bool moving = false;
         double[,] angles;
-        Vector3D target;
-        Vector3D point;
-        public bool MidpointReached = true;
+        Point3D point;
 
-        public InverseKinematic(Movement mv,_3Dmodel gripper)
+        int PointsDensity = 15;
+        double distance = 50;
+        Point3D[] Targets;
+        int TargetID = 0;
+
+        public InverseKinematic(Movement mv,_3Dmodel model)
         {
             angles = new double[3,3];
             movement = mv;
-            this.gripper = gripper;
+            this.model = model;
 
-            //debug later delete
-            target.X = -32.987374785963;
-            target.Y = -7.45200511932373;
-            target.Z = 22.1720001023346;
+            Targets = new Point3D[PointsDensity];
+            Settings();
         }
 
+        void Settings()
+        {
+            Point3D startPoint;
+            double angle = movement.elbow0.AngleInDegree + movement.elbow1.AngleInDegree + movement.elbow2.AngleInDegree - 22;
+            startPoint = model.griper.Bounds.Location;
+            startPoint.X = Math.Round(startPoint.X, 3);
+            startPoint.Z = Math.Round(startPoint.Z, 3);
+
+            for (int i = 0; i < PointsDensity; i++)
+            {
+                Targets[i].X = Math.Round(startPoint.X + (Math.Cos(DegreeToRadian(angle)) * ((distance / PointsDensity) * (i+1))), 3);
+                Targets[i].Z = Math.Round(startPoint.Z + (Math.Sin(DegreeToRadian(angle)) * ((distance / PointsDensity) * (i+1))), 3);
+                Targets[i].Y = startPoint.Y;
+            }
+
+            Console.WriteLine(startPoint);
+            Console.WriteLine(Targets[0]);
+        }
 
         public void InverseKinematics()
         {
             GetAngle();
 
-            //debug later delete
-            if (DistanceFromTarget() < 0.1)  //distance treshild je tolerancia 
+            if (DistanceFromTarget() < 0.5)  
             {
-                MidpointReached = true;
-                //Global.InverseKinematicMovement = false;
+
+                if (TargetID++<PointsDensity)
+                {
+                    TargetID++;
+                }
+                else
+                {
+                    Global.InverseKinematicMovement = false;
+                }
+                //MidpointReached = true;
+                
             }
 
             /*if (Global.triggered == true)  
@@ -86,49 +112,41 @@ namespace Robotic_Arm_Desktop
 
         private double DistanceFromTarget()
         {
-            point.X = gripper.griper.Bounds.Location.X;
-            point.Y = gripper.griper.Bounds.Location.Y;
-            point.Z = gripper.griper.Bounds.Location.Z;
+            point.X = model.griper.Bounds.Location.X;
+            point.Y = model.griper.Bounds.Location.Y;
+            point.Z = model.griper.Bounds.Location.Z;
 
-            return Math.Sqrt(Math.Pow((point.X - target.X), 2.0) + Math.Pow((point.Y - target.Y), 2.0) + Math.Pow((point.Z - target.Z), 2.0));
-        }
-
-        public void RealoadTarger()
-        {
-            //Vector3D arget = new Vector3D();
-
-            /*target.X = gripper.endpoint.Bounds.Location.X;
-            target.Y = gripper.endpoint.Bounds.Location.Y;
-            target.Z = gripper.endpoint.Bounds.Location.Z; */
-
-
-            //TranslateTransform3D translate = new TranslateTransform3D(target.X +xx, target.Y, target.Z -yy);
-
-            //gripper.elbow5.Transform = translate;
+            double distance = Math.Sqrt(Math.Pow((point.X - Targets[TargetID].X), 2.0) + Math.Pow((point.Y - Targets[TargetID].Y), 2.0) + Math.Pow((point.Z - Targets[TargetID].Z), 2.0));
+            return distance;
         }
 
 
         private void GetAngle()
         {
 
-            angles[0, 0] = movement.elbow0.AngleInDegree;
+            angles[2, 0] = movement.elbow0.AngleInDegree;
             angles[1, 0] = movement.elbow1.AngleInDegree;
-            angles[2, 0] = movement.elbow2.AngleInDegree;
+            angles[0, 0] = movement.elbow2.AngleInDegree;
 
-            angles[0, 1] = Arm.PwmToDegree(movement.elbow0.startfrom);
+            angles[2, 1] = Arm.PwmToDegree(movement.elbow0.startfrom);
             angles[1, 1] = Arm.PwmToDegree(movement.elbow1.startfrom);
-            angles[2, 1] = Arm.PwmToDegree(movement.elbow2.startfrom);
+            angles[0, 1] = Arm.PwmToDegree(movement.elbow2.startfrom);
 
-            angles[0, 2] = Arm.PwmToDegree(movement.elbow0.EndAt);
+            angles[2, 2] = Arm.PwmToDegree(movement.elbow0.EndAt);
             angles[1, 2] = Arm.PwmToDegree(movement.elbow1.EndAt);
-            angles[2, 2] = Arm.PwmToDegree(movement.elbow2.EndAt);
+            angles[0, 2] = Arm.PwmToDegree(movement.elbow2.EndAt);
         }
 
         private void SetAngle()
         {
-            movement.elbow0.Update(angles[0, 0], 0);
+            movement.elbow0.Update(angles[2, 0], 0);
             movement.elbow1.Update(angles[1, 0], 0);
-            movement.elbow2.Update(angles[2, 0], 0);
+            movement.elbow2.Update(angles[0, 0], 0);
+        }
+
+        private double DegreeToRadian(double angle)
+        {
+            return Math.PI * angle / 180.0;
         }
 
         private T Clamp<T>(T value, T min, T max)

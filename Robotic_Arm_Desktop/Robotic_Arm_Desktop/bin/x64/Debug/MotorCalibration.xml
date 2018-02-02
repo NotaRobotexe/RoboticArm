@@ -3,15 +3,15 @@
   <Elbow0>
     <MaxUse>576</MaxUse>
     <StartFrom>0</StartFrom>
-    <Speed>10</Speed>
+    <Speed>0</Speed>
   </Elbow0>
   <Elbow1>
-    <MaxUse>576</MaxUse>
+    <MaxUse>375.15</MaxUse>
     <StartFrom>0</StartFrom>
     <Speed>0</Speed>
   </Elbow1>
   <Elbow2>
-    <MaxUse>576</MaxUse>
+    <MaxUse>339</MaxUse>
     <StartFrom>0</StartFrom>
     <Speed>0</Speed>
   </Elbow2>
