@@ -20,7 +20,7 @@ namespace Robotic_Arm_Desktop
         public double AngleInDegree = 0;
 
         public double EndAt; 
-        public double startfrom;
+        public double startfrom = 102;
         public double SpeedBoost = 0;
 
         public void SetPostionFromKeyboadrOrGamepad(double increment)

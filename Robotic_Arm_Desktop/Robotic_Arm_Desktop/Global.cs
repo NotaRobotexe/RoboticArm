@@ -35,5 +35,7 @@ namespace Robotic_Arm_Desktop
         //debug only 
         public static bool DebugMode = true;
 
+        public static System.Windows.Media.Media3D.Vector3D point;
+
     }
 }

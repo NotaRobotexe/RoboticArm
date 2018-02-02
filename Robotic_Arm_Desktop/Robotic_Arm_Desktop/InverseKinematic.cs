@@ -11,13 +11,13 @@ namespace Robotic_Arm_Desktop
     {
         Movement movement;
         _3Dmodel model;
-        const double LearningRate = 0.5;
-        const double SamplingDistance = 0.15;
+        const double LearningRate = 0.2;
+        const double SamplingDistance = 0.08;
         double[,] angles;
         Point3D point;
 
-        int PointsDensity = 15;
-        double distance = 50;
+        int PointsDensity = 75;
+        double distance = 100;
         Point3D[] Targets;
         int TargetID = 0;
 
@@ -34,27 +34,32 @@ namespace Robotic_Arm_Desktop
         void Settings()
         {
             Point3D startPoint;
-            double angle = movement.elbow0.AngleInDegree + movement.elbow1.AngleInDegree + movement.elbow2.AngleInDegree - 22;
+            double angle =   movement.elbow0.AngleInDegree -( movement.elbow1.AngleInDegree + movement.elbow2.AngleInDegree + 22);
             startPoint = model.griper.Bounds.Location;
             startPoint.X = Math.Round(startPoint.X, 3);
             startPoint.Z = Math.Round(startPoint.Z, 3);
 
             for (int i = 0; i < PointsDensity; i++)
             {
-                Targets[i].X = Math.Round(startPoint.X + (Math.Cos(DegreeToRadian(angle)) * ((distance / PointsDensity) * (i+1))), 3);
+                Targets[i].X = Math.Round(startPoint.X + (Math.Cos(DegreeToRadian(angle)) * (((-1*distance) / PointsDensity) * (i+1))), 3);
                 Targets[i].Z = Math.Round(startPoint.Z + (Math.Sin(DegreeToRadian(angle)) * ((distance / PointsDensity) * (i+1))), 3);
                 Targets[i].Y = startPoint.Y;
             }
 
+            Global.point.X = Targets[PointsDensity - 1].X;
+            Global.point.Y = Targets[PointsDensity - 1].Y;
+            Global.point.Z = Targets[PointsDensity - 1].Z;
+            Console.WriteLine(angle);
+
             Console.WriteLine(startPoint);
-            Console.WriteLine(Targets[0]);
+            Console.WriteLine(Targets[PointsDensity-1]);
         }
 
         public void InverseKinematics()
         {
             GetAngle();
 
-            if (DistanceFromTarget() < 0.5)  
+            if (DistanceFromTarget() < 0.08)  
             {
 
                 if (TargetID++<PointsDensity)
@@ -65,8 +70,6 @@ namespace Robotic_Arm_Desktop
                 {
                     Global.InverseKinematicMovement = false;
                 }
-                //MidpointReached = true;
-                
             }
 
             /*if (Global.triggered == true)  
@@ -159,5 +162,6 @@ namespace Robotic_Arm_Desktop
                     result = min;
                 return result;
             }
+
     }
 }

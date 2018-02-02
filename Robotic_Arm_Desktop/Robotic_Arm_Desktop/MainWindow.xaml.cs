@@ -139,8 +139,6 @@ namespace Robotic_Arm_Desktop
 
             buttonAnimationOnOff(HUDbutton, false);
 
-            ForceMovement = new BruteForceMovement(movement, model);
-
             loadingDone = true;
         }
 
@@ -1101,23 +1099,16 @@ namespace Robotic_Arm_Desktop
 
             IK_timer = new DispatcherTimer();
             IK_timer.Tick += IK_timer_Tick;
-            IK_timer.Interval = new TimeSpan(0, 0, 0, 0, 1);
+            IK_timer.Interval = new TimeSpan(0, 0, 0, 0, 0);
             IK_timer.Start();
 
         }
 
+
         private void IK_timer_Tick(object sender, EventArgs e)
         {
-            /*if (inverse.MidpointReached==true)
-            {
-                inverse.MidpointReached = false;
-                inverse.RealoadTarger();
-            }*/
-
-            //inverse.InverseKinematics();
             if (Global.InverseKinematicMovement == true)
             {
-                //inverse.RealoadTarger();
                 inverse.InverseKinematics();
             }
             else
@@ -1126,14 +1117,6 @@ namespace Robotic_Arm_Desktop
             }
         }
 
-        /*Brute Force "Fake inverse kinematic"*/
-
-        /*private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            ForceMovement.InitBRM();
-            MessageBox.Show("end");
-            
-        }*/
     }
 }
 

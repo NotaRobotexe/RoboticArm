@@ -31,7 +31,7 @@ namespace Robotic_Arm_Desktop
             elbow2 = importer.Load(@"ArmModel/elbow2.stl");
             baseHolder = importer.Load(@"ArmModel/base.obj"); 
             griper = importer.Load(@"ArmModel/graper.stl");
-           // test = importer.Load(@"ArmModel/graper.stl");
+            test = importer.Load(@"ArmModel/graper.stl");
 
             CallUpdate();
 
@@ -41,7 +41,7 @@ namespace Robotic_Arm_Desktop
             group.Children.Add(elbow2);
             group.Children.Add(baseHolder);
             group.Children.Add(griper);
-            //group.Children.Add(test);
+            group.Children.Add(test);
         }
 
         public void UpdateModel(Movement movement)
@@ -68,7 +68,7 @@ namespace Robotic_Arm_Desktop
             Transform3DGroup tra3 = new Transform3DGroup();
             Transform3DGroup tra4 = new Transform3DGroup();
             Transform3DGroup tra5 = new Transform3DGroup();
-            //Transform3DGroup tra6 = new Transform3DGroup();
+            Transform3DGroup tra6 = new Transform3DGroup();
 
             //set position of models
             translate = new TranslateTransform3D(0, -4, 0);
@@ -110,9 +110,9 @@ namespace Robotic_Arm_Desktop
             elbow2.Transform = tra4;
             griper.Transform = tra5;
 
-            /*tra6.Children.Add(new TranslateTransform3D(25.4931449890137, -39.7999992370605, 2.23200511932373));
-            tra6.Children.Add(new TranslateTransform3D(elbow2.Bounds.Location.X, -4, elbow2.Bounds.Location.Z));
-            test.Transform = tra6;*/
+            tra6.Children.Add(new TranslateTransform3D(25.4931449890137, -39.7999992370605, 2.23200511932373));
+            tra6.Children.Add(new TranslateTransform3D(Global.point));
+            test.Transform = tra6;
 
             //Console.WriteLine(elbow2.Bounds.Location);
 
