@@ -26,8 +26,6 @@ namespace Robotic_Arm_Desktop
             InitializeComponent();
         }
 
-        bool saved = false;
-
         private void SaveScript(object sender, RoutedEventArgs e)
         {
             string content = EditorNew.Text;
@@ -42,28 +40,25 @@ namespace Robotic_Arm_Desktop
             if (path != "Script.py")
             {
                 File.WriteAllText(path, content);
-                saved = true;
             }
+        }
 
+        protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
+        {
+            base.OnMouseLeftButtonDown(e);
 
+            // Begin dragging the window
+            this.DragMove();
         }
 
         private void CloseWindows(object sender, RoutedEventArgs e)
         {
-            if (saved == true)
-            {
                 this.Close();
-            }
-            else
-            {
-                MessageBox.Show("Save or delete a file first");
-            }
         }
 
         private void Clearbox(object sender, RoutedEventArgs e)
         {
             EditorNew.Clear();
-            saved = true;
         }
 
         private void OpenScript(object sender, RoutedEventArgs e)

@@ -34,14 +34,33 @@ namespace Robotic_Arm_Desktop
             WindowState = WindowState.Minimized;
         }
 
-        private void Next_Pressed(object sender, RoutedEventArgs e)
+        private async void Next_Pressed(object sender, RoutedEventArgs e)
         {
+            tothemain.IsEnabled = false;
             Global.ipaddres = IpAddres.Text;
-            Console.WriteLine(Global.ipaddres);
+            loading.Visibility = Visibility.Visible;
+
+            await Task.Run(() =>
+            {
+                System.Threading.Thread.Sleep(1000);
+            });
+
             MainWindow main = new MainWindow();
             App.Current.MainWindow = main;
-            this.Close();
             main.Show();
+
+            if (Global.loadingDone == true)
+            {
+                this.Close();
+            }
+            tothemain.IsEnabled = true;
+        }
+
+
+
+        private void Button_Click_2(object sender, RoutedEventArgs e)
+        {
+            Application.Current.Shutdown();
         }
     }
 }

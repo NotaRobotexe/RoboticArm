@@ -24,7 +24,6 @@ using Microsoft.Win32;
 
 namespace Robotic_Arm_Desktop
 {
-    //TODO: Safety control - taktiez netreba moc
     //TODO: fixnut ostatne buggy
     //TODO: responzivnost - nepotrebne fullHD staci
     //TODO: Spracovanie obrazu a vsetky tie blbosti - hot hot hot hot
@@ -39,7 +38,6 @@ namespace Robotic_Arm_Desktop
         Gamepad gamepad;
         XmlReadWriter xrw;
         VideoStream stream;
-        BruteForceMovement ForceMovement;
         RemoteNetwork remoteNetwork;
 
         string ScriptPath = "";
@@ -47,7 +45,6 @@ namespace Robotic_Arm_Desktop
         bool AutoMode = false;
         bool gamepadConnected = false;
         bool hud = false;
-        bool loadingDone = false;
         bool CapturingTemplate = false;
         bool WaitForTrigger = false;
         int framerate = 0;
@@ -73,7 +70,7 @@ namespace Robotic_Arm_Desktop
 
         public MainWindow()
         {
-
+            //WindowState = WindowState.Minimized;
             Directory.CreateDirectory(System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\RoboticArm\\Scripts");
             InitializeComponent();
 
@@ -100,16 +97,13 @@ namespace Robotic_Arm_Desktop
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            //keyboard animation 
             ControllstatusTimer = new DispatcherTimer();
             ControllstatusTimer.Tick += ControllstatusTimer_Tick;
             ControllstatusTimer.Interval = new TimeSpan(0, 0, 0, 0, 300);
 
-            
             Arm.PositonChange += Arm_PositonChange;
             movement.IncrementationChange += Movemend_IncrementationChange;
 
-            InitializeGamepad();
             helix.Content = model.group;
             HelixViewport3D.Camera.Position = new Point3D(0,75,85);
             HelixViewport3D.Camera.LookDirection = new Vector3D(0, -1, -1);
@@ -138,41 +132,20 @@ namespace Robotic_Arm_Desktop
             FrameRateCounter.Start();
 
             buttonAnimationOnOff(HUDbutton, false);
+            this.incLabel.Content = Math.Round(movement.valueCount, 3);
 
-            loadingDone = true;
+            //WindowState = WindowState.Maximized;
+            Global.loadingDone = true;
+
+            InitializeGamepad();
         }
 
         /*undone things*/
 
-        private void EnableAutoMode_Click(object sender, RoutedEventArgs e)
-        {
-            AutoMode = !AutoMode;
-
-            if (AutoMode == true)
-            {
-
-                manualModeStatus.Content = "Disabled";
-                ManualModeStatusEllipse.Fill = new SolidColorBrush(Color.FromRgb(172, 33, 33));
-            }
-            else
-            {
-                manualModeStatus.Content = "Enabled";
-                ManualModeStatusEllipse.Fill = new SolidColorBrush(Color.FromRgb(37, 37, 38));
-            }
-
-            movement.keyboardenabled = !movement.keyboardenabled;
-            buttonAnimationOnOff(keyboardEnalbeButton, movement.keyboardenabled);
-            if (gamepad.gamepadConnected == true )
-            {
-                movement.gamepadEnabled = !movement.gamepadEnabled;
-                buttonAnimationOnOff(GamepadEnalbeButton, movement.gamepadEnabled);
-            }
-        }
-
         /*video stream and other thing with image control*/
         private async void SetStreamSettings()
         {
-            if (loadingDone==true){
+            if (Global.loadingDone ==true){
                 stream.ProcesEnd();
                 stream = new VideoStream();
             }
@@ -308,7 +281,7 @@ namespace Robotic_Arm_Desktop
         {
             if (ControllstatusTimer.IsEnabled == false)
             {
-                ManualModeStatusEllipse.Fill = new SolidColorBrush(Color.FromRgb(0, 153, 0));
+                ManualModeStatusEllipse.Fill = new SolidColorBrush(Color.FromRgb(117, 255, 67));
 
                 
                 ControllstatusTimer.Start();
@@ -317,7 +290,7 @@ namespace Robotic_Arm_Desktop
 
         private void ControllstatusTimer_Tick(object sender, EventArgs e)
         {
-            ManualModeStatusEllipse.Fill = new SolidColorBrush(Color.FromRgb(37, 37, 38));
+            ManualModeStatusEllipse.Fill = new SolidColorBrush(Color.FromRgb(30, 190, 247));
             ControllstatusTimer.Stop();
         }
 
@@ -381,7 +354,7 @@ namespace Robotic_Arm_Desktop
             }
         }
 
-        public static object GC { get; internal set; }
+        public static object GC { get; internal set; }  //wtf co to je??
 
         /*gamepad and keyboard basic input*/
         private void InitializeGamepad()
@@ -456,11 +429,10 @@ namespace Robotic_Arm_Desktop
         }
 
         /*Motors calibration and settings */
-        int OpenListbox;
 
         private void ListboxChange(object sender, SelectionChangedEventArgs e)
         {
-            if (loadingDone==true)
+            if (Global.loadingDone ==true)
             {
                 MotorCalibrationDisplay();
             }
@@ -468,7 +440,7 @@ namespace Robotic_Arm_Desktop
 
         private void MotorCalibrationDisplay()
         {
-            if (listBox.SelectedIndex == 0)
+            if (listBox.SelectedIndex == 0 && max != null)
             {
                 max.Maximum = Arm.max_Pwm;
                 max.Minimum = Arm.min_Pwm;
@@ -482,10 +454,6 @@ namespace Robotic_Arm_Desktop
 
                 double avalible = 180 - Arm.PwmToDegree(start.Value) - (180 - Arm.PwmToDegree(max.Value));
                 availableD.Content = Math.Round(avalible, 2).ToString() + " °";
-
-                speedR.Text = movement.elbow0.SpeedBoost.ToString();
-
-                OpenListbox = 0;
             }
             else if(listBox.SelectedIndex == 1)
             {
@@ -501,10 +469,6 @@ namespace Robotic_Arm_Desktop
 
                 double avalible = 180 - Arm.PwmToDegree(start.Value) - (180 - Arm.PwmToDegree(max.Value));
                 availableD.Content = Math.Round(avalible, 2).ToString() + " °";
-
-                speedR.Text = movement.elbow1.SpeedBoost.ToString();
-
-                OpenListbox = 1;
             }
             else if (listBox.SelectedIndex == 2)
             {
@@ -520,10 +484,6 @@ namespace Robotic_Arm_Desktop
 
                 double avalible = 180 - Arm.PwmToDegree(start.Value) - (180 - Arm.PwmToDegree(max.Value));
                 availableD.Content = Math.Round(avalible, 2).ToString() + " °";
-
-                speedR.Text = movement.elbow2.SpeedBoost.ToString();
-
-                OpenListbox = 2;
             }
             else if (listBox.SelectedIndex == 3)
             {
@@ -539,10 +499,6 @@ namespace Robotic_Arm_Desktop
 
                 double avalible = 180 - Arm.PwmToDegree(start.Value) - (180 - Arm.PwmToDegree(max.Value));
                 availableD.Content = Math.Round(avalible, 2).ToString() + " °";
-
-                speedR.Text = movement.baseMovemend.SpeedBoost.ToString();
-
-                OpenListbox = 3;
             }
             else if (listBox.SelectedIndex == 4)
             {
@@ -558,10 +514,6 @@ namespace Robotic_Arm_Desktop
 
                 double avalible = 180 - Arm.PwmToDegree(start.Value) - (180 - Arm.PwmToDegree(max.Value));
                 availableD.Content = Math.Round(avalible, 2).ToString() + " °";
-
-                speedR.Text = movement.griperRotation.SpeedBoost.ToString();
-
-                OpenListbox = 4;
             }
             else if (listBox.SelectedIndex == 5)
             {
@@ -577,16 +529,12 @@ namespace Robotic_Arm_Desktop
 
                 double avalible = 180 - Arm.PwmToDegree(start.Value) - (180 - Arm.PwmToDegree(max.Value));
                 availableD.Content = Math.Round(avalible, 2).ToString() + " °";
-
-                speedR.Text = movement.griper.SpeedBoost.ToString();
-
-                OpenListbox = 5;
             }
         }
 
         private void MaxUseSliderChange(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (loadingDone == true)
+            if (Global.loadingDone == true)
             {
                 if (listBox.SelectedIndex == 0)
                 {
@@ -641,7 +589,7 @@ namespace Robotic_Arm_Desktop
 
         private void StartFromSliderChange(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (loadingDone == true)
+            if (Global.loadingDone == true)
             {
                 if (listBox.SelectedIndex == 0)
                 {
@@ -696,28 +644,6 @@ namespace Robotic_Arm_Desktop
 
         private void SaveMotorsStats(object sender, RoutedEventArgs e)
         {
-            switch (OpenListbox)
-            {
-                case 0:
-                    movement.elbow0.SpeedBoost = Convert.ToDouble(speedR.Text);
-                    break;
-                case 1:
-                    movement.elbow1.SpeedBoost = Convert.ToDouble(speedR.Text);
-                    break;
-                case 2:
-                    movement.elbow2.SpeedBoost = Convert.ToDouble(speedR.Text);
-                    break;
-                case 3:
-                    movement.baseMovemend.SpeedBoost = Convert.ToDouble(speedR.Text);
-                    break;
-                case 4:
-                    movement.griperRotation.SpeedBoost = Convert.ToDouble(speedR.Text);
-                    break;
-                case 5:
-                    movement.griper.SpeedBoost = Convert.ToDouble(speedR.Text);
-                    break;
-            }
-
             xrw.UpdateFile(movement);
         }
 
@@ -731,7 +657,7 @@ namespace Robotic_Arm_Desktop
                  DrawDataAndUpdateModel();
             });
 
-            if (loadingDone == true)
+            if (Global.loadingDone == true)
             {
                 send_pos.AnalyzeAndSend();
             }
@@ -753,11 +679,6 @@ namespace Robotic_Arm_Desktop
             {
                 RotateTransform rotateTransform = new RotateTransform(movement.griperRotation.AngleInDegree-90);
                 hudImage.RenderTransform = rotateTransform;
-            }
-
-            if (CapturingTemplate == true)
-            {
-                modeposition0.Content = baseRa.Content + " " + elb0a.Content + " " + elb1a.Content + " " + elb2a.Content + " " + grra.Content;
             }
 
             OnOffControllStatus(); //controll status just for effect
@@ -929,6 +850,7 @@ namespace Robotic_Arm_Desktop
         {
             while (Global.connected == true)
             {
+                OnOffControllStatus();
                 string data = await netData.ReceiveData();
                 Stats.getData(data);
 
@@ -945,6 +867,7 @@ namespace Robotic_Arm_Desktop
                 if (trigger == "false")
                 {
                     Global.triggered = false;
+                    OnOffControllStatus();
                 }
                 else
                 {
@@ -972,8 +895,9 @@ namespace Robotic_Arm_Desktop
 
         private void NewFanSpeed(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (loadingDone == true)
+            if (Global.connected == true)
             {
+                OnOffControllStatus();
                 int speed = (int)Math.Round(fanSlider.Value);
                 netFan.SendData(speed.ToString());
             }
@@ -1090,7 +1014,7 @@ namespace Robotic_Arm_Desktop
             Global.RemoteExc = !Global.RemoteExc;
         }
 
-        /*INVERSE kinematic         Not what I wanned  but it is really cool and can be use later*/
+        /*INVERSE kinematic -straight line*/
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
@@ -1103,7 +1027,6 @@ namespace Robotic_Arm_Desktop
             IK_timer.Start();
 
         }
-
 
         private void IK_timer_Tick(object sender, EventArgs e)
         {

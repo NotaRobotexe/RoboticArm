@@ -21,7 +21,6 @@ namespace Robotic_Arm_Desktop
 
         public double EndAt; 
         public double startfrom = 102;
-        public double SpeedBoost = 0;
 
         public void SetPostionFromKeyboadrOrGamepad(double increment)
         {
@@ -44,7 +43,6 @@ namespace Robotic_Arm_Desktop
                 AngleInPWM = pos;
                 AngleInDegree = (pos - min_Pwm) / PwmPerDegree;
             }
-            Thread.Sleep((int)SpeedBoost);
             OnPositionChange(EventArgs.Empty);
         }
 

@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="BetterPopUpBox" Height="150" Width="400"  WindowStyle="None" WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
     <Grid Background="#FF1b1b1c">
-        <Label Name="betterLabel" Content="Label" HorizontalAlignment="Center" Margin="10,57,10,0" VerticalAlignment="Top" FontSize="18" Foreground="#FF63D2FA" FontWeight="Bold" Width="380" HorizontalContentAlignment="Center"/>
+        <Label Name="betterLabel" Content="Label" HorizontalAlignment="Center" Margin="10,57,10,0" VerticalAlignment="Top" FontSize="18" Foreground="#ff20BEF7" FontWeight="Bold" Width="380" HorizontalContentAlignment="Center"/>
 
     </Grid>
 </Window>
