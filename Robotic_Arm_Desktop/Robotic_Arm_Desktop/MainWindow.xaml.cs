@@ -24,9 +24,19 @@ using Microsoft.Win32;
 
 namespace Robotic_Arm_Desktop
 {
-    //TODO: fixnut ostatne buggy
-    //TODO: responzivnost - nepotrebne fullHD staci
-    //TODO: Spracovanie obrazu a vsetky tie blbosti - hot hot hot hot
+    //TODO: fixnut buggy
+    //TODO: loading screen 
+    //TODO: YOLO implementation
+    //TODO: Object follow
+    //TODO: auto boot
+    //TODO: remote stream
+    //TODO: remote script execution
+    //TODO: script update
+    //TODO: trigger 
+    //TODO: Stream Loading
+    //TODO: message if exception is throw;
+    //TODO: recoverry popout windows
+    //TODO: vsetko zbalit do kopy
     //TODO: spiest sa ako babovka #1 #2 #3
     //TODO: Prestat pridavat TODO
 
@@ -279,12 +289,13 @@ namespace Robotic_Arm_Desktop
         /*manual mode stuff here*/
         private void OnOffControllStatus() //ManualModeStatusEllipse turning on off
         {
-            if (ControllstatusTimer.IsEnabled == false)
+            if (ControllstatusTimer != null)
             {
-                ManualModeStatusEllipse.Fill = new SolidColorBrush(Color.FromRgb(117, 255, 67));
-
-                
-                ControllstatusTimer.Start();
+                if (ControllstatusTimer.IsEnabled == false)
+                {
+                    ManualModeStatusEllipse.Fill = new SolidColorBrush(Color.FromRgb(117, 255, 67));
+                    ControllstatusTimer.Start();
+                }
             }
         }
 
@@ -895,7 +906,7 @@ namespace Robotic_Arm_Desktop
 
         private void NewFanSpeed(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (Global.connected == true)
+            if (Global.connected == true && netFan != null)
             {
                 OnOffControllStatus();
                 int speed = (int)Math.Round(fanSlider.Value);
@@ -958,11 +969,20 @@ namespace Robotic_Arm_Desktop
                 {
                     remoteNetwork = new RemoteNetwork();
                     string ip = targetIp.Text;
-                    remoteNetwork.InitCom(ip, movement);
+                    int connectionStatus = remoteNetwork.InitCom(ip, movement);
+
+                    if (connectionStatus == 0)
+                    {
+                        remotestatus.Content = "Online";
+                    }
+                    else
+                    {
+                        remotestatus.Content = "Offline";
+                    }
 
                     string script = File.ReadAllText(ScriptPath);
 
-                    if (script != null)
+                    if (script != null && connectionStatus == 0)
                     {
                         remoteNetwork.UploadScript(script);
                         string ack = remoteNetwork.Acknowlage();
@@ -1012,6 +1032,15 @@ namespace Robotic_Arm_Desktop
         private void RemoteExecution_Change(object sender, RoutedEventArgs e)
         {
             Global.RemoteExc = !Global.RemoteExc;
+
+            if (Global.RemoteExc==true)
+            {
+                remotestatus.Content = "Active";
+            }
+            else
+            {
+                remotestatus.Content = "Non-Active";
+            }
         }
 
         /*INVERSE kinematic -straight line*/

@@ -143,6 +143,7 @@ namespace Robotic_Arm_Desktop
         private Socket socket;
         public bool ScriptRunning = false;
         public string InputMsg = "";
+        private bool connected = false;
 
         public int InitCom(string ip, Movement m)
         {
@@ -151,6 +152,7 @@ namespace Robotic_Arm_Desktop
             try
             {
                 socket.Connect(IPAddress.Parse(ip), 6972);
+                connected = true;
                 return 0;
             }
             catch (Exception e)
@@ -182,46 +184,49 @@ namespace Robotic_Arm_Desktop
 
         public async void Communication()
         {
-            await Task.Run(() =>
+            if (connected == true)
             {
-                while (ScriptRunning)
+                await Task.Run(() =>
                 {
-                    string msg_raw = ReceiveData();
-                    string msg = msg_raw.Substring(0, msg_raw.IndexOf('\0'));
-                    if (msg == "")
+                    while (ScriptRunning)
                     {
-                        break;
-                    }
-
-                    byte ScriptMessage = Convert.ToByte(msg.Substring(0, 1));
-
-                    switch (ScriptMessage)
-                    {
-                        case 1:
-                            //trigger
+                        string msg_raw = ReceiveData();
+                        string msg = msg_raw.Substring(0, msg_raw.IndexOf('\0'));
+                        if (msg == "")
+                        {
                             break;
+                        }
 
-                        case 2:
-                            InputMessaging();
-                            break;
+                        byte ScriptMessage = Convert.ToByte(msg.Substring(0, 1));
 
-                        case 3:
-                            AutoModeTemplate.ScriptDefaultMovemend(msg, movement);
-                            break;
-                        case 4:
-                            MovingStatus();
-                            break;
+                        switch (ScriptMessage)
+                        {
+                            case 1:
+                                //trigger
+                                break;
 
-                        case 5:
-                            SetMovSpeed(msg);
-                            break;
+                            case 2:
+                                InputMessaging();
+                                break;
 
-                        default:
-                            break;
+                            case 3:
+                                AutoModeTemplate.ScriptDefaultMovemend(msg, movement);
+                                break;
+                            case 4:
+                                MovingStatus();
+                                break;
+
+                            case 5:
+                                SetMovSpeed(msg);
+                                break;
+
+                            default:
+                                break;
+                        }
                     }
                 }
+                );
             }
-            );
         }
 
         private void SetMovSpeed(string msg)
@@ -261,6 +266,7 @@ namespace Robotic_Arm_Desktop
     {
         private Movement movement;
         private Socket socket;
+        private bool connected = false;
 
         public int InitCom(string ip, Movement m)
         {
@@ -269,6 +275,7 @@ namespace Robotic_Arm_Desktop
             try
             {
                 socket.Connect(IPAddress.Parse(ip), 6973);
+                connected = true;
                 return 0;
             }
             catch (Exception e)

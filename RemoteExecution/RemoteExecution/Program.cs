@@ -8,8 +8,12 @@ namespace RemoteExecution
     {
         static Process python;
         static Network network;
+        static bool relaunch = false;
+
         static void Main(string[] args)
         {
+            begin: //Every day we're fuhrer and fuhrer from God;
+
             network = new Network();
             network.init();
 
@@ -17,6 +21,11 @@ namespace RemoteExecution
             {
                 network.RecieveData();
                 RunORStopScript();
+                if (relaunch == true)
+                {
+                    relaunch = false;
+                    goto begin;
+                }
             }
         }
 
@@ -24,12 +33,8 @@ namespace RemoteExecution
         {
             if (network.raw.Substring(0,3)=="END")
             {
-                Console.WriteLine(python.HasExited);
-                if (python.HasExited)
-                {
-
-                }
                 python.Close();
+
             }
             else
             {
@@ -47,7 +52,15 @@ namespace RemoteExecution
             python.StartInfo.UseShellExecute = true;
             python.StartInfo.RedirectStandardOutput = false;
             python.StartInfo.CreateNoWindow = false;
+            python.EnableRaisingEvents = true;
+            python.Exited += Python_Exited;
             python.Start();
         }
+
+        private static void Python_Exited(object sender, EventArgs e)
+        {
+
+        }
+
     }
 }

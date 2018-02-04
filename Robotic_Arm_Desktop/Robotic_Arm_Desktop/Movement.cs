@@ -65,7 +65,6 @@ namespace Robotic_Arm_Desktop
             }
         }
 
-
     }
 
     public class Movement

@@ -50,7 +50,7 @@
             <Slider x:Name="Contrast" HorizontalAlignment="Left" Margin="184,104,0,0" VerticalAlignment="Top" Minimum="-100" Value="0" Maximum="100" Height="22" Width="165" SmallChange="1"/>
             <Label Content="Brightness :" HorizontalAlignment="Left" Margin="19,131,0,0" VerticalAlignment="Top" Foreground="White" FontSize="18" FontWeight="Bold"/>
             <Label Content="Contrast :" HorizontalAlignment="Left" Margin="19,95,0,0" VerticalAlignment="Top" Foreground="White" FontSize="18" FontWeight="Bold"/>
-            <Button x:Name="HUDbutton" Content="Disabled" HorizontalAlignment="Left" Margin="222,259,0,0" VerticalAlignment="Top" Width="90" Height="29" Background="#FF2E2E2E" BorderBrush="Gainsboro" BorderThickness="2" FontSize="17" FontFamily="Segoe UI Semibold" ForceCursor="True" Foreground="White" Click="HUDclick"/>
+            <Button Style="{DynamicResource ButtonStyle1}" x:Name="HUDbutton" Content="Disabled" HorizontalAlignment="Left" Margin="222,259,0,0" VerticalAlignment="Top" Width="90" Height="29" Background="#FF2E2E2E" BorderBrush="Gainsboro" BorderThickness="2" FontSize="17" FontFamily="Segoe UI Semibold" ForceCursor="True" Foreground="White" Click="HUDclick"/>
             <Label Content="Head-up display :" HorizontalAlignment="Left" Margin="19,254,0,0" VerticalAlignment="Top" Foreground="White" FontSize="18" FontWeight="Bold"/>
             <Label Content="Resolution :" HorizontalAlignment="Left" Margin="19,59,0,0" VerticalAlignment="Top" Foreground="White" FontSize="18" FontWeight="Bold"/>
             <TextBox Name="widthL" HorizontalAlignment="Left" Height="27" Margin="161,63,0,0" TextWrapping="Wrap" Text="900" VerticalAlignment="Top" Width="66" Background="#FF2E2E2E" BorderThickness="2" BorderBrush="#FFD7D8D8" Foreground="White" FontSize="18" TextAlignment="Center"/>
@@ -107,7 +107,7 @@
             <Button Style="{DynamicResource ButtonStyle1}" Content="Disabled" HorizontalAlignment="Left" Margin="38,52,0,0" VerticalAlignment="Top" Width="90" Height="28" Background="#FF2E2E2E" BorderBrush="Gainsboro" BorderThickness="2" FontSize="16" FontFamily="Segoe UI Semibold" ForceCursor="True" Foreground="White" Click="RemoteExecution_Change"/>
             <TextBox x:Name="targetIp" HorizontalAlignment="Left" Background="#FF2E2E2E" BorderThickness="2" BorderBrush="#FFD7D8D8" Foreground="White" FontSize="16" FontStyle="Italic" TextDecorations="{x:Null}" FontFamily="Segoe UI Emoji" Margin="38,122,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="163"/>
             <Label Content="Remote execution status :" HorizontalAlignment="Left" Margin="38,162,0,0" VerticalAlignment="Top" Foreground="White" FontSize="18" FontWeight="Bold"/>
-            <Label Content="Non-active" HorizontalAlignment="Left" Margin="281,166,0,0" VerticalAlignment="Top" FontSize="16" Foreground="#FF1EBEF7" FontWeight="Bold"/>
+            <Label Name="remotestatus" Content="Non-active" HorizontalAlignment="Left" Margin="281,166,0,0" VerticalAlignment="Top" FontSize="16" Foreground="#FF1EBEF7" FontWeight="Bold"/>
 
         </Grid>
         <Grid HorizontalAlignment="Left" Height="410" Margin="20,650,0,0" VerticalAlignment="Top" Width="348" Background="#FF252526">
@@ -135,8 +135,8 @@
             <Label Content="Manual Mode" HorizontalAlignment="Left" Margin="18,10,0,0" VerticalAlignment="Top" Foreground="White" FontSize="22" FontWeight="Bold"/>
             <Label Content="Keyboard :" HorizontalAlignment="Left" Margin="18,62,0,0" VerticalAlignment="Top" Foreground="White" FontSize="18" FontWeight="Bold"/>
             <Label x:Name="gamepadLabel" Content="Gamepad :" HorizontalAlignment="Left" Margin="18,105,0,0" VerticalAlignment="Top" Foreground="White" FontSize="18" FontWeight="Bold"/>
-            <Button x:Name="keyboardEnalbeButton" Content="Enabled" HorizontalAlignment="Left" Margin="232,67,0,0" VerticalAlignment="Top"  Width="90" Height="29" Background="#FF2E2E2E" BorderBrush="Gainsboro" BorderThickness="2" FontSize="17" FontFamily="Segoe UI Semibold" ForceCursor="True" Foreground="White" Click="KeyboardOnOff"/>
-            <Button x:Name="GamepadEnalbeButton" Content="Enabled" HorizontalAlignment="Left" Margin="232,110,0,0" VerticalAlignment="Top" Width="90" Height="29" Background="#FF2E2E2E" BorderBrush="Gainsboro" BorderThickness="2" FontSize="17" FontFamily="Segoe UI Semibold" ForceCursor="True" Foreground="White" Click="GamepadOnOff"/>
+            <Button Style="{DynamicResource ButtonStyle1}" x:Name="keyboardEnalbeButton" Content="Enabled" HorizontalAlignment="Left" Margin="232,67,0,0" VerticalAlignment="Top"  Width="90" Height="29" Background="#FF2E2E2E" BorderBrush="Gainsboro" BorderThickness="2" FontSize="17" FontFamily="Segoe UI Semibold" ForceCursor="True" Foreground="White" Click="KeyboardOnOff"/>
+            <Button Style="{DynamicResource ButtonStyle1}"  x:Name="GamepadEnalbeButton" Content="Enabled" HorizontalAlignment="Left" Margin="232,110,0,0" VerticalAlignment="Top" Width="90" Height="29" Background="#FF2E2E2E" BorderBrush="Gainsboro" BorderThickness="2" FontSize="17" FontFamily="Segoe UI Semibold" ForceCursor="True" Foreground="White" Click="GamepadOnOff"/>
             <Ellipse x:Name="ManualModeStatusEllipse" Fill="#FF1EBEF7" HorizontalAlignment="Left" Height="12" Margin="-1,-405,0,0" VerticalAlignment="Top" Width="12" RenderTransformOrigin="-0.6,0.533"/>
         </Grid>
         <Image x:Name="ViewFrame" HorizontalAlignment="Left" Height="607" Margin="815,20,0,0" VerticalAlignment="Top" Width="1080" Panel.ZIndex="-3" />
@@ -171,7 +171,7 @@
             <Label Content="Load Script :" HorizontalAlignment="Left" Margin="10,58,0,0" VerticalAlignment="Top" Foreground="White" FontSize="18" FontWeight="Bold"/>
             <Button  Style="{DynamicResource ButtonStyle1}" x:Name="ScriptEditor" Content="Open" HorizontalAlignment="Left" Margin="153,204,0,0" VerticalAlignment="Top" Width="90" Height="28" Background="#FF2E2E2E" BorderBrush="Gainsboro" BorderThickness="2" FontSize="16" FontFamily="Segoe UI Semibold" ForceCursor="True" Foreground="White" Click="OpenScriptEditor"/>
             <TextBox HorizontalAlignment="Left" Focusable="False" IsReadOnly="True" Height="73" Margin="95,246,-15,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="173" UndoLimit="200" FontSize="15" Foreground="White" Background="#FF2D2D30"/>
-            <Button Content="Send" HorizontalAlignment="Left" Margin="95,372,0,0" VerticalAlignment="Top" Width="90" Height="28" Background="#FF2E2E2E" BorderBrush="Gainsboro" BorderThickness="2" FontSize="16" FontFamily="Segoe UI Semibold" ForceCursor="True" Foreground="White" Click="InputSend_Click"/>
+            <Button Style="{DynamicResource ButtonStyle1}" Content="Send" HorizontalAlignment="Left" Margin="95,372,0,0" VerticalAlignment="Top" Width="90" Height="28" Background="#FF2E2E2E" BorderBrush="Gainsboro" BorderThickness="2" FontSize="16" FontFamily="Segoe UI Semibold" ForceCursor="True" Foreground="White" Click="InputSend_Click"/>
         </Grid>
 
 
