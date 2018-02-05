@@ -27,6 +27,28 @@ namespace Robotic_Arm_Desktop
             {
                 CheckGamepadMode();
             }
+            else if (Global.BetterMessageBoxErrorIndex == 2)
+            {
+                GlobalException();
+            }
+            else if (Global.BetterMessageBoxErrorIndex == 3)
+            {
+                RecoveryMode();
+            }
+
+        }
+
+        void RecoveryMode()
+        {
+            betterLabel.Content = "Recovery mode is now activated.";
+            shBut.Visibility = Visibility.Visible;
+        }
+
+        private void GlobalException()
+        {
+            betterLabel.FontSize = 15;
+            betterLabel.Content = "Something went wrong! &#xA; Restart program and reconnect robotic arm.";
+            shBut.Visibility = Visibility.Visible;
 
         }
 
@@ -50,5 +72,17 @@ namespace Robotic_Arm_Desktop
             await Task.Delay(delay);
         }
 
+        private void shBut_Click(object sender, RoutedEventArgs e)
+        {
+            if (Global.BetterMessageBoxErrorIndex ==2){
+                Application.Current.Shutdown();
+            }
+            else if (Global.BetterMessageBoxErrorIndex == 3){
+                shBut.Visibility = Visibility.Hidden;
+                Global.Recovery = true;
+                this.Close();
+            }
+
+        }
     }
 }

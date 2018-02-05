@@ -296,10 +296,11 @@
             </Button.Background>
         </Button>
         <Grid HorizontalAlignment="Left" Height="456" Margin="792,276,0,0" VerticalAlignment="Top" Width="375" Background="#FF161617">
+            <TextBox Name="ipadd" HorizontalAlignment="Left" Height="29" Margin="190,26,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="157" Background="#FF2E2E2E" BorderBrush="#FFD7D8D8" Foreground="#FFEAEAEA" FontSize="18" />
             <Button Style="{DynamicResource ButtonStyle1}" Content="Exit" HorizontalAlignment="Left" Margin="44,394,0,0" VerticalAlignment="Top" Width="80" Background="#FF2E2E2E" BorderBrush="Gainsboro" BorderThickness="2" Height="30" FontSize="17" FontFamily="Segoe UI Semibold" ForceCursor="True" Foreground="White" Click="Button_Click_2"/>
             <Button Style="{DynamicResource ButtonStyle1}" Content="Next" x:Name="tothemain" HorizontalAlignment="Left" Margin="255,394,0,0" VerticalAlignment="Top" Width="80" Background="#FF2E2E2E" BorderBrush="Gainsboro" BorderThickness="2" Height="30" FontSize="17" FontFamily="Segoe UI Semibold" ForceCursor="True" Foreground="White" Click="Next_Pressed"/>
-            <Label Content="Language:" HorizontalAlignment="Left" Margin="42,92,0,0" VerticalAlignment="Top" FontSize="19" FontFamily="Segoe UI Semibold" Foreground="White"/>
-            <ComboBox x:Name="cmbox" SelectedIndex="0" HorizontalAlignment="Left" Margin="212,93,0,0" VerticalAlignment="Top" Width="66" Height="34" FontSize="17" ClipToBounds="True" OpacityMask="White" Foreground="White" BorderBrush="White" Style="{DynamicResource ComboBoxStyle1}">
+            <Label Content="Language:" HorizontalAlignment="Left" Margin="44,100,0,0" VerticalAlignment="Top" FontSize="19" FontFamily="Segoe UI Semibold" Foreground="White"/>
+            <ComboBox x:Name="cmbox" SelectedIndex="0" HorizontalAlignment="Left" Margin="281,101,0,0" VerticalAlignment="Top" Width="66" Height="34" FontSize="17" ClipToBounds="True" OpacityMask="White" Foreground="White" BorderBrush="White" Style="{DynamicResource ComboBoxStyle1}">
                 <ComboBox.Resources>
                     <SolidColorBrush x:Key="{x:Static SystemColors.WindowBrushKey}" Color="#FF2E2E2E" />
                 </ComboBox.Resources>
@@ -307,11 +308,10 @@
                 <ComboBoxItem Content="ENG"/>
                 <ComboBoxItem Content="SVK"/>
             </ComboBox>
-            <Label Content="Find Device :" HorizontalAlignment="Left" Margin="42,38,0,0" VerticalAlignment="Top" FontSize="19" FontFamily="Segoe UI Semibold" Foreground="White" RenderTransformOrigin="0.219,0.543"/>
+            <Label Content="Find Device :" HorizontalAlignment="Left" Margin="44,60,0,0" VerticalAlignment="Top" FontSize="19" FontFamily="Segoe UI Semibold" Foreground="White" RenderTransformOrigin="0.219,0.543"/>
             <Image x:Name="loading" HorizontalAlignment="Left" gif:ImageBehavior.RepeatBehavior="0x" gif:ImageBehavior.AnimatedSource="icons/preloader.gif"  Height="100" Margin="142,230,0,0" VerticalAlignment="Top" Width="100" Visibility="Hidden"/>
-            <Button Name="findb" Style="{DynamicResource ButtonStyle1}" Foreground="White" Width="80" Background="#FF2E2E2E" BorderBrush="Gainsboro" BorderThickness="2" Height="30" FontSize="17" FontFamily="Segoe UI Semibold" Content="Find" HorizontalAlignment="Left" Margin="212,43,0,0" VerticalAlignment="Top" Click="Findevice" />
-            <Label Content="IP addres : " HorizontalAlignment="Left" Margin="44,143,0,0" VerticalAlignment="Top" FontSize="19" FontFamily="Segoe UI Semibold" Foreground="White"/>
-            <Label  Name="ipa" Content="0.0.0.0" HorizontalAlignment="Left" Margin="212,148,0,0" VerticalAlignment="Top" FontSize="17" Foreground="#FF1EBEF7" FontWeight="Bold" Width="153"/>
+            <Button Name="findb" Style="{DynamicResource ButtonStyle1}" Foreground="White" Width="80" Background="#FF2E2E2E" BorderBrush="Gainsboro" BorderThickness="2" Height="30" FontSize="17" FontFamily="Segoe UI Semibold" Content="Find" HorizontalAlignment="Left" Margin="267,63,0,0" VerticalAlignment="Top" Click="Findevice" />
+            <Label Content="IP addres : " HorizontalAlignment="Left" Margin="44,20,0,0" VerticalAlignment="Top" FontSize="19" FontFamily="Segoe UI Semibold" Foreground="White"/>
         </Grid>
     </Grid>
 

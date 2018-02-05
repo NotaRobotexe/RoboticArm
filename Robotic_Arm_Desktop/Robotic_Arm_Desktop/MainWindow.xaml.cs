@@ -24,21 +24,18 @@ using Microsoft.Win32;
 
 namespace Robotic_Arm_Desktop
 {
-    //TODO: fixnut buggy
-    //TODO: loading screen 
-    //TODO: YOLO implementation
-    //TODO: Object follow
-    //TODO: auto boot
-    //TODO: remote stream
-    //TODO: remote script execution
-    //TODO: script update
-    //TODO: trigger 
-    //TODO: Stream Loading
-    //TODO: message if exception is throw;
-    //TODO: recoverry popout windows
-    //TODO: vsetko zbalit do kopy
-    //TODO: spiest sa ako babovka #1 #2 #3
-    //TODO: Prestat pridavat TODO
+    //TODO: fixnut buggy        
+    //TODO: YOLO implementation fri/sat
+    //TODO: Object follow       tu
+    //TODO: auto boot           sun
+    //TODO: remote stream       fri
+    //TODO: remote script execution fri 
+    //TODO: script update       wed
+    //TODO: trigger             mon
+    //TODO: turn off / on       mon
+    //TODO: vsetko zbalit do kopy   sat
+
+    //TODO: spiest sa ako panvica #1 #2 #3
 
     public partial class MainWindow : Window
     {
@@ -80,6 +77,7 @@ namespace Robotic_Arm_Desktop
 
         public MainWindow()
         {
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException; //global exception
             //WindowState = WindowState.Minimized;
             Directory.CreateDirectory(System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\RoboticArm\\Scripts");
             InitializeComponent();
@@ -103,6 +101,14 @@ namespace Robotic_Arm_Desktop
             GetCPUandTemp();
             GetTrigger();
 
+        }
+
+        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e) //Global exception if something goes wrong 
+        {
+            Global.BetterMessageBoxLauched = true;
+            Global.BetterMessageBoxErrorIndex = 2;
+            BetterPopUpBox BetterMessageBox = new BetterPopUpBox();
+            BetterMessageBox.Show();
         }
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
@@ -155,6 +161,7 @@ namespace Robotic_Arm_Desktop
         /*video stream and other thing with image control*/
         private async void SetStreamSettings()
         {
+            loading.Visibility = Visibility.Visible;
             if (Global.loadingDone ==true){
                 stream.ProcesEnd();
                 stream = new VideoStream();
@@ -184,6 +191,7 @@ namespace Robotic_Arm_Desktop
             netCom.SendData("2"+res+ Slenght + StreammSetting);
             await NonBlockSleep();
             stream.Procesinit();
+            loading.Visibility = Visibility.Hidden;
         }
 
         public async Task NonBlockSleep()
@@ -239,7 +247,7 @@ namespace Robotic_Arm_Desktop
             FrameRateCounter.Stop();
             stream.ProcesEnd();
             await AutoModeTemplate.AnimationFromTemplate(Positions.OffPos, movement);
-            netCom.SendData("7");
+            netCom.SendData("70");
             Application.Current.Shutdown();
         }
 
@@ -250,40 +258,51 @@ namespace Robotic_Arm_Desktop
 
         private void Recovery_Click(object sender, RoutedEventArgs e)
         {
-            List<string> instructionsRaw = Positions.RecoveryPos.Split('*').ToList();
-            List<double> instructions = new List<double>();
-
-            foreach (var item in instructionsRaw)
+            if (Global.Recovery == false)
             {
-                instructions.Add(Convert.ToDouble(item));
+                Global.BetterMessageBoxLauched = true;
+                Global.BetterMessageBoxErrorIndex = 3;
+                BetterPopUpBox BetterMessageBox = new BetterPopUpBox();
+                BetterMessageBox.Show();
+                Global.BetterMessageBoxLauched = false;
             }
 
-            movement.baseMovemend.Update(instructions[0],1);
-            movement.elbow0.Update(instructions[1], 1);
-            movement.elbow1.Update(instructions[2], 1);
-            movement.elbow2.Update(instructions[3], 1);
-            movement.griperRotation.Update(instructions[4], 1);
-            movement.griper.Update(instructions[5], 1);
+            if (Global.Recovery == true)
+            {
+                List<string> instructionsRaw = Positions.RecoveryPos.Split('*').ToList();
+                List<double> instructions = new List<double>();
 
-            DrawDataAndUpdateModel();
+                foreach (var item in instructionsRaw)
+                {
+                    instructions.Add(Convert.ToDouble(item));
+                }
+
+                movement.baseMovemend.Update(instructions[0],1);
+                movement.elbow0.Update(instructions[1], 1);
+                movement.elbow1.Update(instructions[2], 1);
+                movement.elbow2.Update(instructions[3], 1);
+                movement.griperRotation.Update(instructions[4], 1);
+                movement.griper.Update(instructions[5], 1);
+
+                DrawDataAndUpdateModel();
+                Global.Recovery = false;
+            }
         }
 
         private async void Start(object sender, RoutedEventArgs e)
         {
             await AutoModeTemplate.AnimationFromTemplate(Positions.SteadyPos, movement);
-            latency.Content = "test";
         }
 
         private async void Stop(object sender, RoutedEventArgs e)
         {
             await AutoModeTemplate.AnimationFromTemplate(Positions.OffPos, movement);
-            latency.Content = "test2";
-
         }
 
         private async void TurnOffPressed(object sender, RoutedEventArgs e)
         {
             await AutoModeTemplate.AnimationFromTemplate(Positions.OffPos, movement);
+            netCom.SendData("70");
         }
 
         /*manual mode stuff here*/

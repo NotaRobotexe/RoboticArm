@@ -49,7 +49,7 @@ namespace Robotic_Arm_Desktop
                 p.StartInfo.RedirectStandardOutput = true;
                 p.StartInfo.CreateNoWindow = true;
                 p.StartInfo.FileName = "cmd.exe";
-                p.StartInfo.Arguments = "/C ping -4 raspebrrypi.local";
+                p.StartInfo.Arguments = "/C ping -4 raspberrypi.local";
                 p.Start();
                 output = p.StandardOutput.ReadToEnd();
                 p.WaitForExit();
@@ -65,7 +65,7 @@ namespace Robotic_Arm_Desktop
             {
                 string result = output.Substring(begin,end-begin);
                 Global.ipaddres = result;
-                ipa.Content = result;
+                ipadd.Text = result;
 
             }
             catch (Exception)
@@ -86,23 +86,34 @@ namespace Robotic_Arm_Desktop
                 Global.SVK = true;
             }
 
-            tothemain.IsEnabled = false;
-            loading.Visibility = Visibility.Visible;
-
-            await Task.Run(() =>
-            {
-                System.Threading.Thread.Sleep(1000);
-            });
-
-            MainWindow main = new MainWindow();
-            App.Current.MainWindow = main;
-            main.Show();
-
-            if (Global.loadingDone == true)
-            {
-                this.Close();
+            if (Global.ipaddres == "" && ipadd.Text != ""){
+                Global.ipaddres = ipadd.Text;
             }
-            tothemain.IsEnabled = true;
+
+            if (Global.ipaddres != "")
+            {
+                tothemain.IsEnabled = false;
+                loading.Visibility = Visibility.Visible;
+
+                await Task.Run(() =>
+                {
+                    System.Threading.Thread.Sleep(1000);
+                });
+
+                MainWindow main = new MainWindow();
+                App.Current.MainWindow = main;
+                main.Show();
+
+                if (Global.loadingDone == true)
+                {
+                    this.Close();
+                }
+                tothemain.IsEnabled = true;
+            }
+            else
+            {
+                MessageBox.Show("IP address is empty.");
+            }
         }
 
 

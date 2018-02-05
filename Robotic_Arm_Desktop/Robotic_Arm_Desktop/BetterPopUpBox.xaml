@@ -7,7 +7,8 @@
         mc:Ignorable="d"
         Title="BetterPopUpBox" Height="150" Width="400"  WindowStyle="None" WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
     <Grid Background="#FF1b1b1c">
-        <Label Name="betterLabel" Content="Label" HorizontalAlignment="Center" Margin="10,57,10,0" VerticalAlignment="Top" FontSize="18" Foreground="#ff20BEF7" FontWeight="Bold" Width="380" HorizontalContentAlignment="Center"/>
+        <Label Name="betterLabel" Content="label" HorizontalAlignment="Center" Margin="10,46,10,0" VerticalAlignment="Top" FontSize="18" Foreground="#ff20BEF7" FontWeight="Bold" Width="380" HorizontalContentAlignment="Center" Height="46"/>
+        <Button Name="shBut" Style="{DynamicResource ButtonStyle1}" Content="Ok" HorizontalAlignment="Left" Margin="140,108,0,0" VerticalAlignment="Top" Width="129"  Background="#FF2E2E2E" BorderBrush="Gainsboro" BorderThickness="3" FontSize="17" FontFamily="Segoe UI Semibold" ForceCursor="True" Foreground="White" Height="32" Visibility="Hidden" Click="shBut_Click"/>
 
     </Grid>
 </Window>

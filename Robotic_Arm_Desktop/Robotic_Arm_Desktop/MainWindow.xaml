@@ -5,6 +5,8 @@
         xmlns:h="http://helix-toolkit.org/wpf"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Robotic_Arm_Desktop"
+        xmlns:gif="http://wpfanimatedgif.codeplex.com"
+
         mc:Ignorable="d"
         Title="MainWindow" Height="1080" Width="1920" WindowStyle="None" WindowStartupLocation="CenterScreen" WindowState="Maximized" ResizeMode="NoResize" KeyDown="KeyboardEvent">
 
@@ -174,6 +176,7 @@
             <Button Style="{DynamicResource ButtonStyle1}" Content="Send" HorizontalAlignment="Left" Margin="95,372,0,0" VerticalAlignment="Top" Width="90" Height="28" Background="#FF2E2E2E" BorderBrush="Gainsboro" BorderThickness="2" FontSize="16" FontFamily="Segoe UI Semibold" ForceCursor="True" Foreground="White" Click="InputSend_Click"/>
         </Grid>
 
+        <Image x:Name="loading" HorizontalAlignment="Left" gif:ImageBehavior.RepeatBehavior="0x" gif:ImageBehavior.AnimatedSource="icons/preloader.gif"  Height="100" Margin="1321,278,0,0" VerticalAlignment="Top" Width="100" Visibility="Visible" Panel.ZIndex="5"/>
 
     </Grid>
 </Window>
