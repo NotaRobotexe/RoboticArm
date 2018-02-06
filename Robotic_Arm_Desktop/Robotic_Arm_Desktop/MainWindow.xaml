@@ -11,7 +11,7 @@
         Title="MainWindow" Height="1080" Width="1920" WindowStyle="None" WindowStartupLocation="CenterScreen" WindowState="Maximized" ResizeMode="NoResize" KeyDown="KeyboardEvent">
 
     <Grid Background="#FF2D2D30">
-        <Button x:Name="exit" Content="" HorizontalAlignment="Left" Margin="1900,3,0,0" VerticalAlignment="Top" Width="17" Height="17" BorderBrush="{x:Null}" Focusable="False" Click="ExitWin" >
+        <Button x:Name="exit" Content="" Margin="1900,3,3,0" VerticalAlignment="Top" Height="17" BorderBrush="{x:Null}" Focusable="False" Click="ExitWin" >
             <Button.Background>
                 <ImageBrush ImageSource="icons/clear-button.png"/>
             </Button.Background>
@@ -106,10 +106,10 @@
             <Slider Name="start" HorizontalAlignment="Left"  Minimum="0" Margin="152,143,0,0" VerticalAlignment="Top" Width="129" ValueChanged="StartFromSliderChange"/>
         </Grid>
         <Grid HorizontalAlignment="Left" Height="223" Margin="646,837,0,0" VerticalAlignment="Top" Width="390" Background="#FF252526">
-            <Button Style="{DynamicResource ButtonStyle1}" Content="Disabled" HorizontalAlignment="Left" Margin="38,52,0,0" VerticalAlignment="Top" Width="90" Height="28" Background="#FF2E2E2E" BorderBrush="Gainsboro" BorderThickness="2" FontSize="16" FontFamily="Segoe UI Semibold" ForceCursor="True" Foreground="White" Click="RemoteExecution_Change"/>
+            <Button Name="buttonchange" Style="{DynamicResource ButtonStyle1}" Content="Disabled" HorizontalAlignment="Left" Margin="38,52,0,0" VerticalAlignment="Top" Width="90" Height="28" Background="#FF2E2E2E" BorderBrush="Gainsboro" BorderThickness="2" FontSize="16" FontFamily="Segoe UI Semibold" ForceCursor="True" Foreground="White" Click="RemoteExecution_Change"/>
             <TextBox x:Name="targetIp" HorizontalAlignment="Left" Background="#FF2E2E2E" BorderThickness="2" BorderBrush="#FFD7D8D8" Foreground="White" FontSize="16" FontStyle="Italic" TextDecorations="{x:Null}" FontFamily="Segoe UI Emoji" Margin="38,122,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="163"/>
             <Label Content="Remote execution status :" HorizontalAlignment="Left" Margin="38,162,0,0" VerticalAlignment="Top" Foreground="White" FontSize="18" FontWeight="Bold"/>
-            <Label Name="remotestatus" Content="Non-active" HorizontalAlignment="Left" Margin="281,166,0,0" VerticalAlignment="Top" FontSize="16" Foreground="#FF1EBEF7" FontWeight="Bold"/>
+            <Label Name="remotestatus" Content="Non-active" HorizontalAlignment="Left" Margin="281,165,0,0" VerticalAlignment="Top" FontSize="16" Foreground="#FF1EBEF7" FontWeight="Bold"/>
 
         </Grid>
         <Grid HorizontalAlignment="Left" Height="410" Margin="20,650,0,0" VerticalAlignment="Top" Width="348" Background="#FF252526">

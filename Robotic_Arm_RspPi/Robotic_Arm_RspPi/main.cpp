@@ -110,7 +110,7 @@ int main(void)
 	
 	this_thread::sleep_for(chrono::milliseconds(8000));
 
-	if (NetComMessage.substr(1, 1) != "0"){
+	if (NetComMessage.substr(1, 1) == "0"){
 		system("sudo shutdown -t now");
 	}
 	return 0;

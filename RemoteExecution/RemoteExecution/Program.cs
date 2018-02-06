@@ -12,11 +12,11 @@ namespace RemoteExecution
 
         static void Main(string[] args)
         {
-            begin: //Every day we're fuhrer and fuhrer from God;
+            begin: //Every day we're fuhrer and fuhrer from the God;
 
             network = new Network();
             network.init();
-
+            Console.WriteLine("init");
             while (true)
             {
                 network.RecieveData();
@@ -34,7 +34,7 @@ namespace RemoteExecution
             if (network.raw.Substring(0,3)=="END")
             {
                 python.Close();
-
+                relaunch = true;
             }
             else
             {
@@ -59,7 +59,7 @@ namespace RemoteExecution
 
         private static void Python_Exited(object sender, EventArgs e)
         {
-
+            relaunch = true;
         }
 
     }

@@ -25,17 +25,15 @@ using Microsoft.Win32;
 namespace Robotic_Arm_Desktop
 {
     //TODO: fixnut buggy        
-    //TODO: YOLO implementation fri/sat
-    //TODO: Object follow       tu
-    //TODO: auto boot           sun
-    //TODO: remote stream       fri
-    //TODO: remote script execution fri 
-    //TODO: script update       wed
-    //TODO: trigger             mon
-    //TODO: turn off / on       mon
-    //TODO: vsetko zbalit do kopy   sat
+    //TODO: YOLO implementation 
+    //TODO: Object follow       
+    //TODO: auto boot           
+    //TODO: remote stream       tu
+    //TODO: remote script execution tu 
+    //TODO: script update       
+    //TODO: vsetko zbalit do kopy   
 
-    //TODO: spiest sa ako panvica #1 #2 #3
+    //TODO: spiest sa ako panvica #1 #2 
 
     public partial class MainWindow : Window
     {
@@ -78,7 +76,6 @@ namespace Robotic_Arm_Desktop
         public MainWindow()
         {
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException; //global exception
-            //WindowState = WindowState.Minimized;
             Directory.CreateDirectory(System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\RoboticArm\\Scripts");
             InitializeComponent();
 
@@ -150,10 +147,12 @@ namespace Robotic_Arm_Desktop
             buttonAnimationOnOff(HUDbutton, false);
             this.incLabel.Content = Math.Round(movement.valueCount, 3);
 
-            //WindowState = WindowState.Maximized;
-            Global.loadingDone = true;
-
             InitializeGamepad();
+
+            int speed = (int)Math.Round(fanSlider.Value); //start fan after loading
+            netFan.SendData(speed.ToString());
+
+            Global.loadingDone = true;
         }
 
         /*undone things*/
@@ -242,13 +241,20 @@ namespace Robotic_Arm_Desktop
         }
         
         /*controls buttons*/
-        private async void ExitWin(object sender, RoutedEventArgs e)
+        private async void ExitWin(object sender, RoutedEventArgs e) //nezabudni znovu zapnuti vypinanie
         {
-            FrameRateCounter.Stop();
-            stream.ProcesEnd();
-            await AutoModeTemplate.AnimationFromTemplate(Positions.OffPos, movement);
-            netCom.SendData("70");
-            Application.Current.Shutdown();
+            try
+            {
+                netCom.SendData("7");
+                FrameRateCounter.Stop();
+                stream.ProcesEnd();
+                await AutoModeTemplate.AnimationFromTemplate(Positions.OffPos, movement);
+
+            }
+            catch (Exception)
+            {
+                Application.Current.Shutdown();
+            }
         }
 
         private void MinWin(object sender, RoutedEventArgs e)
@@ -894,16 +900,18 @@ namespace Robotic_Arm_Desktop
             while (Global.connected == true)
             {
                 string trigger = await netTrigger.ReceiveData();
+                trigger = trigger.Substring(0, trigger.IndexOf('\0'));
+                Console.WriteLine(trigger);
                 if (trigger == "false")
                 {
                     Global.triggered = false;
-                    OnOffControllStatus();
                 }
                 else
                 {
                     Global.triggered = true;
                 }
                 this.trigger.Content = Global.triggered;
+                OnOffControllStatus();
             }
         }
 
@@ -1055,9 +1063,11 @@ namespace Robotic_Arm_Desktop
             if (Global.RemoteExc==true)
             {
                 remotestatus.Content = "Active";
+                buttonchange.Content = "Enabled";
             }
             else
             {
+                buttonchange.Content = "Disabled";
                 remotestatus.Content = "Non-Active";
             }
         }

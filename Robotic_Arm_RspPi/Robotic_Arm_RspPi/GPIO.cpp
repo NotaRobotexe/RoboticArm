@@ -11,7 +11,6 @@
 
 std::string GPIO::CheckTrigger(){
 	int i = digitalRead(TRIGGER);
-	
 	if (i == 0)
 	{
 		return "true";
