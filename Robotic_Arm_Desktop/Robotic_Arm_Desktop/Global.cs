@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Robotic_Arm_Desktop
+﻿namespace Robotic_Arm_Desktop
 {
     public static class Global
     {
@@ -37,10 +31,9 @@ namespace Robotic_Arm_Desktop
         public static bool Recovery = false;
         public static bool SVK = false;
 
-        //debug only 
+        //debug only
         public static bool DebugMode = true;
 
         public static System.Windows.Media.Media3D.Vector3D point;
-
     }
 }

@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Net;
 using System.Net.Sockets;
+using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Robotic_Arm_Desktop
 {
@@ -63,15 +61,14 @@ namespace Robotic_Arm_Desktop
             }
             return "";
         }
-
     }
 
     public class SendPosition
     {
-        NetworkCom NetMove;
-        Movement moveData;
+        private NetworkCom NetMove;
+        private Movement moveData;
 
-        struct positions
+        private struct positions
         {
             public int BaseRotation;
             public int Elb0;
@@ -81,8 +78,8 @@ namespace Robotic_Arm_Desktop
             public int Gripper;
         }
 
-        positions old;
-        positions actual;
+        private positions old;
+        private positions actual;
 
         public SendPosition(NetworkCom network, Movement movement)
         {
@@ -212,6 +209,7 @@ namespace Robotic_Arm_Desktop
                             case 3:
                                 AutoModeTemplate.ScriptDefaultMovemend(msg, movement);
                                 break;
+
                             case 4:
                                 MovingStatus();
                                 break;
@@ -247,10 +245,12 @@ namespace Robotic_Arm_Desktop
 
         private void MovingStatus()
         {
-            if (Global.IsMoving == false){
+            if (Global.IsMoving == false)
+            {
                 SendData("0");
             }
-            else{
+            else
+            {
                 SendData("1");
             }
         }
@@ -259,7 +259,6 @@ namespace Robotic_Arm_Desktop
         {
             socket.Close();
         }
-
     }
 
     public class RemoteNetwork

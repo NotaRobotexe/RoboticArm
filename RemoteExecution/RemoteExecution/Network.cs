@@ -18,18 +18,24 @@ namespace RemoteExecution
             socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             socket.Bind(new IPEndPoint(IPAddress.Any, 6973));
 
-            socket.Listen(1); 
+            socket.Listen(100); 
             acp_socket = socket.Accept();
         }
 
         public void RecieveData()
         {
-            data = new byte[acp_socket.SendBufferSize]; 
-            int j = acp_socket.Receive(data); 
-            byte[] adata = new byte[j];
-            for (int i = 0; i < j; i++)         
-                adata[i] = data[i];             
-            raw = Encoding.Default.GetString(adata);
+            data = new byte[acp_socket.SendBufferSize];
+            try{
+                int j = acp_socket.Receive(data); 
+                byte[] adata = new byte[j];
+                for (int i = 0; i < j; i++)         
+                    adata[i] = data[i];             
+                raw = Encoding.Default.GetString(adata);
+            }
+            catch (Exception)
+            {
+                raw = "";
+            }
         }
 
         public void sendACK()
@@ -42,6 +48,12 @@ namespace RemoteExecution
             }
             );
 
+        }
+
+        public void Release()
+        {
+            acp_socket.Close();
+            socket.Close();
         }
 
     }

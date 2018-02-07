@@ -8,39 +8,43 @@ namespace RemoteExecution
     {
         static Process python;
         static Network network;
-        static bool relaunch = false;
+        static bool SciptRunning;
 
         static void Main(string[] args)
         {
-            begin: //Every day we're fuhrer and fuhrer from the God;
-
+            relaunch:
             network = new Network();
             network.init();
-            Console.WriteLine("init");
             while (true)
             {
                 network.RecieveData();
-                RunORStopScript();
-                if (relaunch == true)
-                {
-                    relaunch = false;
-                    goto begin;
+               
+                if (RunORStopScript()==false){
+                    network.Release();
+                    goto relaunch;
                 }
             }
         }
 
-        static void RunORStopScript()
+        static bool RunORStopScript()
         {
-            if (network.raw.Substring(0,3)=="END")
+            if (network.raw != "")
             {
-                python.Close();
-                relaunch = true;
+                if (network.raw.Substring(0,3)=="END" && SciptRunning==true)
+                {
+                    python.Close();
+                    SciptRunning = false;
+                }
+                else
+                {
+                    File.WriteAllText("Script.py", network.raw);
+                    StartScript();
+                    network.sendACK();
+                }
+            return true;
             }
-            else
-            {
-                File.WriteAllText("Script.py", network.raw);
-                StartScript();
-                network.sendACK();
+            else{
+                return false;
             }
         }
 
@@ -55,11 +59,12 @@ namespace RemoteExecution
             python.EnableRaisingEvents = true;
             python.Exited += Python_Exited;
             python.Start();
+            SciptRunning = true;
         }
 
         private static void Python_Exited(object sender, EventArgs e)
         {
-            relaunch = true;
+            SciptRunning = false;
         }
 
     }

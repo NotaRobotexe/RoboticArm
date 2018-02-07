@@ -24,12 +24,10 @@ using Microsoft.Win32;
 
 namespace Robotic_Arm_Desktop
 {
-    //TODO: fixnut buggy        
     //TODO: YOLO implementation 
     //TODO: Object follow       
     //TODO: auto boot           
-    //TODO: remote stream       tu
-    //TODO: remote script execution tu 
+    //TODO: remote script video 
     //TODO: script update       
     //TODO: vsetko zbalit do kopy   
 
@@ -155,7 +153,6 @@ namespace Robotic_Arm_Desktop
             Global.loadingDone = true;
         }
 
-        /*undone things*/
 
         /*video stream and other thing with image control*/
         private async void SetStreamSettings()
@@ -249,7 +246,7 @@ namespace Robotic_Arm_Desktop
                 FrameRateCounter.Stop();
                 stream.ProcesEnd();
                 await AutoModeTemplate.AnimationFromTemplate(Positions.OffPos, movement);
-
+                Application.Current.Shutdown();
             }
             catch (Exception)
             {
@@ -969,6 +966,8 @@ namespace Robotic_Arm_Desktop
 
         }
 
+        int connectionStatus = -1;
+
         private void RunScript(object sender, RoutedEventArgs e)
         {
             if (ScriptPath != "")
@@ -994,17 +993,20 @@ namespace Robotic_Arm_Desktop
                 }
                 else //start script on remote computer
                 {
-                    remoteNetwork = new RemoteNetwork();
-                    string ip = targetIp.Text;
-                    int connectionStatus = remoteNetwork.InitCom(ip, movement);
+                    string ip = "";
 
-                    if (connectionStatus == 0)
+                    if (connectionStatus == -1)
                     {
-                        remotestatus.Content = "Online";
-                    }
-                    else
-                    {
-                        remotestatus.Content = "Offline";
+                        remoteNetwork = new RemoteNetwork();
+                        ip = targetIp.Text;
+                        connectionStatus = remoteNetwork.InitCom(ip, movement);
+
+                        if (connectionStatus == 0){
+                            remotestatus.Content = "Online";
+                        }
+                        else{
+                            remotestatus.Content = "Offline";
+                        }
                     }
 
                     string script = File.ReadAllText(ScriptPath);
