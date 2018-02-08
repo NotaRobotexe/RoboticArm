@@ -26,9 +26,9 @@ namespace Robotic_Arm_Desktop
 {
     //TODO: YOLO implementation 
     //TODO: Object follow       
-    //TODO: auto boot           
-    //TODO: remote script video 
     //TODO: script update       
+
+    //TODO: auto boot           
     //TODO: vsetko zbalit do kopy   
 
     //TODO: spiest sa ako panvica #1 #2 
@@ -51,6 +51,7 @@ namespace Robotic_Arm_Desktop
         bool CapturingTemplate = false;
         bool WaitForTrigger = false;
         int framerate = 0;
+        int connectionStatus = -1;
 
         DispatcherTimer ControllstatusTimer;
         DispatcherTimer FrameRateCounter;
@@ -966,10 +967,10 @@ namespace Robotic_Arm_Desktop
 
         }
 
-        int connectionStatus = -1;
-
         private void RunScript(object sender, RoutedEventArgs e)
         {
+            Global.ScriptOutput = "";
+
             if (ScriptPath != "")
             {
 

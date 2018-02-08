@@ -136,6 +136,8 @@ namespace Robotic_Arm_Desktop
 
     public class ScriptNetwork
     {
+        public event EventHandler NewOutput;
+
         private Movement movement;
         private Socket socket;
         public bool ScriptRunning = false;
@@ -199,7 +201,7 @@ namespace Robotic_Arm_Desktop
                         switch (ScriptMessage)
                         {
                             case 1:
-                                //trigger
+                                SendTriggerStatus();
                                 break;
 
                             case 2:
@@ -218,12 +220,42 @@ namespace Robotic_Arm_Desktop
                                 SetMovSpeed(msg);
                                 break;
 
+                            case 6:
+                                SetOutput(msg);
+                                OnNewOutput(EventArgs.Empty);
+                                break;
+
                             default:
                                 break;
                         }
                     }
                 }
                 );
+            }
+        }
+
+        private void SetOutput(string msg)
+        {
+            string oldString = Global.ScriptOutput;
+            Global.ScriptOutput = msg.Substring(1)+"/n"+oldString;
+        } 
+            
+        protected virtual void OnNewOutput(EventArgs e)
+        {
+            EventHandler eventHandler = NewOutput;
+            if (eventHandler != null)
+            {
+                eventHandler(this, e);
+            }
+        }
+
+        private void SendTriggerStatus()
+        {
+            if (Global.triggered == true){
+                SendData("1");
+            }
+            else{
+                SendData("0");
             }
         }
 

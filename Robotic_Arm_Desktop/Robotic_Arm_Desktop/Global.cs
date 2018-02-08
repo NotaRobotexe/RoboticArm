@@ -31,6 +31,8 @@
         public static bool Recovery = false;
         public static bool SVK = false;
 
+        public static string ScriptOutput = "";
+
         //debug only
         public static bool DebugMode = true;
 

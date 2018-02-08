@@ -3,8 +3,10 @@ import cv2
 import numpy as np
 
 #############################################################################################################################
+def GetObjectPosition():
+    return
+
 def BasicColorRecognition(Frame,BGR,smooth,minOnjectSizem,OutputMode): #outputmode 1=mask 2=hsv 3=normal 
-    #BGR = np.uint8([[[51,91,222]]])
     BGRhsv = cv2.cvtColor(BGR,cv2.COLOR_BGR2HSV)
     lower = np.array([BGRhsv[0,0,0]-20,70,50])
     upper= np.array([BGRhsv[0,0,0]+20,255,255])
@@ -30,6 +32,8 @@ def BasicColorRecognition(Frame,BGR,smooth,minOnjectSizem,OutputMode): #outputmo
             box = cv2.boxPoints(rect)
             box = np.int0(box)
             cv2.drawContours(final,[box],-1,(255,0,255),5)
+            #cv2.circle(final,[box])
+            print(box[0])
 
     return final
 
@@ -50,10 +54,14 @@ def ReadInput():
     data = Receive().decode('UTF-8')
     return data
 
+def SendMessage(messaage):
+    Send("6"+messaage)
+
+
 def MovingSpeed(time):
     Send("5"+str(time))
 
-def SetPosition(base,elbow0,elbow1,elbow2,gripper_rotatio,gripper):
+def SetPosition(base, elbow0 ,elbow1 ,elbow2 ,gripper_rotatio ,gripper):
     pos = "3"+str(base)+"*"+str(elbow0)+"*"+str(elbow1)+"*"+str(elbow2)+"*"+str(gripper_rotatio)+"*"+str(gripper)
     print(pos)
     Send(pos)

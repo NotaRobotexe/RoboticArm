@@ -166,7 +166,7 @@
             <Label Content="Executing on remote computer :" HorizontalAlignment="Left" Margin="284,204,-313,0" VerticalAlignment="Top" Foreground="White" FontSize="18" FontWeight="Bold" Width="282" />
             <Label Content="Load Script :" HorizontalAlignment="Left" Margin="10,58,0,0" VerticalAlignment="Top" Foreground="White" FontSize="18" FontWeight="Bold" />
             <Button  Style="{DynamicResource ButtonStyle1}" x:Name="ScriptEditor" Content="Open" HorizontalAlignment="Left" Margin="153,204,0,0" VerticalAlignment="Top" Width="90" Height="28" Background="#FF2E2E2E" BorderBrush="Gainsboro" BorderThickness="2" FontSize="16" FontFamily="Segoe UI Semibold" ForceCursor="True" Foreground="White" Click="OpenScriptEditor" />
-            <TextBox HorizontalAlignment="Left" Focusable="False" IsReadOnly="True" Height="73" Margin="95,246,-15,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="173" UndoLimit="200" FontSize="15" Foreground="White" Background="#FF2D2D30" />
+            <TextBox Name="sciptoutput" HorizontalAlignment="Left" Focusable="False" IsReadOnly="True" Height="73" Margin="95,246,-15,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="173" UndoLimit="200" FontSize="15" Foreground="White" Background="#FF2D2D30" />
             <Button Style="{DynamicResource ButtonStyle1}" Content="Send" HorizontalAlignment="Left" Margin="95,372,0,0" VerticalAlignment="Top" Width="90" Height="28" Background="#FF2E2E2E" BorderBrush="Gainsboro" BorderThickness="2" FontSize="16" FontFamily="Segoe UI Semibold" ForceCursor="True" Foreground="White" Click="InputSend_Click" />
         </Grid>
 
