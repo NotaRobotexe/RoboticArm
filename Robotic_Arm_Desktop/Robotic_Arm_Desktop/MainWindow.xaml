@@ -135,6 +135,8 @@
             <Button Style="{DynamicResource ButtonStyle1}"  x:Name="GamepadEnalbeButton" Content="Enabled" HorizontalAlignment="Left" Margin="232,110,0,0" VerticalAlignment="Top" Width="90" Height="29" Background="#FF2E2E2E" BorderBrush="Gainsboro" BorderThickness="2" FontSize="17" FontFamily="Segoe UI Semibold" ForceCursor="True" Foreground="White" Click="GamepadOnOff" />
             <Ellipse x:Name="ManualModeStatusEllipse" Fill="#FF1EBEF7" HorizontalAlignment="Left" Height="12" Margin="-1,-405,0,0" VerticalAlignment="Top" Width="12" RenderTransformOrigin="-0.6,0.533" />
         </Grid>
+        <Image x:Name="Targets" HorizontalAlignment="Left" Height="607" Margin="815,20,0,0" VerticalAlignment="Top" Width="1080" Panel.ZIndex="-2" />
+        <Canvas x:Name="Cnv"/>
         <Image x:Name="ViewFrame" HorizontalAlignment="Left" Height="607" Margin="815,20,0,0" VerticalAlignment="Top" Width="1080" Panel.ZIndex="-3" />
         <Image Name="hudimage1" HorizontalAlignment="Left" Height="92" Margin="1289,278,0,0" VerticalAlignment="Top" Width="132" Source="icons/hud1.png" Visibility="Hidden" />
         <Image x:Name="hudImage" HorizontalAlignment="Left" Height="444" Margin="815,88,0,0" VerticalAlignment="Top"  Width="1080" Source="icons/hud2.png" RenderTransformOrigin="0.498,0.654" Panel.ZIndex="-2" Visibility="Hidden">
@@ -159,17 +161,17 @@
             <Button Style="{DynamicResource ButtonStyle1}" Content="Stop" HorizontalAlignment="Left" Margin="153,143,0,0" VerticalAlignment="Top" Width="90" Height="28" Background="#FF2E2E2E" BorderBrush="Gainsboro" BorderThickness="2" FontSize="16" FontFamily="Segoe UI Semibold" ForceCursor="True" Foreground="White" Click="ScriptStop_Click" />
             <TextBox Name="input_" HorizontalAlignment="Left" Height="28" Margin="95,334,-15,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="173" Background="#FF2E2E2E" BorderThickness="2" BorderBrush="#FFD7D8D8" Foreground="White" FontSize="16" FontStyle="Italic" TextDecorations="{x:Null}" FontFamily="Segoe UI Emoji" GotFocus="DisableMovemendWhenWriting" LostFocus="EnableMovementdAfterWriting" />
             <Label Content="Input :" HorizontalAlignment="Left" Margin="10,328,0,0" VerticalAlignment="Top" Foreground="White" FontSize="18" FontWeight="Bold" RenderTransformOrigin="0.559,1.129" />
-            <Button Content="test" HorizontalAlignment="Left" Margin="284,10,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click" />
             <Label Content="Output :" HorizontalAlignment="Left" Margin="10,246,0,0" VerticalAlignment="Top" Foreground="White" FontSize="18" FontWeight="Bold" />
             <Label Content="Script editor :" HorizontalAlignment="Left" Margin="10,198,0,0" VerticalAlignment="Top" Foreground="White" FontSize="18" FontWeight="Bold" />
             <Label Content="Remote computer IP address :" HorizontalAlignment="Left" Margin="284,274,-300,0" VerticalAlignment="Top" Foreground="White" FontSize="18" FontWeight="Bold" Width="269" />
             <Label Content="Executing on remote computer :" HorizontalAlignment="Left" Margin="284,204,-313,0" VerticalAlignment="Top" Foreground="White" FontSize="18" FontWeight="Bold" Width="282" />
             <Label Content="Load Script :" HorizontalAlignment="Left" Margin="10,58,0,0" VerticalAlignment="Top" Foreground="White" FontSize="18" FontWeight="Bold" />
             <Button  Style="{DynamicResource ButtonStyle1}" x:Name="ScriptEditor" Content="Open" HorizontalAlignment="Left" Margin="153,204,0,0" VerticalAlignment="Top" Width="90" Height="28" Background="#FF2E2E2E" BorderBrush="Gainsboro" BorderThickness="2" FontSize="16" FontFamily="Segoe UI Semibold" ForceCursor="True" Foreground="White" Click="OpenScriptEditor" />
-            <TextBox Name="sciptoutput" HorizontalAlignment="Left" Focusable="False" IsReadOnly="True" Height="73" Margin="95,246,-15,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="173" UndoLimit="200" FontSize="15" Foreground="White" Background="#FF2D2D30" />
+            <TextBox Name="sciptoutput" HorizontalAlignment="Left" Focusable="False" IsReadOnly="True" Height="73" Margin="97,247,-17,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="173" UndoLimit="200" FontSize="15" Foreground="White" Background="#FF2D2D30" />
             <Button Style="{DynamicResource ButtonStyle1}" Content="Send" HorizontalAlignment="Left" Margin="95,372,0,0" VerticalAlignment="Top" Width="90" Height="28" Background="#FF2E2E2E" BorderBrush="Gainsboro" BorderThickness="2" FontSize="16" FontFamily="Segoe UI Semibold" ForceCursor="True" Foreground="White" Click="InputSend_Click" />
         </Grid>
 
         <Image x:Name="loading" HorizontalAlignment="Left" gif:ImageBehavior.RepeatBehavior="0x" gif:ImageBehavior.AnimatedSource="icons/preloader.gif"  Height="100" Margin="1321,278,0,0" VerticalAlignment="Top" Width="100" Visibility="Visible" Panel.ZIndex="5" />
+        <Button Content="Button" HorizontalAlignment="Left" Margin="756,293,0,0" VerticalAlignment="Top" Width="76" Click="Button_Click"/>
     </Grid>
 </Window>

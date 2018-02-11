@@ -58,7 +58,6 @@ namespace Robotic_Arm_Desktop
         public void InverseKinematics()
         {
             GetAngle();
-
             if (DistanceFromTarget() < 0.08)  
             {
 
@@ -72,11 +71,10 @@ namespace Robotic_Arm_Desktop
                 }
             }
 
-            /*if (Global.triggered == true)  
+            if (Global.triggered == false)  
             {
-                moving = false;
-                SetAngle();
-            }*/
+                Global.InverseKinematicMovement = false;
+            }
 
             for (int i = 0; i <= 2; i++)
             {

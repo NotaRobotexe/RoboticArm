@@ -2,11 +2,41 @@ import socket
 import cv2
 import numpy as np
 
-#############################################################################################################################
-def GetObjectPosition():
-    return
+port = 6972
+sck = 0
+tcp_count = 128
+new_sck = 0
 
-def BasicColorRecognition(Frame,BGR,smooth,minOnjectSizem,OutputMode): #outputmode 1=mask 2=hsv 3=normal 
+def TryLockAtObject(Position):
+    return 0
+
+def Gripper(open_pos):
+    pos ="3"+str(-1)+"*"+str(-1)+"*"+str(-1)+"*"+str(-1)+"*"+str(-1)+"*"+str(open_pos)
+    Send(pos)
+
+def DrawTargetsOnVideo(objects):
+    Coordiniates = ""
+    for x in (0,len(objects)-1):
+        Coordiniates = Coordiniates+str(objects[x])
+
+    #Send(("8"+Coordiniates))
+
+def MoveForward():
+    Send("2")
+    onpos = 0
+    while onpos == 0:
+        ans = Receive().decode('UTF-8')
+        if ans == "finished":
+            onpos = 1
+    return 0
+
+def GetArmPosition():
+    Send("7")
+    position_ = Receive().decode('UTF-8')
+    position = position_.split("*")
+    return position
+
+def BasicColorRecognition(Frame,BGR,smooth,minOnjectSizem):
     BGRhsv = cv2.cvtColor(BGR,cv2.COLOR_BGR2HSV)
     lower = np.array([BGRhsv[0,0,0]-20,70,50])
     upper= np.array([BGRhsv[0,0,0]+20,255,255])
@@ -20,10 +50,7 @@ def BasicColorRecognition(Frame,BGR,smooth,minOnjectSizem,OutputMode): #outputmo
         
     (_,contours,_) = cv2.findContours(final, 1, 2)
 
-    if OutputMode == 1:
-        final = hsv
-    elif OutputMode == 2:
-        final = Frame
+    objects = []
 
     for cnt in contours:
         area = cv2.contourArea(cnt)
@@ -32,55 +59,41 @@ def BasicColorRecognition(Frame,BGR,smooth,minOnjectSizem,OutputMode): #outputmo
             box = cv2.boxPoints(rect)
             box = np.int0(box)
             cv2.drawContours(final,[box],-1,(255,0,255),5)
-            #cv2.circle(final,[box])
-            print(box[0])
+            objects.append(box[0])
 
-    return final
-
-
-#############################################################################################################################
-
-port = 6972
-sck = 0
-tcp_count = 128
-new_sck = 0
+    return final , objects
 
 def GetTriggerStatus():
     Send("1")
     return Receive().decode('UTF-8')
 
 def ReadInput():
-    Send("2")
     data = Receive().decode('UTF-8')
     return data
 
 def SendMessage(messaage):
     Send("6"+messaage)
 
-
 def MovingSpeed(time):
     Send("5"+str(time))
 
-def SetPosition(base, elbow0 ,elbow1 ,elbow2 ,gripper_rotatio ,gripper):
+def SetPosition(base, elbow0 ,elbow1 ,elbow2 ,gripper_rotatio ,gripper): #-1 nothing
     pos = "3"+str(base)+"*"+str(elbow0)+"*"+str(elbow1)+"*"+str(elbow2)+"*"+str(gripper_rotatio)+"*"+str(gripper)
-    print(pos)
     Send(pos)
 
-def IsMovig():
+def IsMoving():
     Send("4")
     ans = Receive().decode('UTF-8')
 
     if ans=="0":
-        return False
+        return 0
     else:
-        return True 
+        return 1 
 
-#def LookAtPosition():
+#netwrok functions
 
-#def GrabAngle(angle):
-
-def InitCom(ip):
-    tcp_ip = ip
+def InitCom():
+    tcp_ip = "0.0.0.0"
     global sck
     global new_sck
     sck = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

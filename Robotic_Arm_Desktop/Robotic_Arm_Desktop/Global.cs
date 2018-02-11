@@ -2,6 +2,8 @@
 {
     public static class Global
     {
+        public static string ScriptTargets = "";
+
         public static bool RemoteExc = false;
 
         public static int MovingSpeed = 15;
@@ -34,7 +36,7 @@
         public static string ScriptOutput = "";
 
         //debug only
-        public static bool DebugMode = true;
+        public static bool DebugMode = false;
 
         public static System.Windows.Media.Media3D.Vector3D point;
     }

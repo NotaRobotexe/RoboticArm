@@ -11,6 +11,7 @@
 #include "NetworkCom.h"
 #include "PCA9685.h"
 
+#define BASE 8
 #define ARM0a 9
 #define ARM0b 11
 #define ARM1 10
@@ -208,8 +209,9 @@ void Movemend(NetworkCom netMove) {
 void ManualMovemend(PCA9685 pwm, string msg) {
 	int pos = stoi(msg.substr(1, 3));
 
-	if (msg.substr(0, 1) == "0")
+	if (msg.substr(0, 1) == "0" && pos >= MIN_s && pos <= MAX_s)
 	{
+		pwm.setPWM(BASE, pos);
 	}
 	else if (msg.substr(0, 1) == "1" && pos >= MIN_s && pos <= MAX_s) {
 		pwm.setPWM(ARM0a, pos);

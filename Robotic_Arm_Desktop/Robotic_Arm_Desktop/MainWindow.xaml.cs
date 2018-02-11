@@ -27,7 +27,7 @@ namespace Robotic_Arm_Desktop
     //TODO: YOLO implementation 
     //TODO: Object follow       
     //TODO: script update       
-
+    //TODO: video stream
     //TODO: auto boot           
     //TODO: vsetko zbalit do kopy   
 
@@ -56,6 +56,7 @@ namespace Robotic_Arm_Desktop
         DispatcherTimer ControllstatusTimer;
         DispatcherTimer FrameRateCounter;
         DispatcherTimer IK_timer;
+        DispatcherTimer DrawTargetsTimer;
 
         List<string> Commands = new List<string>(); //Template command
         Stopwatch stopWatch;
@@ -155,6 +156,7 @@ namespace Robotic_Arm_Desktop
         }
 
 
+
         /*video stream and other thing with image control*/
         private async void SetStreamSettings()
         {
@@ -186,16 +188,16 @@ namespace Robotic_Arm_Desktop
 
             string res = _width + _high;
             netCom.SendData("2"+res+ Slenght + StreammSetting);
-            await NonBlockSleep();
+            await NonBlockSleep(2000);
             stream.Procesinit();
             loading.Visibility = Visibility.Hidden;
         }
 
-        public async Task NonBlockSleep()
+        public async Task NonBlockSleep(int time)
         {
             await Task.Run(() =>
             {
-                Thread.Sleep(2000);
+                Thread.Sleep(time);
             });
         } 
 
@@ -220,6 +222,7 @@ namespace Robotic_Arm_Desktop
             FrameLab.Content = framerate.ToString() + " fps";
             framerate = 0;
         }
+
         private void HUDclick(object sender, RoutedEventArgs e)
         {
             hud = !hud;
@@ -951,7 +954,8 @@ namespace Robotic_Arm_Desktop
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
             openFileDialog.Title = "Open a Script";
-            openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\RoboticArm\\Scripts";
+            //openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\RoboticArm\\Scripts";
+            openFileDialog.InitialDirectory = "C:\\Users\\mt2si\\Desktop\\projekty\\S.O.C Robotic Arm\\Robotic Arm\\PyScript";
             openFileDialog.ShowDialog();
 
             ScriptPath = openFileDialog.FileName;
@@ -967,30 +971,36 @@ namespace Robotic_Arm_Desktop
 
         }
 
-        private void RunScript(object sender, RoutedEventArgs e)
+        private async void RunScript(object sender, RoutedEventArgs e)
         {
             Global.ScriptOutput = "";
+            sciptoutput.Text = "";
 
             if (ScriptPath != "")
             {
 
                 if (Global.RemoteExc == false)
                 {
-                    pythone = new Process();
-                    pythone.StartInfo.FileName = ScriptPath;
+                    /*pythone = new Process();
+                    pythone.StartInfo.FileName = "python.exe";
+                    pythone.StartInfo.Arguments = "\""+ScriptPath+ "\"";
                     pythone.StartInfo.UseShellExecute = true;
                     pythone.StartInfo.RedirectStandardOutput = false;
-                    pythone.StartInfo.CreateNoWindow = true;
+                    pythone.StartInfo.CreateNoWindow = false;
                     pythone.EnableRaisingEvents = true;
                     pythone.Start();
-                    pythone.Exited += Pythone_Exited;
+                    pythone.Exited += Pythone_Exited;*/
 
+                    await NonBlockSleep(1000);
 
                     Global.ScriptEnabled = true;
                     scriptCom = new ScriptNetwork();
                     scriptCom.InitCom("127.0.0.1",movement);
-                    scriptCom.Communication();
                     scriptCom.ScriptRunning = true;
+                    scriptCom.Communication();
+                    scriptCom.NewOutput += ScriptCom_NewOutput;
+                    scriptCom.StraightLine += ScriptCom_StraightLine;
+                    scriptCom.DrawTargets += ScriptCom_DrawTargets;
                 }
                 else //start script on remote computer
                 {
@@ -1031,29 +1041,40 @@ namespace Robotic_Arm_Desktop
             }
         }
 
+        private void ScriptCom_DrawTargets(object sender, EventArgs e)
+        {
+            
+        }
+
         private void InputSend_Click(object sender, RoutedEventArgs e)
         {
-            if (input_.Text != "")
+            if (input_.Text != "" && scriptCom != null)
             {
-                scriptCom.InputMsg = input_.Text;
+                scriptCom.InputMessaging(input_.Text);
                 input_.Text = "";
             }
         }
 
         private void Pythone_Exited(object sender, EventArgs e)
         {
-            scriptCom.EndCom();
+            if (scriptCom != null)
+            {
+                scriptCom.EndCom();
+            }
         }
 
         private void ScriptStop_Click(object sender, RoutedEventArgs e)
         {
             if (Global.RemoteExc == true)
             {
+                scriptCom.EndCom();
                 remoteNetwork.QuitScript();
             }
             else
             {
+                scriptCom.EndCom();
                 Global.ScriptEnabled = false;
+                pythone.Kill();
                 pythone.Close();
             }
 
@@ -1075,9 +1096,19 @@ namespace Robotic_Arm_Desktop
             }
         }
 
-        /*INVERSE kinematic -straight line*/
+        private void ScriptCom_NewOutput(object sender, EventArgs e)
+        {
+            Application.Current.Dispatcher.Invoke(
+            () =>
+            {
+                sciptoutput.Text = Global.ScriptOutput;
+            });
+        }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        /*INVERSE kinematic - straight line movement*/
+
+
+        private void ScriptCom_StraightLine(object sender, EventArgs e)
         {
             inverse = new InverseKinematic(movement, model);
             Global.InverseKinematicMovement = true;
@@ -1086,7 +1117,6 @@ namespace Robotic_Arm_Desktop
             IK_timer.Tick += IK_timer_Tick;
             IK_timer.Interval = new TimeSpan(0, 0, 0, 0, 0);
             IK_timer.Start();
-
         }
 
         private void IK_timer_Tick(object sender, EventArgs e)
@@ -1097,8 +1127,22 @@ namespace Robotic_Arm_Desktop
             }
             else
             {
+                scriptCom.MoveForwardFinished();
                 IK_timer.Stop();
             }
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            Ellipse ellipse = new Ellipse();
+            ellipse.Fill = Brushes.Red;
+            ellipse.Width = 15;
+            ellipse.Height = 15;
+            ellipse.StrokeThickness = 2;
+
+            Cnv.Children.Add(ellipse);
+            Canvas.SetLeft(ellipse, 815);
+            Canvas.SetTop(ellipse, 20);
         }
 
     }

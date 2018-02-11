@@ -137,11 +137,12 @@ namespace Robotic_Arm_Desktop
     public class ScriptNetwork
     {
         public event EventHandler NewOutput;
+        public event EventHandler StraightLine;
+        public event EventHandler DrawTargets;
 
         private Movement movement;
         private Socket socket;
         public bool ScriptRunning = false;
-        public string InputMsg = "";
         private bool connected = false;
 
         public int InitCom(string ip, Movement m)
@@ -176,23 +177,35 @@ namespace Robotic_Arm_Desktop
         {
             byte[] buffer = new byte[100];
 
-            socket.Receive(buffer);
-            string message = Encoding.UTF8.GetString(buffer);
-            return message;
+            try
+            {
+                socket.Receive(buffer);
+                string message = Encoding.UTF8.GetString(buffer);
+                return message;
+            }
+            catch
+            {
+                return "";
+            }
         }
 
         public async void Communication()
         {
+
             if (connected == true)
             {
+
                 await Task.Run(() =>
                 {
                     while (ScriptRunning)
                     {
                         string msg_raw = ReceiveData();
+                        if (msg_raw == ""){
+                            break;
+                        }
                         string msg = msg_raw.Substring(0, msg_raw.IndexOf('\0'));
-                        if (msg == "")
-                        {
+
+                        if (msg == ""){
                             break;
                         }
 
@@ -205,7 +218,7 @@ namespace Robotic_Arm_Desktop
                                 break;
 
                             case 2:
-                                InputMessaging();
+                                OnStraightLine(EventArgs.Empty);
                                 break;
 
                             case 3:
@@ -225,6 +238,15 @@ namespace Robotic_Arm_Desktop
                                 OnNewOutput(EventArgs.Empty);
                                 break;
 
+                            case 7:
+                                SendArmPosition();
+                                break;
+
+                            case 8:
+                                Global.ScriptTargets = msg;
+                                OnDrawTargets(EventArgs.Empty);
+                                break;
+
                             default:
                                 break;
                         }
@@ -234,13 +256,43 @@ namespace Robotic_Arm_Desktop
             }
         }
 
+        protected virtual void OnDrawTargets(EventArgs e)
+        {
+            EventHandler eventHandler = NewOutput;
+            if (eventHandler != null)
+            {
+                eventHandler(this, e);
+            }
+        }
+
+        public void MoveForwardFinished()
+        {
+            SendData("finished");
+        }
+
+        private void SendArmPosition()
+        {
+            string pos = Math.Round(movement.baseMovemend.AngleInDegree,2).ToString() + "*" + Math.Round(movement.elbow0.AngleInDegree, 2).ToString() + "*" + Math.Round(movement.elbow1.AngleInDegree, 2).ToString() +
+            "*" + Math.Round(movement.elbow2.AngleInDegree, 2).ToString()+ "*"+ Math.Round(movement.griperRotation.AngleInDegree, 2).ToString() + "*" + Math.Round(movement.griper.AngleInDegree, 2).ToString();
+            SendData(pos);
+        }
+
         private void SetOutput(string msg)
         {
             string oldString = Global.ScriptOutput;
-            Global.ScriptOutput = msg.Substring(1)+"/n"+oldString;
+            Global.ScriptOutput = msg.Substring(1)+ "\r\n" + oldString;
         } 
             
         protected virtual void OnNewOutput(EventArgs e)
+        {
+            EventHandler eventHandler = NewOutput;
+            if (eventHandler != null)
+            {
+                eventHandler(this, e);
+            }
+        }
+
+        protected virtual void OnStraightLine(EventArgs e)
         {
             EventHandler eventHandler = NewOutput;
             if (eventHandler != null)
@@ -261,18 +313,14 @@ namespace Robotic_Arm_Desktop
 
         private void SetMovSpeed(string msg)
         {
-            int time = Convert.ToInt32(msg.Substring(1));
+           
+            int time = Convert.ToInt32(msg);
             Global.MovingSpeed = time;
         }
 
-        private void InputMessaging()
+        public void InputMessaging(string msg)
         {
-            while (InputMsg == "")
-            {
-                Thread.Sleep(100);
-            }
-            SendData(InputMsg);
-            InputMsg = "";
+            SendData(msg);
         }
 
         private void MovingStatus()
