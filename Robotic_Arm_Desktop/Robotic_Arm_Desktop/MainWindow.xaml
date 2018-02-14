@@ -172,6 +172,6 @@
         </Grid>
 
         <Image x:Name="loading" HorizontalAlignment="Left" gif:ImageBehavior.RepeatBehavior="0x" gif:ImageBehavior.AnimatedSource="icons/preloader.gif"  Height="100" Margin="1321,278,0,0" VerticalAlignment="Top" Width="100" Visibility="Visible" Panel.ZIndex="5" />
-        <Button Content="Button" HorizontalAlignment="Left" Margin="756,293,0,0" VerticalAlignment="Top" Width="76" Click="Button_Click"/>
+        <Button Content="Button" HorizontalAlignment="Left" Margin="756,293,0,0" VerticalAlignment="Top" Width="76" Click="Button_Click" Visibility="Hidden"/>
     </Grid>
 </Window>

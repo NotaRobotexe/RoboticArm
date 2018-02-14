@@ -13,6 +13,7 @@ def TryLockAtObject(Position):
 def Gripper(open_pos):
     pos ="3"+str(-1)+"*"+str(-1)+"*"+str(-1)+"*"+str(-1)+"*"+str(-1)+"*"+str(open_pos)
     Send(pos)
+    acnknowladge()
 
 def DrawTargetsOnVideo(objects):
     Coordiniates = ""
@@ -23,12 +24,7 @@ def DrawTargetsOnVideo(objects):
 
 def MoveForward():
     Send("2")
-    onpos = 0
-    while onpos == 0:
-        ans = Receive().decode('UTF-8')
-        if ans == "finished":
-            onpos = 1
-    return 0
+    acnknowladge()
 
 def GetArmPosition():
     Send("7")
@@ -73,18 +69,20 @@ def ReadInput():
 
 def SendMessage(messaage):
     Send("6"+messaage)
+    acnknowladge()
 
 def MovingSpeed(time):
     Send("5"+str(time))
+    acnknowladge()
 
 def SetPosition(base, elbow0 ,elbow1 ,elbow2 ,gripper_rotatio ,gripper): #-1 nothing
     pos = "3"+str(base)+"*"+str(elbow0)+"*"+str(elbow1)+"*"+str(elbow2)+"*"+str(gripper_rotatio)+"*"+str(gripper)
     Send(pos)
+    acnknowladge()
 
 def IsMoving():
     Send("4")
     ans = Receive().decode('UTF-8')
-
     if ans=="0":
         return 0
     else:
@@ -111,3 +109,10 @@ def Receive():
 
 def Send(data):
     new_sck.sendall(data.encode())
+
+def acnknowladge():
+    while 1==1:
+        ack = Receive().decode('UTF-8')
+        print(ack)
+        if ack == "1":
+            break

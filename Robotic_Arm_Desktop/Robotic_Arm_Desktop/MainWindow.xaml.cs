@@ -981,7 +981,7 @@ namespace Robotic_Arm_Desktop
 
                 if (Global.RemoteExc == false)
                 {
-                    /*pythone = new Process();
+                    pythone = new Process();
                     pythone.StartInfo.FileName = "python.exe";
                     pythone.StartInfo.Arguments = "\""+ScriptPath+ "\"";
                     pythone.StartInfo.UseShellExecute = true;
@@ -989,7 +989,7 @@ namespace Robotic_Arm_Desktop
                     pythone.StartInfo.CreateNoWindow = false;
                     pythone.EnableRaisingEvents = true;
                     pythone.Start();
-                    pythone.Exited += Pythone_Exited;*/
+                    pythone.Exited += Pythone_Exited;
 
                     await NonBlockSleep(1000);
 
@@ -1103,6 +1103,7 @@ namespace Robotic_Arm_Desktop
             {
                 sciptoutput.Text = Global.ScriptOutput;
             });
+            scriptCom.SendACK();
         }
 
         /*INVERSE kinematic - straight line movement*/
@@ -1117,6 +1118,8 @@ namespace Robotic_Arm_Desktop
             IK_timer.Tick += IK_timer_Tick;
             IK_timer.Interval = new TimeSpan(0, 0, 0, 0, 0);
             IK_timer.Start();
+
+            scriptCom.SendACK();
         }
 
         private void IK_timer_Tick(object sender, EventArgs e)
@@ -1127,7 +1130,6 @@ namespace Robotic_Arm_Desktop
             }
             else
             {
-                scriptCom.MoveForwardFinished();
                 IK_timer.Stop();
             }
         }

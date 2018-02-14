@@ -223,6 +223,7 @@ namespace Robotic_Arm_Desktop
 
                             case 3:
                                 AutoModeTemplate.ScriptDefaultMovemend(msg, movement);
+                                SendACK();
                                 break;
 
                             case 4:
@@ -263,11 +264,6 @@ namespace Robotic_Arm_Desktop
             {
                 eventHandler(this, e);
             }
-        }
-
-        public void MoveForwardFinished()
-        {
-            SendData("finished");
         }
 
         private void SendArmPosition()
@@ -313,9 +309,9 @@ namespace Robotic_Arm_Desktop
 
         private void SetMovSpeed(string msg)
         {
-           
             int time = Convert.ToInt32(msg);
             Global.MovingSpeed = time;
+            SendACK();
         }
 
         public void InputMessaging(string msg)
@@ -333,6 +329,11 @@ namespace Robotic_Arm_Desktop
             {
                 SendData("1");
             }
+        }
+
+        public void SendACK()
+        {
+            SendData("1");
         }
 
         public void EndCom()
