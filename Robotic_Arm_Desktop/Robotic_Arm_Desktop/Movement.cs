@@ -83,7 +83,7 @@ namespace Robotic_Arm_Desktop
 
         public short keyboardMovingArm=0; // moving with witch part of arm 0=el0 1=el1 2=el2 
 
-        public float valueCountExp = (float)0.001;
+        public float valueCountExp = (float)0.01;
         public float valueCount = 1; //on how much will value increment
 
 
@@ -118,11 +118,11 @@ namespace Robotic_Arm_Desktop
 
             if (data.frontButton==8 && Global.WrongMode == false)
             {
-                elbow0.SetPostionFromKeyboadrOrGamepad(valueCount);
+                elbow0.SetPostionFromKeyboadrOrGamepad(-(valueCount));
             }
             else if (data.frontButton == 4 && Global.WrongMode == false)
             {
-                elbow0.SetPostionFromKeyboadrOrGamepad(-(valueCount));
+                elbow0.SetPostionFromKeyboadrOrGamepad((valueCount));
             }
             else if (data.frontButton == 1 && Global.WrongMode == false)
             {
@@ -162,18 +162,17 @@ namespace Robotic_Arm_Desktop
 
             if (data.leftStickHor > 0 && Global.WrongMode == false)
             {
-                baseMovemend.SetPostionFromKeyboadrOrGamepad(valueCount);
+                baseMovemend.SetPostionFromKeyboadrOrGamepad(-(valueCount));
             }
             else if (data.leftStickHor < 0 && Global.WrongMode == false)
             {
-                baseMovemend.SetPostionFromKeyboadrOrGamepad(-(valueCount));
+                baseMovemend.SetPostionFromKeyboadrOrGamepad((valueCount));
             }
 
         }
 
         public void AnalizeData(Key key) //for keyboard
         {
-
             if (key == Key.R)
             {
                 if (valueCount + valueCountExp < 25)
@@ -223,7 +222,7 @@ namespace Robotic_Arm_Desktop
             {
                 griper.SetPostionFromKeyboadrOrGamepad(-valueCount);
             }
-            else if (key == Key.CrSel)
+            else if (key == Key.Z)
             {
                 griper.SetPostionFromKeyboadrOrGamepad(valueCount);
             }

@@ -34,7 +34,6 @@ namespace Robotic_Arm_Desktop
     }
 
 
-
     public struct GamepadState
     {
         public int leftStickHor;
@@ -44,6 +43,7 @@ namespace Robotic_Arm_Desktop
         public int button;
         public int frontButton;
         public int mode;
+      
     };
 
     [StructLayout(LayoutKind.Sequential)]

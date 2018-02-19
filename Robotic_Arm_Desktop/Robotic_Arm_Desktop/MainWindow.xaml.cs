@@ -35,7 +35,7 @@ namespace Robotic_Arm_Desktop
 
     public partial class MainWindow : Window
     {
-        GamepadState gamepadData;
+        GamepadState gamepadData ,gamepadDataOld;
         Movement movement;
         _3Dmodel model;
         Gamepad gamepad;
@@ -45,6 +45,7 @@ namespace Robotic_Arm_Desktop
 
         string ScriptPath = "";
 
+        bool GamepadSlowDown = false;
         bool AutoMode = false;
         bool gamepadConnected = false;
         bool hud = false;
@@ -57,6 +58,7 @@ namespace Robotic_Arm_Desktop
         DispatcherTimer FrameRateCounter;
         DispatcherTimer IK_timer;
         DispatcherTimer DrawTargetsTimer;
+        Timer GamepadSlower;
 
         List<string> Commands = new List<string>(); //Template command
         Stopwatch stopWatch;
@@ -147,15 +149,23 @@ namespace Robotic_Arm_Desktop
             buttonAnimationOnOff(HUDbutton, false);
             this.incLabel.Content = Math.Round(movement.valueCount, 3);
 
-            InitializeGamepad();
+            int mainID = Process.GetCurrentProcess().Id;
+            new Thread(() =>
+            {
+                Process p = Process.GetProcessById(mainID);
+                IntPtr windowHandle = p.MainWindowHandle;
+                InitializeGamepad(windowHandle);
+            }).Start();
+
 
             int speed = (int)Math.Round(fanSlider.Value); //start fan after loading
             netFan.SendData(speed.ToString());
 
+            GamepadSlower = new Timer(TimerCallback, null, 0, 2);
+
+
             Global.loadingDone = true;
         }
-
-
 
         /*video stream and other thing with image control*/
         private async void SetStreamSettings()
@@ -246,10 +256,10 @@ namespace Robotic_Arm_Desktop
         {
             try
             {
+                await AutoModeTemplate.AnimationFromTemplate(Positions.OffPos, movement);
                 netCom.SendData("7");
                 FrameRateCounter.Stop();
                 stream.ProcesEnd();
-                await AutoModeTemplate.AnimationFromTemplate(Positions.OffPos, movement);
                 Application.Current.Shutdown();
             }
             catch (Exception)
@@ -391,23 +401,20 @@ namespace Robotic_Arm_Desktop
             }
         }
 
-        public static object GC { get; internal set; }  //wtf co to je??
 
         /*gamepad and keyboard basic input*/
-        private void InitializeGamepad()
+        private void InitializeGamepad(IntPtr windowHandle)
         {
-            var mainHandle = new WindowInteropHelper(this).Handle;
+            gamepad = new Gamepad(windowHandle);
 
-            gamepad = new Gamepad(mainHandle);
-
-            HwndSource source = HwndSource.FromHwnd(mainHandle);
+            HwndSource source = HwndSource.FromHwnd(windowHandle);
             source.AddHook(new HwndSourceHook(WndProc));
-            
+
         }
 
         private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled) //gamepad input
         {
-            if (movement.gamepadEnabled == true)
+            if (movement.gamepadEnabled == true && GamepadSlowDown == false)
             {
                 switch (msg)
                 {
@@ -463,6 +470,11 @@ namespace Robotic_Arm_Desktop
                     movement.keyboardMovingArm = 2;
                 }
             }
+        }
+
+        private void TimerCallback(object state)
+        {
+            GamepadSlowDown = !GamepadSlowDown;
         }
 
         /*Motors calibration and settings */
@@ -1136,6 +1148,8 @@ namespace Robotic_Arm_Desktop
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
+            Console.WriteLine(movement.baseMovemend.AngleInPWM + " " + movement.elbow0.AngleInPWM + " " + movement.elbow1.AngleInPWM + " " + movement.elbow2.AngleInPWM);
+
             Ellipse ellipse = new Ellipse();
             ellipse.Fill = Brushes.Red;
             ellipse.Width = 15;
