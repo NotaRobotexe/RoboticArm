@@ -1,14 +1,28 @@
+import threading
 import socket
 import cv2
 import numpy as np
+import os
 
 port = 6972
 sck = 0
 tcp_count = 128
 new_sck = 0
 
-def TryLockAtObject(Position):
+Yport = 6973
+Ysck = 0
+Ytcp_count = 128
+Ynew_sck = 0
+
+
+def TryLockAtObject(Position,speed,tollerance):
+    
     return 0
+
+def GetStreamAddress():
+    Send("9")
+    StreamAdd = Receive()
+    return StreamAdd
 
 def Gripper(open_pos):
     pos ="3"+str(-1)+"*"+str(-1)+"*"+str(-1)+"*"+str(-1)+"*"+str(-1)+"*"+str(open_pos)
@@ -28,7 +42,7 @@ def MoveForward():
 
 def GetArmPosition():
     Send("7")
-    position_ = Receive().decode('UTF-8')
+    position_ = Receive()
     position = position_.split("*")
     return position
 
@@ -61,10 +75,10 @@ def BasicColorRecognition(Frame,BGR,smooth,minOnjectSizem):
 
 def GetTriggerStatus():
     Send("1")
-    return Receive().decode('UTF-8')
+    return Receive()
 
 def ReadInput():
-    data = Receive().decode('UTF-8')
+    data = Receive()
     return data
 
 def SendMessage(messaage):
@@ -82,11 +96,58 @@ def SetPosition(base, elbow0 ,elbow1 ,elbow2 ,gripper_rotatio ,gripper): #-1 not
 
 def IsMoving():
     Send("4")
-    ans = Receive().decode('UTF-8')
+    ans = Receive()
     if ans=="0":
         return 0
     else:
         return 1 
+
+def InitYolo(source):
+    tcp_ip = "127.0.0.1"
+    global Ysck
+    global Ynew_sck
+    Ysck = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    Ysck.bind((tcp_ip, Yport))
+
+    thread = threading.Thread(target=launchYolo, args=(source,))
+    thread.daemon = True
+    thread.start()
+
+    Ysck.listen(1)
+    Ynew_sck,addr = Ysck.accept()
+    data = Ynew_sck.recv(Ytcp_count).decode('UTF-8')
+    return data
+
+def GetYoloOutput():
+    data = "k"
+    Ynew_sck.sendall(data.encode()+b"\0")
+    objects = Ynew_sck.recv(Ytcp_count).decode('UTF-8')
+    
+    if objects == "*":
+        return 0
+
+    objects_ = objects.split("|")
+    num_of_obj = (len(objects_)-1)
+
+    final_object=[]
+    for i in range(num_of_obj):
+        final_object.append([])
+        parameters = objects_[i].split("*")
+        for a in range(5):      
+            final_object[i].append(parameters[a])
+
+    return final_object    
+
+def CloseYolo():
+    Ynew_sck.close()
+    Ysck.close()
+    
+def launchYolo(source): #do not call from script!!!!!
+    dirpath = os.getcwd()    
+    usrname = os.path.basename(dirpath)
+    path = "C:\\Users\\"+usrname+"\\Documents\\RoboticArm\\yolo\\"
+    os.system("cd " + path + " & Yolo.exe "+ source)
+
 
 #netwrok functions
 
@@ -104,7 +165,7 @@ def CloseCom():
     sck.close()
 
 def Receive():
-    data = new_sck.recv(tcp_count)
+    data = new_sck.recv(tcp_count).decode('UTF-8')
     return data
 
 def Send(data):

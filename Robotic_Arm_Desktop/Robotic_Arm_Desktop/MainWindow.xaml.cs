@@ -26,9 +26,7 @@ namespace Robotic_Arm_Desktop
 {
     //TODO: YOLO implementation 
     //TODO: Object follow       
-    //TODO: script update       
     //TODO: video stream
-    //TODO: auto boot           
     //TODO: vsetko zbalit do kopy   
 
     //TODO: spiest sa ako panvica #1 #2 
@@ -49,7 +47,6 @@ namespace Robotic_Arm_Desktop
         bool AutoMode = false;
         bool gamepadConnected = false;
         bool hud = false;
-        bool CapturingTemplate = false;
         bool WaitForTrigger = false;
         int framerate = 0;
         int connectionStatus = -1;
@@ -790,13 +787,10 @@ namespace Robotic_Arm_Desktop
             triggerButton.IsEnabled = true;
             templateSpeed.IsEnabled = true;
 
-            if (tempname.Text != "Template name" && tempname.Text != "")
-            {
+            if (tempname.Text != "Template name" && tempname.Text != ""){
                 Commands.Clear();
-                CapturingTemplate = true;
             }
-            else
-            {
+            else{
                 MessageBox.Show("Incorrect file name");
             }
         }

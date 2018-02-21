@@ -248,6 +248,10 @@ namespace Robotic_Arm_Desktop
                                 OnDrawTargets(EventArgs.Empty);
                                 break;
 
+                            case 9:
+                                SendStreamAddress();
+                                break;
+
                             default:
                                 break;
                         }
@@ -257,9 +261,20 @@ namespace Robotic_Arm_Desktop
             }
         }
 
+        private void SendStreamAddress()
+        {
+            if(Global.RemoteExc == false){
+                SendData("rtsp://" + Global.ipaddres + ":8554/unicast");
+            }
+            else
+            {
+                SendData("127.0.0.0");//TODO: tu treba supnut tu adresu
+            }
+        }
+
         protected virtual void OnDrawTargets(EventArgs e)
         {
-            EventHandler eventHandler = NewOutput;
+            EventHandler eventHandler = DrawTargets;
             if (eventHandler != null)
             {
                 eventHandler(this, e);
@@ -290,7 +305,7 @@ namespace Robotic_Arm_Desktop
 
         protected virtual void OnStraightLine(EventArgs e)
         {
-            EventHandler eventHandler = NewOutput;
+            EventHandler eventHandler = StraightLine;
             if (eventHandler != null)
             {
                 eventHandler(this, e);
