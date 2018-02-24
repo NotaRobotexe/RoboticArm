@@ -196,7 +196,6 @@ namespace Robotic_Arm_Desktop
 
         public async void Communication()
         {
-
             if (connected == true)
             {
                 await Task.Run(() =>
@@ -265,6 +264,9 @@ namespace Robotic_Arm_Desktop
                             case "w":
                                 ObjectFollow(msg);
                                 break;
+                            case "e":
+                                StopMovement();
+                                break;
 
                             default:
                                 break;
@@ -273,6 +275,13 @@ namespace Robotic_Arm_Desktop
                 }
                 );
             }
+        }
+
+        private void StopMovement()
+        {
+            Global.InverseKinematicMovement = false;
+            Global.stopmovement = true;
+            SendACK();
         }
 
         private async void ObjectFollow(string msg)
@@ -338,7 +347,7 @@ namespace Robotic_Arm_Desktop
             }
             else
             {
-                SendData("127.0.0.0");//TODO: tu treba supnut tu adresu
+                SendData("udp://127.0.0.1:8555");
             }
         }
 

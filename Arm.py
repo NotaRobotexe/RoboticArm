@@ -15,35 +15,41 @@ Ytcp_count = 128
 Ynew_sck = 0
 
 
-def TryLockAtObject(PositionX,positionY,speed,toleration,resolution):
-    centerX = resolution[0]/2
-    centerY = resolution[1]/2
+def TryLockAtObject(pos,speed,toleration_,resolution):
+    if len(pos) > 0:
+        toleration = int(toleration_)
+        PositionX = int(pos[0])
+        PositionY = int(pos[1])
+        centerX = int(int(resolution[0])/2)
+        centerY = int(int(resolution[1])/2)
 
-    command = "w"
-    onpos = 0
+        command = "w"
+        onpos = 0
 
-    if PositionX > centerX+toleration:
-        command = command+"1"
-    elif PositionX < centerX-toleration:
-        command = command+"2"
-    else:
-        onpos = 1
-        command = command+"0"
+        if PositionX > centerX+toleration:
+            command = command+"1*"
+        elif PositionX < centerX-toleration:
+            command = command+"2*"
+        else:
+            onpos = 1
+            command = command+"0*"
 
-    if PositionY > centerY+toleration:
-        command = command+"1"
-    elif PositionY < centerY-toleration:
-        command = command+"2"
-    else:
-        onpos = onpos+1
-        command = command+"0"
+        if PositionY > centerY+toleration:
+            command = command+"1*"
+        elif PositionY < centerY-toleration:
+            command = command+"2*"
+        else:
+            onpos = onpos+1
+            command = command+"0*"
 
-    command= command+str(speed)
-    Send(command)
-    acnknowladge()
+        command= command+str(speed)
+        Send(command)
+        acnknowladge()
 
-    if onpos == 2:
-        return 1
+        if onpos == 2:
+            return 1
+        else:
+            return 0
     else:
         return 0
 
@@ -64,14 +70,15 @@ def Gripper(open_pos):
     acnknowladge()
 
 def DrawTargetsOnVideo(objects): #structure [x,y,name]
-    Coordiniates = ""
-    for x in (0,len(objects)-1):
-        for i in range(3):
-            Coordiniates = Coordiniates+str(objects[x][i])+"*"
-        Coordiniates = Coordiniates+"|"
-
-    Send(("8"+Coordiniates))
-    acnknowladge()
+    if len(objects) > 0:
+        Coordiniates = ""
+        for x in range (len(objects)):
+            for i in range(3):
+                Coordiniates = Coordiniates+str(objects[x][i])+"*"
+            Coordiniates = Coordiniates+"|"
+        print(Coordiniates)
+        Send(("8"+Coordiniates))
+        acnknowladge()
 
 def MoveForward():
     Send("2")
@@ -124,6 +131,7 @@ def ReadInput():
     return data
 
 def SendMessage(messaage):
+    messaage = str(messaage)
     Send("6"+messaage)
     acnknowladge()
 
@@ -144,14 +152,14 @@ def IsMoving():
     else:
         return 1 
 
-def InitYolo(source):
+def InitYolo(source,ConfigPath):
     tcp_ip = "127.0.0.1"
     global Ysck
     global Ynew_sck
     Ysck = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     Ysck.bind((tcp_ip, Yport))
 
-    thread = threading.Thread(target=launchYolo, args=(source,))
+    thread = threading.Thread(target=launchYolo, args=(source,ConfigPath,))
     thread.daemon = True
     thread.start()
 
@@ -165,13 +173,13 @@ def GetYoloOutput():
     Ynew_sck.sendall(data.encode()+b"\0")
     objects = Ynew_sck.recv(Ytcp_count).decode('UTF-8')
     
+    final_object=[]
     if objects == "*":
-        return 0
+        return final_object
 
     objects_ = objects.split("|")
     num_of_obj = (len(objects_)-1)
 
-    final_object=[]
     for i in range(num_of_obj):
         final_object.append([])
         parameters = objects_[i].split("*")
@@ -184,11 +192,10 @@ def CloseYolo():
     Ynew_sck.close()
     Ysck.close()
     
-def launchYolo(source): #do not call from script!!!!!
-    dirpath = os.getcwd()    
-    usrname = os.path.basename(dirpath)
+def launchYolo(source,ConfigPath): #do not call from script!!!!! 
+    usrname = os.getlogin()
     path = "C:\\Users\\"+usrname+"\\Documents\\RoboticArm\\yolo\\"
-    os.system("cd " + path + " & Yolo.exe "+ source)
+    os.system(path + "Yolo.exe "+ source + " "+ConfigPath)
 
 
 #netwrok functions
@@ -216,6 +223,5 @@ def Send(data):
 def acnknowladge():
     while 1==1:
         ack = Receive()
-        print(ack)
         if ack == "1":
             break

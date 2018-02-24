@@ -177,13 +177,14 @@ namespace Robotic_Arm_Desktop
 
             await Task.Run(() =>
             {
+                Global.stopmovement = false;
                 bool allMotorsOnPositions = false;
                 do
                 {
                     allMotorsOnPositions = Moving(instructions, movement);
                     Thread.Sleep(Global.MovingSpeed);
 
-                    if (Global.ScriptEnabled == false){
+                    if (Global.ScriptEnabled == false || Global.stopmovement == true){
                         break;
                     }
                 } while (allMotorsOnPositions == false);

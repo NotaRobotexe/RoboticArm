@@ -24,8 +24,6 @@ using Microsoft.Win32;
 
 namespace Robotic_Arm_Desktop
 {
-    //TODO: YOLO implementation 
-    //TODO: Object follow       
     //TODO: video stream
     //TODO: vsetko zbalit do kopy   
 
@@ -1065,17 +1063,30 @@ namespace Robotic_Arm_Desktop
         {
             restream = new Process();
             restream.StartInfo.FileName = Global.FfmpegPath;
-            restream.StartInfo.Arguments = @"-i rtsp://" + Global.ipaddres + ":8554/unicast  -c:v copy -r 60 -f image2pipe -pix_fmt rgb24 -vcodec rawvideo -"; //TODO uprav totok
+            restream.StartInfo.Arguments = @"-i rtsp://" + Global.ipaddres + ":8554/unicast -preset ultrafast -c:v copy -vcodec libx264 -tune zerolatency -f h264 udp://" + targetIp.Text+ ":8555";
             restream.StartInfo.UseShellExecute = false;
             restream.StartInfo.RedirectStandardOutput = false;
             restream.StartInfo.CreateNoWindow = true;
+            restream.EnableRaisingEvents = true;
+            restream.Exited += Restream_Exited;
             restream.Start();
+        }
+
+        private void Restream_Exited(object sender, EventArgs e)
+        {
+            remotestatus.Content = "Stream failed";
         }
 
         private void KillRestream()
         {
-            restream.Kill();
-            restream.Close();
+            try
+            {
+                restream.Kill();
+                restream.Close();
+            }
+            catch (Exception)
+            {
+            }
         }
 
         private void ScriptCom_DrawTargets(object sender, EventArgs e)

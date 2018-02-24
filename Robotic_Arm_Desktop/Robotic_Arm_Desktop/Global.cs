@@ -5,6 +5,7 @@
         public static string ScriptTargets = "";
 
         public static bool RemoteExc = false;
+        public static bool stopmovement = false;
 
         public static int MovingSpeed = 15;
         public static bool ScriptEnabled = false;
