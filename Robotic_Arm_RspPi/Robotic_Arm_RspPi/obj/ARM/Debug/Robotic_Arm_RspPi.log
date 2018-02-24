@@ -1,1 +1,14 @@
-﻿
+﻿  Validating architecture
+  Validating sources
+  Copying sources remotely to 'raspberrypi.local'
+  Starting remote build
+  Compiling sources:
+  main.cpp
+  Linking objects
+  /usr/bin/ld: /home/pi/projects/Robotic_Arm_RspPi/obj/ARM/Debug/main.o: undefined reference to symbol 'pthread_create@@GLIBC_2.4'
+  //lib/arm-linux-gnueabihf/libpthread.so.0: error adding symbols: DSO missing from command line
+  collect2: error: ld returned 1 exit status
+  
+/usr/bin/ld : error : undefined reference to symbol 'pthread_create@@GLIBC_2.4'
+//lib/arm-linux-gnueabihf/libpthread.so.0 : error : DSO missing from command line
+collect2 : error : ld returned 1 exit status

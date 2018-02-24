@@ -114,7 +114,7 @@ namespace Robotic_Arm_Desktop
         {
             Global.IsMoving = true;
 
-            string command = rawcommand.Substring(1);
+            string command = rawcommand;
             List<string> instructionsRaw = command.Split('*').ToList();
             List<double> instructions = new List<double>();
 

@@ -165,10 +165,15 @@ namespace Robotic_Arm_Desktop
         private void SendData(string s)
         {
             byte[] buffer = Encoding.ASCII.GetBytes(s);
-
+            
             Task.Run(() =>
             {
-                socket.Send(buffer);
+                try{
+                    socket.Send(buffer);
+                }
+                catch (Exception)
+                {
+                }
             }
             );
         }
@@ -194,7 +199,6 @@ namespace Robotic_Arm_Desktop
 
             if (connected == true)
             {
-
                 await Task.Run(() =>
                 {
                     while (ScriptRunning)
@@ -203,53 +207,63 @@ namespace Robotic_Arm_Desktop
                         if (msg_raw == ""){
                             break;
                         }
-                        string msg = msg_raw.Substring(0, msg_raw.IndexOf('\0'));
+
+                        string ScriptMessage = msg_raw.Substring(0, 1);
+
+                        string msg = msg_raw.Substring(1, msg_raw.IndexOf('\0'));
 
                         if (msg == ""){
                             break;
                         }
 
-                        byte ScriptMessage = Convert.ToByte(msg.Substring(0, 1));
-
                         switch (ScriptMessage)
                         {
-                            case 1:
+                            case "1":
                                 SendTriggerStatus();
                                 break;
 
-                            case 2:
+                            case "2":
                                 OnStraightLine(EventArgs.Empty);
                                 break;
 
-                            case 3:
+                            case "3":
                                 AutoModeTemplate.ScriptDefaultMovemend(msg, movement);
                                 SendACK();
                                 break;
 
-                            case 4:
+                            case "4":
                                 MovingStatus();
                                 break;
 
-                            case 5:
+                            case "5":
                                 SetMovSpeed(msg);
                                 break;
 
-                            case 6:
+                            case "6":
                                 SetOutput(msg);
                                 OnNewOutput(EventArgs.Empty);
                                 break;
 
-                            case 7:
+                            case "7":
                                 SendArmPosition();
                                 break;
 
-                            case 8:
+                            case "8":
                                 Global.ScriptTargets = msg;
                                 OnDrawTargets(EventArgs.Empty);
+                                SendACK();
                                 break;
 
-                            case 9:
+                            case "9":
                                 SendStreamAddress();
+                                break;
+
+                            case "q":
+                                SendStreamRes();
+                                break;
+
+                            case "w":
+                                ObjectFollow(msg);
                                 break;
 
                             default:
@@ -259,6 +273,62 @@ namespace Robotic_Arm_Desktop
                 }
                 );
             }
+        }
+
+        private async void ObjectFollow(string msg)
+        {
+            string []data = msg.Split('*');
+            int speed = Convert.ToInt32(data[2]);
+            string command="";
+
+            if (data[0]=="1")
+            {
+                command = (movement.baseMovemend.AngleInDegree - speed).ToString() + "*";
+            }
+            else if(data[0] == "2")
+            {
+                command = (movement.baseMovemend.AngleInDegree + speed).ToString() + "*";
+            }
+            else
+            {
+                command = movement.baseMovemend.AngleInDegree.ToString() + "*";
+            }
+
+            command += movement.elbow0.AngleInDegree.ToString() + "*";
+
+            if (data[1] == "2")
+            {
+                if (movement.elbow2.AngleInDegree-speed < Arm.PwmToDegree( movement.elbow2.startfrom)){
+                    command += (movement.elbow1.AngleInDegree - speed).ToString() + "*"+ movement.elbow2.AngleInDegree.ToString()+"*";
+                }
+                else{
+                    command += movement.elbow1.AngleInDegree.ToString() + "*" + (movement.elbow2.AngleInDegree - speed).ToString() + "*";
+                }
+            }
+            else if (data[1] == "1")
+            {
+                if (movement.elbow2.AngleInDegree + speed > Arm.PwmToDegree(movement.elbow2.EndAt)){
+                    command += (movement.elbow1.AngleInDegree + speed).ToString() + "*" + movement.elbow2.AngleInDegree.ToString() + "*";
+                }
+                else{
+                    command += movement.elbow1.AngleInDegree.ToString() + "*" + (movement.elbow2.AngleInDegree + speed).ToString() + "*";
+                }
+            }
+            else
+            {
+                command += movement.elbow1.AngleInDegree.ToString() + "*" + movement.elbow2.AngleInDegree.ToString() + "*";
+            }
+            
+            command += movement.griperRotation.AngleInDegree.ToString()+ "*" + movement.griper.AngleInDegree.ToString() + "*0*0*1.5";
+
+            Console.WriteLine(command);
+            await AutoModeTemplate.ScriptDefaultMovemend(command, movement);
+            SendACK();
+        }
+
+        private void SendStreamRes()
+        {
+            SendData(Global.StreamWidth.ToString() + "*" + Global.StreamHight.ToString());
         }
 
         private void SendStreamAddress()
@@ -291,7 +361,7 @@ namespace Robotic_Arm_Desktop
         private void SetOutput(string msg)
         {
             string oldString = Global.ScriptOutput;
-            Global.ScriptOutput = msg.Substring(1)+ "\r\n" + oldString;
+            Global.ScriptOutput = msg.Remove(msg.Length-1)+ "\r\n" + oldString;
         } 
             
         protected virtual void OnNewOutput(EventArgs e)

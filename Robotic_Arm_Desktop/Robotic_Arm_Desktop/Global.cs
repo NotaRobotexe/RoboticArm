@@ -22,6 +22,9 @@
 
         public static int StreamWidth = 900;
         public static int StreamHight = 600;
+        public static float streamratioX;
+        public static float streamratioY;
+
 
         public static bool stop = false; // manual mode stop all action
         public static bool triggered = false;

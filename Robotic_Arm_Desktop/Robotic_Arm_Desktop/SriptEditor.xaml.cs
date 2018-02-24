@@ -69,12 +69,14 @@ namespace Robotic_Arm_Desktop
             openFileDialog.ShowDialog();
 
             string path = openFileDialog.FileName;
-            string content = File.ReadAllText(path);
-
-            if (content != null)
-            {
-                EditorNew.Text = content;
+            if (path != ""){
+                string content = File.ReadAllText(path);
+                if (content != null)
+                {
+                    EditorNew.Text = content;
+                }
             }
+
 
         }
     }

@@ -50,11 +50,11 @@ namespace Robotic_Arm_Desktop
         bool WaitForTrigger = false;
         int framerate = 0;
         int connectionStatus = -1;
+        string[,] targets;
 
         DispatcherTimer ControllstatusTimer;
         DispatcherTimer FrameRateCounter;
         DispatcherTimer IK_timer;
-        DispatcherTimer DrawTargetsTimer;
         Timer GamepadSlower;
 
         List<string> Commands = new List<string>(); //Template command
@@ -68,6 +68,10 @@ namespace Robotic_Arm_Desktop
         NetworkCom netTrigger;
         NetworkCom netFan;
 
+        Ellipse[] TargetImg;
+        TextBlock[] TargetName;
+
+        Process restream;
         ScriptNetwork scriptCom;
         Process pythone;
         InverseKinematic inverse;
@@ -80,7 +84,7 @@ namespace Robotic_Arm_Desktop
 
             if (Global.DebugMode== false)
             {
-                Stats.GetPingAndTryConnection();//TODO: nech sa to overi este pri zadavani ip adresi
+                Stats.GetPingAndTryConnection();
             }
 
             movement = new Movement();
@@ -158,8 +162,9 @@ namespace Robotic_Arm_Desktop
             int speed = (int)Math.Round(fanSlider.Value); //start fan after loading
             netFan.SendData(speed.ToString());
 
-            GamepadSlower = new Timer(TimerCallback, null, 0, 2);
-
+            GamepadSlower = new Timer(TimerCallback, null, 0, 30);
+            Global.streamratioX = (float)ViewFrame.Width / (float)Global.StreamWidth;
+            Global.streamratioY = (float)ViewFrame.Height / (float)Global.StreamHight;
 
             Global.loadingDone = true;
         }
@@ -175,6 +180,9 @@ namespace Robotic_Arm_Desktop
 
             Global.StreamWidth = Convert.ToInt32(widthL.Text);
             Global.StreamHight = Convert.ToInt32(highL.Text);
+            Global.streamratioX =  (float)ViewFrame.Width/ (float)Global.StreamWidth;
+            Global.streamratioY = (float)ViewFrame.Height / (float)Global.StreamHight;
+
 
             string StreammSetting = "v4l2-ctl --set-ctrl=color_effects="+ Math.Round(ColSlid.Value) +" --set-ctrl=contrast="+ Math.Round(Contrast.Value)+" --set-ctrl=brightness="+ Math.Round(brighness.Value);
             string Slenght = StreammSetting.Length.ToString();
@@ -922,10 +930,14 @@ namespace Robotic_Arm_Desktop
             }
         }
 
-        private void UpTime_Tick(object sender, EventArgs e)
+        private void UpTime_Tick(object sender, EventArgs e) //and some cleaning of targets which have no connection with this but i just need some timer so why create new... pls end my suffering 
         {
             elapsed = stopWatch.Elapsed;
             this.uptime.Content = elapsed.ToString("hh\\:mm\\:ss");
+
+            if (TargetImg != null && TargetImg.Length > 0 && Cnv.Children.Contains(TargetImg[0])){
+                RemoveTarget();
+            }
         }
 
         private void PingTimer_Tick(object sender, EventArgs e)
@@ -1026,6 +1038,8 @@ namespace Robotic_Arm_Desktop
                         }
                     }
 
+                    LauchRestream();
+
                     string script = File.ReadAllText(ScriptPath);
 
                     if (script != null && connectionStatus == 0)
@@ -1047,9 +1061,81 @@ namespace Robotic_Arm_Desktop
             }
         }
 
+        private void LauchRestream()
+        {
+            restream = new Process();
+            restream.StartInfo.FileName = Global.FfmpegPath;
+            restream.StartInfo.Arguments = @"-i rtsp://" + Global.ipaddres + ":8554/unicast  -c:v copy -r 60 -f image2pipe -pix_fmt rgb24 -vcodec rawvideo -"; //TODO uprav totok
+            restream.StartInfo.UseShellExecute = false;
+            restream.StartInfo.RedirectStandardOutput = false;
+            restream.StartInfo.CreateNoWindow = true;
+            restream.Start();
+        }
+
+        private void KillRestream()
+        {
+            restream.Kill();
+            restream.Close();
+        }
+
         private void ScriptCom_DrawTargets(object sender, EventArgs e)
         {
-            
+            string[] objects = Global.ScriptTargets.Split('|');
+            targets = new string[objects.Length - 1, 3];
+
+            for (int i = 0; i < objects.Length-1; i++)
+            {
+                string[] parameters = objects[i].Split('*');
+                for (int a = 0; a < 3; a++)
+                {
+                    targets[i, a] = parameters[a];
+                }
+            }
+
+            RemoveTarget();
+            DrawTargets();
+        }
+
+        private void DrawTargets()
+        {
+            Application.Current.Dispatcher.Invoke((Action)delegate {
+                TargetImg = new Ellipse[targets.Length/3];
+                TargetName = new TextBlock[targets.Length/3];
+
+                
+
+                for (int i = 0; i < targets.Length/3; i++)
+                {
+                    int posx = 815 + (int)((float)Convert.ToInt32(targets[i, 0]) * Global.streamratioX);
+                    int posy = 20 + (int)(Convert.ToInt32(targets[i, 1]) * Global.streamratioY);
+
+                    TargetImg[i] = new Ellipse();
+                    TargetImg[i].Fill = Brushes.Red;
+                    TargetImg[i].Width = 30;
+                    TargetImg[i].Height = 30;
+                    TargetImg[i].StrokeThickness = 6;
+
+                    Cnv.Children.Add(TargetImg[i]);
+                    Canvas.SetLeft(TargetImg[i],posx);
+                    Canvas.SetTop(TargetImg[i], posy);
+
+                    TargetName[i] = new TextBlock();
+                    TargetName[i].Text = targets[i, 2];
+                    TargetName[i].FontSize = 25;
+                    TargetName[i].Foreground = Brushes.Red;
+
+                    Cnv.Children.Add(TargetName[i]);
+                    Canvas.SetLeft(TargetName[i], posx+15);
+                    Canvas.SetTop(TargetName[i], posy+15);
+                }
+            });
+        }
+
+        private void RemoveTarget()
+        {
+            Application.Current.Dispatcher.Invoke((Action)delegate {
+                Cnv.Children.Clear();
+            });
         }
 
         private void InputSend_Click(object sender, RoutedEventArgs e)
@@ -1080,8 +1166,15 @@ namespace Robotic_Arm_Desktop
             {
                 scriptCom.EndCom();
                 Global.ScriptEnabled = false;
-                pythone.Kill();
-                pythone.Close();
+                try
+                {
+                    pythone.Kill();
+                    pythone.Close();
+                }
+                catch (Exception)
+                {
+                }
+
             }
 
         }
@@ -1094,9 +1187,11 @@ namespace Robotic_Arm_Desktop
             {
                 remotestatus.Content = "Active";
                 buttonchange.Content = "Enabled";
+                LauchRestream();
             }
             else
             {
+                KillRestream();
                 buttonchange.Content = "Disabled";
                 remotestatus.Content = "Non-Active";
             }
@@ -1139,22 +1234,6 @@ namespace Robotic_Arm_Desktop
                 IK_timer.Stop();
             }
         }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            Console.WriteLine(movement.baseMovemend.AngleInPWM + " " + movement.elbow0.AngleInPWM + " " + movement.elbow1.AngleInPWM + " " + movement.elbow2.AngleInPWM);
-
-            Ellipse ellipse = new Ellipse();
-            ellipse.Fill = Brushes.Red;
-            ellipse.Width = 15;
-            ellipse.Height = 15;
-            ellipse.StrokeThickness = 2;
-
-            Cnv.Children.Add(ellipse);
-            Canvas.SetLeft(ellipse, 815);
-            Canvas.SetTop(ellipse, 20);
-        }
-
     }
 }
 

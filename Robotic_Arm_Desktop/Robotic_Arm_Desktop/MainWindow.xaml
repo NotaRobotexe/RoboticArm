@@ -73,7 +73,7 @@
             <Label Name="cpuusage" Content="err" HorizontalAlignment="Left" Margin="640,39,0,0" VerticalAlignment="Top" FontSize="17" Foreground="#FF1EBEF7" FontWeight="Bold" RenderTransformOrigin="0.467,0.467" />
             <Label Name="uptime" Content="err" HorizontalAlignment="Left" Margin="355,75,0,0" VerticalAlignment="Top" FontSize="17" Foreground="#FF1EBEF7" FontWeight="Bold" />
             <Label Name="temperature" Content="err" HorizontalAlignment="Left" Margin="640,122,0,0" VerticalAlignment="Top" FontSize="17" Foreground="#FF1EBEF7" FontWeight="Bold" Width="48" />
-            <Slider Name="fanSlider" HorizontalAlignment="Left" Margin="602,180,0,0" VerticalAlignment="Top" Width="112"  Value="800" Minimum="8" Maximum="1024" RenderTransformOrigin="0.342,0.611" ValueChanged="NewFanSpeed" />
+            <Slider Name="fanSlider" HorizontalAlignment="Left" Margin="602,180,0,0" VerticalAlignment="Top" Width="112"  Value="800" Minimum="0" Maximum="1024" RenderTransformOrigin="0.342,0.611" ValueChanged="NewFanSpeed" />
             <Button Style="{DynamicResource ButtonStyle1}" Content="Turn Off" HorizontalAlignment="Left" Margin="222,188,0,0" VerticalAlignment="Top" Width="145"  Background="#FF2E2E2E" BorderBrush="Gainsboro" BorderThickness="3" FontSize="24" FontFamily="Segoe UI Semibold" ForceCursor="True" Foreground="White" Height="55" Click="TurnOffPressed" />
             <Button Style="{DynamicResource ButtonStyle1}" Content="Recovery" HorizontalAlignment="Left" Margin="31,191,0,0" VerticalAlignment="Top" Width="140" Height="55" Background="#FF2E2E2E" BorderBrush="Gainsboro" BorderThickness="3" FontSize="24" FontFamily="Segoe UI Semibold" ForceCursor="True" Foreground="White" Click="Recovery_Click" />
             <Label Content="Framerate :" HorizontalAlignment="Left" Margin="455,78,0,0" VerticalAlignment="Top" Foreground="White" FontSize="16" FontWeight="Bold" />
@@ -172,6 +172,5 @@
         </Grid>
 
         <Image x:Name="loading" HorizontalAlignment="Left" gif:ImageBehavior.RepeatBehavior="0x" gif:ImageBehavior.AnimatedSource="icons/preloader.gif"  Height="100" Margin="1321,278,0,0" VerticalAlignment="Top" Width="100" Visibility="Visible" Panel.ZIndex="5" />
-        <Button Content="Button" HorizontalAlignment="Left" Margin="756,293,0,0" VerticalAlignment="Top" Width="76" Click="Button_Click" Visibility="Visible"/>
     </Grid>
 </Window>
