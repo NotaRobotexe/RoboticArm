@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Motors>
+  <Elbow0>
+    <MaxUse>576</MaxUse>
+    <StartFrom>102</StartFrom>
+    <Speed>0</Speed>
+  </Elbow0>
+  <Elbow1>
+    <MaxUse>415.32</MaxUse>
+    <StartFrom>102</StartFrom>
+    <Speed>0</Speed>
+  </Elbow1>
+  <Elbow2>
+    <MaxUse>339</MaxUse>
+    <StartFrom>102</StartFrom>
+    <Speed>0</Speed>
+  </Elbow2>
+  <Base>
+    <MaxUse>576</MaxUse>
+    <StartFrom>102</StartFrom>
+    <Speed>0</Speed>
+  </Base>
+  <Gripper0>
+    <MaxUse>576</MaxUse>
+    <StartFrom>102</StartFrom>
+    <Speed>0</Speed>
+  </Gripper0>
+  <Gripper1>
+    <MaxUse>576</MaxUse>
+    <StartFrom>102</StartFrom>
+    <Speed>0</Speed>
+  </Gripper1>
+</Motors>

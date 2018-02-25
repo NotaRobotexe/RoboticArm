@@ -29,7 +29,7 @@ namespace Robotic_Arm_Desktop
         [DllImport("User32.dll", SetLastError = true)]
         internal static extern bool RegisterRawInputDevices(RawInputDevice[] pRawInputDevice, uint numberDevices, uint size);
 
-        [DllImport("C:\\Users\\mt2si\\Desktop\\projekty\\S.O.C Robotic Arm\\Robotic Arm\\GamepadDLL\\x64\\Release\\GamepadDLL.dll")]
+        [DllImport("GamepadDLL.dll")]
         public static extern GamepadState GamepadProcesing(IntPtr lParam);
     }
 

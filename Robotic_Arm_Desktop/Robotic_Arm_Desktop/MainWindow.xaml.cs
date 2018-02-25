@@ -24,10 +24,8 @@ using Microsoft.Win32;
 
 namespace Robotic_Arm_Desktop
 {
-    //TODO: video stream
-    //TODO: vsetko zbalit do kopy   
-
-    //TODO: spiest sa ako panvica #1 #2 
+    //TODO: bug pri vypinani
+    //todo : este skusit cloud
 
     public partial class MainWindow : Window
     {
@@ -970,8 +968,7 @@ namespace Robotic_Arm_Desktop
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
             openFileDialog.Title = "Open a Script";
-            //openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\RoboticArm\\Scripts";
-            openFileDialog.InitialDirectory = "C:\\Users\\mt2si\\Desktop\\projekty\\S.O.C Robotic Arm\\Robotic Arm\\PyScript";
+            openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\RoboticArm\\Scripts";
             openFileDialog.ShowDialog();
 
             ScriptPath = openFileDialog.FileName;

@@ -19,7 +19,7 @@
         public static string ipaddres = "";
         public static bool connected = false;
         public static bool WrongMode = false;
-        public static string FfmpegPath = @"C:\Users\mt2si\Desktop\ffmpeg\ffmpeg.exe";
+        public static string FfmpegPath = "C:\\Users\\mt2si\\Desktop\\projekty\\S.O.C Robotic Arm\\Robotic Arm\\Robotic_Arm_Desktop\\Robotic_Arm_Desktop\\obj\\x64\\Debug\\ffmpeg.exe"; //TODO: pls odjeb toto a aj seba
 
         public static int StreamWidth = 900;
         public static int StreamHight = 600;

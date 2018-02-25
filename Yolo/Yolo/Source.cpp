@@ -70,8 +70,11 @@ int main(int argc, char** argv) {
 				else
 					pos = "h";
 				
-				objects += to_string(centerX) + "*" + to_string(centerY) + "*" + obj_names[raw_objects[i].obj_id] + "*" + pos+"*"+ to_string(raw_objects[i].prob)+"|";
-				//cout << objects << endl;
+				if (raw_objects[i].prob != NULL)
+				{
+					objects += to_string(centerX) + "*" + to_string(centerY) + "*" + obj_names[raw_objects[i].obj_id] + "*" + pos+"*"+ to_string(raw_objects[i].prob)+"|";
+				}
+				cout << objects << endl;
 			}
 			ip.SendData(objects);
 		}

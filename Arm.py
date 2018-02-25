@@ -14,6 +14,9 @@ Ysck = 0
 Ytcp_count = 128
 Ynew_sck = 0
 
+def StopMovement():
+    Send("e")
+    acnknowladge()
 
 def TryLockAtObject(pos,speed,toleration_,resolution):
     if len(pos) > 0:
