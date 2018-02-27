@@ -45,6 +45,22 @@ namespace Robotic_Arm_Desktop
             }
         }
 
+        public void ACKSend(string s)
+        {
+            if (Global.connected == true)
+            {
+                resend:
+                byte[] buffer = Encoding.ASCII.GetBytes(s);
+                socket.Send(buffer);
+
+                byte[] recvbuff = new byte[100];
+                string message = Encoding.UTF8.GetString(buffer);
+                if(message == "re"){
+                    goto resend;
+                }
+            }
+        }
+
         public async Task<string> ReceiveData()
         {
             if (Global.connected == true)
@@ -107,27 +123,27 @@ namespace Robotic_Arm_Desktop
 
             if (actual.BaseRotation != old.BaseRotation)
             {
-                NetMove.SendData("0" + actual.BaseRotation.ToString());
+                NetMove.ACKSend("0" + actual.BaseRotation.ToString());
             }
             if (actual.Elb0 != old.Elb0)
             {
-                NetMove.SendData("1" + actual.Elb0.ToString());
+                NetMove.ACKSend("1" + actual.Elb0.ToString());
             }
             if (actual.Elb1 != old.Elb1)
             {
-                NetMove.SendData("2" + actual.Elb1.ToString());
+                NetMove.ACKSend("2" + actual.Elb1.ToString());
             }
             if (actual.Elb2 != old.Elb2)
             {
-                NetMove.SendData("3" + actual.Elb2.ToString());
+                NetMove.ACKSend("3" + actual.Elb2.ToString());
             }
             if (actual.GripperRot != old.GripperRot)
             {
-                NetMove.SendData("4" + actual.GripperRot.ToString());
+                NetMove.ACKSend("4" + actual.GripperRot.ToString());
             }
             if (actual.Gripper != old.Gripper)
             {
-                NetMove.SendData("5" + actual.Gripper.ToString());
+                NetMove.ACKSend("5" + actual.Gripper.ToString());
             }
 
             old = actual;
@@ -330,7 +346,6 @@ namespace Robotic_Arm_Desktop
             
             command += movement.griperRotation.AngleInDegree.ToString()+ "*" + movement.griper.AngleInDegree.ToString() + "*0*0*1.5";
 
-            Console.WriteLine(command);
             await AutoModeTemplate.ScriptDefaultMovemend(command, movement);
             SendACK();
         }

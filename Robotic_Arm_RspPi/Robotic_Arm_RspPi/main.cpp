@@ -42,8 +42,8 @@ string getTemp();
 string getCPULoad();
 
 string TempAndLoad = "26*83";
-int StreamW = 900;
-int StreamH = 600;
+int StreamW = 600;
+int StreamH = 480;
 const char* homeDir;
 
 int main(void)
@@ -200,9 +200,18 @@ void Movemend(NetworkCom netMove) {
 	do
 	{
 		string msg = netMove.Recv();
-		GPIO::BlueLed();
-		ManualMovemend(pwm, msg);
-		GPIO::GreenLed();
+		if (msg.length() < 5) {
+			netMove.Send("*");
+			cout << msg << endl;
+			GPIO::BlueLed();
+			ManualMovemend(pwm, msg);
+			GPIO::GreenLed();
+		}
+		else
+		{
+			netMove.Send("re");
+		}
+
 	} while (ShutDownStart == false);
 }
 

@@ -321,6 +321,7 @@ namespace Robotic_Arm_Desktop
         {
             await AutoModeTemplate.AnimationFromTemplate(Positions.OffPos, movement);
             netCom.SendData("70");
+            this.Close();
         }
 
         /*manual mode stuff here*/
@@ -912,7 +913,6 @@ namespace Robotic_Arm_Desktop
             {
                 string trigger = await netTrigger.ReceiveData();
                 trigger = trigger.Substring(0, trigger.IndexOf('\0'));
-                Console.WriteLine(trigger);
                 if (trigger == "false")
                 {
                     Global.triggered = false;
@@ -999,7 +999,7 @@ namespace Robotic_Arm_Desktop
                     pythone.StartInfo.Arguments = "\""+ScriptPath+ "\"";
                     pythone.StartInfo.UseShellExecute = true;
                     pythone.StartInfo.RedirectStandardOutput = false;
-                    pythone.StartInfo.CreateNoWindow = false;
+                    pythone.StartInfo.CreateNoWindow = true;
                     pythone.EnableRaisingEvents = true;
                     pythone.Start();
                     pythone.Exited += Pythone_Exited;
@@ -1184,6 +1184,7 @@ namespace Robotic_Arm_Desktop
                 }
 
             }
+            Global.InverseKinematicMovement = false ;
 
         }
 
@@ -1217,19 +1218,23 @@ namespace Robotic_Arm_Desktop
 
         /*INVERSE kinematic - straight line movement*/
 
-
         private void ScriptCom_StraightLine(object sender, EventArgs e)
         {
-            inverse = new InverseKinematic(movement, model);
-            Global.InverseKinematicMovement = true;
+            Application.Current.Dispatcher.Invoke(
+            () =>
+            {
+                inverse = new InverseKinematic(movement, model);
+                Global.InverseKinematicMovement = true;
 
-            IK_timer = new DispatcherTimer();
-            IK_timer.Tick += IK_timer_Tick;
-            IK_timer.Interval = new TimeSpan(0, 0, 0, 0, 0);
-            IK_timer.Start();
+                IK_timer = new DispatcherTimer();
+                IK_timer.Tick += IK_timer_Tick; 
+                IK_timer.Interval = new TimeSpan(0, 0, 0, 0, 0);
+                IK_timer.Start();
 
-            scriptCom.SendACK();
+                scriptCom.SendACK();
+            });
         }
+
 
         private void IK_timer_Tick(object sender, EventArgs e)
         {

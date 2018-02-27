@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/linearLayout1">
+        <ImageView
+            android:src="@drawable/gum3"
+            android:layout_width="121.5dp"
+            android:layout_height="120.5dp"
+            android:id="@+id/imageView4"
+            android:layout_marginBottom="0.0dp"
+            android:layout_marginLeft="0.0dp" />
+        <ImageView
+            android:src="@drawable/tic"
+            android:layout_width="107.0dp"
+            android:layout_height="match_parent"
+            android:id="@+id/imageView5" />
+        <ImageView
+            android:src="@drawable/gum5"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/imageView6" />
+    </LinearLayout>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/linearLayout2">
+        <TextView
+            android:text="0"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/textView1"
+            android:layout_marginLeft="52.5dp" />
+        <TextView
+            android:text="0"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/textView2"
+            android:layout_marginLeft="106.0dp" />
+        <TextView
+            android:text="0"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/textView3"
+            android:layout_marginLeft="124.5dp" />
+    </LinearLayout>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/linearLayout3">
+        <Button
+            android:text="add"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/gum1"
+            android:layout_marginLeft="12.0dp" />
+        <Button
+            android:text="add"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/tic"
+            android:layout_marginLeft="34.5dp" />
+        <Button
+            android:text="add"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/gum2"
+            android:layout_marginLeft="48.0dp" />
+    </LinearLayout>
+    <Button
+        android:text="ORDER"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/order" />
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/linearLayout4"
+        android:layout_marginTop="259.0dp">
+        <EditText
+            android:layout_width="291.5dp"
+            android:layout_height="match_parent"
+            android:id="@+id/editText1" />
+        <Button
+            android:text="connect"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/con" />
+    </LinearLayout>
+</LinearLayout>

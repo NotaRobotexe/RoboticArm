@@ -165,7 +165,6 @@ namespace Robotic_Arm_Desktop
 
                 foreach (var command in list)
                 {
-                    Console.WriteLine(command);
                     writer.WriteElementString("instruction",command);
                 }
 

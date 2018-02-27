@@ -38,6 +38,7 @@ namespace Robotic_Arm_Desktop
             startPoint = model.griper.Bounds.Location;
             startPoint.X = Math.Round(startPoint.X, 3);
             startPoint.Z = Math.Round(startPoint.Z, 3);
+            startPoint.Y = Math.Round(startPoint.Y, 3);
 
             for (int i = 0; i < PointsDensity; i++)
             {
@@ -49,10 +50,7 @@ namespace Robotic_Arm_Desktop
             Global.point.X = Targets[PointsDensity - 1].X;
             Global.point.Y = Targets[PointsDensity - 1].Y;
             Global.point.Z = Targets[PointsDensity - 1].Z;
-            Console.WriteLine(angle);
 
-            Console.WriteLine(startPoint);
-            Console.WriteLine(Targets[PointsDensity-1]);
         }
 
         public void InverseKinematics()
@@ -71,7 +69,7 @@ namespace Robotic_Arm_Desktop
                 }
             }
 
-            if (Global.triggered == false)  
+            if (Global.triggered == true)  
             {
                 Global.InverseKinematicMovement = false;
             }
@@ -81,6 +79,7 @@ namespace Robotic_Arm_Desktop
                 // Gradient descent
                 double gradient = PartialGradient(i);
                 angles[i,0] -= LearningRate * gradient;
+                Console.WriteLine(gradient);
 
                 // hodnota medzi min a max
                 angles[i,0] = Clamp(angles[i,0], angles[i,1], angles[i,2]);
@@ -124,7 +123,6 @@ namespace Robotic_Arm_Desktop
 
         private void GetAngle()
         {
-
             angles[2, 0] = movement.elbow0.AngleInDegree;
             angles[1, 0] = movement.elbow1.AngleInDegree;
             angles[0, 0] = movement.elbow2.AngleInDegree;

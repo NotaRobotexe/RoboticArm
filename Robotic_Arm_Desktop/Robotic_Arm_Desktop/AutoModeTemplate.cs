@@ -196,7 +196,7 @@ namespace Robotic_Arm_Desktop
         private static bool Moving(List<double> instruction, Movement movement)
         {
             int onPosition = 0;
-            if (instruction[1]>= movement.elbow0.startfrom && instruction[1]<= movement.elbow0.EndAt)
+            if (instruction[1] - incrementation >= movement.elbow0.startfrom && instruction[1]<= movement.elbow0.EndAt+ incrementation)
             {
                 if (instruction[1] > movement.elbow0.AngleInPWM)
                 {
@@ -226,7 +226,7 @@ namespace Robotic_Arm_Desktop
                 }
             }
 
-            if (instruction[2] >= movement.elbow1.startfrom && instruction[2] <= movement.elbow1.EndAt)
+            if (instruction[2] - incrementation >= movement.elbow1.startfrom && instruction[2] <= movement.elbow1.EndAt + incrementation)
             {
                 if (instruction[2] > movement.elbow1.AngleInPWM)
                 {
@@ -256,7 +256,7 @@ namespace Robotic_Arm_Desktop
                 }
             }
 
-            if (instruction[3] >= movement.elbow2.startfrom && instruction[3] <= movement.elbow2.EndAt)
+            if (instruction[3] - incrementation >= movement.elbow2.startfrom && instruction[3] <= movement.elbow2.EndAt + incrementation)
             {
                 if (instruction[3] > movement.elbow2.AngleInPWM)
                 {
@@ -286,7 +286,7 @@ namespace Robotic_Arm_Desktop
                 }
             }
 
-            if (instruction[4] >= movement.griperRotation.startfrom && instruction[4] <= movement.griperRotation.EndAt)
+            if (instruction[4] - incrementation >= movement.griperRotation.startfrom && instruction[4] <= movement.griperRotation.EndAt + incrementation)
             {
                 if (instruction[4] > movement.griperRotation.AngleInPWM)
                 {
@@ -316,7 +316,7 @@ namespace Robotic_Arm_Desktop
                 }
             }
 
-            if (instruction[5] >= movement.griper.startfrom && instruction[5] <= movement.griper.EndAt)
+            if (instruction[5]- incrementation >= movement.griper.startfrom && instruction[5] <= movement.griper.EndAt + incrementation)
             {
                 if (instruction[5] > movement.griper.AngleInPWM)
                 {
@@ -346,7 +346,7 @@ namespace Robotic_Arm_Desktop
                 }
             }
 
-            if (instruction[0] >= movement.baseMovemend.startfrom && instruction[0] <= movement.baseMovemend.EndAt)
+            if (instruction[0]-incrementation >= movement.baseMovemend.startfrom && instruction[0] <= movement.baseMovemend.EndAt + incrementation)
             {
                 if (instruction[0] > movement.baseMovemend.AngleInPWM)
                 {
