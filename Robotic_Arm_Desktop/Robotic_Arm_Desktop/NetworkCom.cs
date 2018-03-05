@@ -196,7 +196,7 @@ namespace Robotic_Arm_Desktop
 
         private string ReceiveData()
         {
-            byte[] buffer = new byte[100];
+            byte[] buffer = new byte[256];
 
             try
             {

@@ -24,12 +24,11 @@ using Microsoft.Win32;
 
 namespace Robotic_Arm_Desktop
 {
-    //TODO: bug pri vypinani
     //todo : este skusit cloud
 
     public partial class MainWindow : Window
     {
-        GamepadState gamepadData ,gamepadDataOld;
+        GamepadState gamepadData;
         Movement movement;
         _3Dmodel model;
         Gamepad gamepad;
@@ -158,7 +157,7 @@ namespace Robotic_Arm_Desktop
             int speed = (int)Math.Round(fanSlider.Value); //start fan after loading
             netFan.SendData(speed.ToString());
 
-            GamepadSlower = new Timer(TimerCallback, null, 0, 30);
+            GamepadSlower = new Timer(TimerCallback, null, 0, 5);
             Global.streamratioX = (float)ViewFrame.Width / (float)Global.StreamWidth;
             Global.streamratioY = (float)ViewFrame.Height / (float)Global.StreamHight;
 
@@ -230,7 +229,7 @@ namespace Robotic_Arm_Desktop
 
         private void FrameRateCounter_Tick(object sender, EventArgs e)
         {
-            FrameLab.Content = framerate.ToString() + " fps";
+            FrameLab.Content = (framerate/2).ToString() + " fps";
             framerate = 0;
         }
 
@@ -992,12 +991,22 @@ namespace Robotic_Arm_Desktop
             if (ScriptPath != "")
             {
 
+                try
+                {
+                    pythone.Kill();
+                    pythone.Close();
+                }
+                catch
+                {
+                }
+
+                ManualModeStatusEllipse.Fill = new SolidColorBrush(Color.FromRgb(117, 255, 67));
                 if (Global.RemoteExc == false)
                 {
                     pythone = new Process();
                     pythone.StartInfo.FileName = "python.exe";
                     pythone.StartInfo.Arguments = "\""+ScriptPath+ "\"";
-                    pythone.StartInfo.UseShellExecute = true;
+                    pythone.StartInfo.UseShellExecute = false;
                     pythone.StartInfo.RedirectStandardOutput = false;
                     pythone.StartInfo.CreateNoWindow = true;
                     pythone.EnableRaisingEvents = true;
@@ -1119,8 +1128,8 @@ namespace Robotic_Arm_Desktop
 
                     TargetImg[i] = new Ellipse();
                     TargetImg[i].Fill = Brushes.Red;
-                    TargetImg[i].Width = 30;
-                    TargetImg[i].Height = 30;
+                    TargetImg[i].Width = 20;
+                    TargetImg[i].Height = 20;
                     TargetImg[i].StrokeThickness = 6;
 
                     Cnv.Children.Add(TargetImg[i]);
@@ -1159,6 +1168,7 @@ namespace Robotic_Arm_Desktop
         {
             if (scriptCom != null)
             {
+                ManualModeStatusEllipse.Fill = new SolidColorBrush(Color.FromRgb(30, 190, 247));
                 scriptCom.EndCom();
             }
         }

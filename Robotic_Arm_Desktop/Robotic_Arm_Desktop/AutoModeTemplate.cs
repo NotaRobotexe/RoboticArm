@@ -112,6 +112,13 @@ namespace Robotic_Arm_Desktop
 
         public static async Task ScriptDefaultMovemend(string rawcommand, Movement movement)
         {
+            if(Global.IsMoving == true)
+            {
+                Global.stopmovement = true;
+                Thread.Sleep(100);
+            }
+
+            Global.stopmovement = false;
             Global.IsMoving = true;
 
             string command = rawcommand;
@@ -225,6 +232,10 @@ namespace Robotic_Arm_Desktop
                     onPosition++;
                 }
             }
+            else
+            {
+                onPosition++;
+            }
 
             if (instruction[2] - incrementation >= movement.elbow1.startfrom && instruction[2] <= movement.elbow1.EndAt + incrementation)
             {
@@ -254,6 +265,10 @@ namespace Robotic_Arm_Desktop
                 {
                     onPosition++;
                 }
+            }
+            else
+            {
+                onPosition++;
             }
 
             if (instruction[3] - incrementation >= movement.elbow2.startfrom && instruction[3] <= movement.elbow2.EndAt + incrementation)
@@ -285,6 +300,10 @@ namespace Robotic_Arm_Desktop
                     onPosition++;
                 }
             }
+            else
+            {
+                onPosition++;
+            }
 
             if (instruction[4] - incrementation >= movement.griperRotation.startfrom && instruction[4] <= movement.griperRotation.EndAt + incrementation)
             {
@@ -314,6 +333,10 @@ namespace Robotic_Arm_Desktop
                 {
                     onPosition++;
                 }
+            }
+            else
+            {
+                onPosition++;
             }
 
             if (instruction[5]- incrementation >= movement.griper.startfrom && instruction[5] <= movement.griper.EndAt + incrementation)
@@ -345,6 +368,10 @@ namespace Robotic_Arm_Desktop
                     onPosition++;
                 }
             }
+            else
+            {
+                onPosition++;
+            }
 
             if (instruction[0]-incrementation >= movement.baseMovemend.startfrom && instruction[0] <= movement.baseMovemend.EndAt + incrementation)
             {
@@ -374,6 +401,10 @@ namespace Robotic_Arm_Desktop
                 {
                     onPosition++;
                 }
+            }
+            else
+            {
+                onPosition++;
             }
 
             if (onPosition == 6)

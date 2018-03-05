@@ -56,7 +56,7 @@ namespace Robotic_Arm_Desktop
         public void InverseKinematics()
         {
             GetAngle();
-            if (DistanceFromTarget() < 0.08)  
+            if (DistanceFromTarget() < 0.2)  
             {
 
                 if (TargetID++<PointsDensity)

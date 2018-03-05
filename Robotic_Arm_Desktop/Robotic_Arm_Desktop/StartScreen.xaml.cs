@@ -79,13 +79,6 @@ namespace Robotic_Arm_Desktop
 
         private async void Next_Pressed(object sender, RoutedEventArgs e)
         {
-            if (cmbox.SelectedIndex == 0){
-                Global.SVK = false;
-            }
-            else{
-                Global.SVK = true;
-            }
-
             if (Global.ipaddres == "" && ipadd.Text != ""){
                 Global.ipaddres = ipadd.Text;
             }

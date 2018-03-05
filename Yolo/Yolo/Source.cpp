@@ -67,14 +67,18 @@ int main(int argc, char** argv) {
 				string pos = "";
 				if (raw_objects[i].w > raw_objects[i].h)
 					pos = "w";
-				else
+				else if(raw_objects[i].w < raw_objects[i].h)
 					pos = "h";
+				else pos = "w";
 				
-				if (raw_objects[i].prob != NULL)
+				if (raw_objects[i].prob != NULL || raw_objects[i].h != NULL || raw_objects[i].obj_id != NULL || raw_objects[i].w != NULL || raw_objects[i].x != NULL || raw_objects[i].y != NULL)
 				{
 					objects += to_string(centerX) + "*" + to_string(centerY) + "*" + obj_names[raw_objects[i].obj_id] + "*" + pos+"*"+ to_string(raw_objects[i].prob)+"|";
 				}
-				cout << objects << endl;
+				else
+				{
+					cout << "wrong" + objects << endl;
+				}
 			}
 			ip.SendData(objects);
 		}

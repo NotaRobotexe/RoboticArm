@@ -153,6 +153,7 @@
         <Grid Height="812" Margin="480,20,1110,0" VerticalAlignment="Top" Background="#FF2D2D30" Panel.ZIndex="-1" />
         <Grid Height="24" Margin="565,0,3,0" VerticalAlignment="Top" Background="#FF2D2D30" Panel.ZIndex="-1" />
         <Grid HorizontalAlignment="Left" Height="410" Margin="393,650,0,0" VerticalAlignment="Top" Width="253" Background="#FF252526">
+            <Ellipse x:Name="ScriptStatus" Fill="#FF1EBEF7" HorizontalAlignment="Left" Height="12" Margin="196,26,0,0" VerticalAlignment="Top" Width="12" RenderTransformOrigin="-0.6,0.533" />
             <Button Style="{DynamicResource ButtonStyle1}" x:Name="startScript" Content="Start" IsEnabled="True" HorizontalAlignment="Left" Margin="10,143,0,0" VerticalAlignment="Top" Width="90" Height="28" Background="#FF2E2E2E" BorderBrush="Gainsboro" BorderThickness="2" FontSize="16" FontFamily="Segoe UI Semibold" Foreground="White" Click="RunScript" />
             <Label Content="Script Name : " HorizontalAlignment="Left" Margin="10,97,0,0" VerticalAlignment="Top" Foreground="White" FontSize="18" FontWeight="Bold" />
             <Button Style="{DynamicResource ButtonStyle1}" Content="Load" HorizontalAlignment="Left" Margin="153,61,0,321" Width="90" Height="28" Background="#FF2E2E2E" BorderBrush="Gainsboro" BorderThickness="2" FontSize="16" FontFamily="Segoe UI Semibold" ForceCursor="True" Foreground="White" Click="LoadScript" />

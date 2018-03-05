@@ -19,7 +19,7 @@
         public static string ipaddres = "";
         public static bool connected = false;
         public static bool WrongMode = false;
-        public static string FfmpegPath = "C:\\Users\\mt2si\\Desktop\\ffmpeg\\ffmpeg.exe"; //TODO: pls odjeb toto a aj seba
+        public static string FfmpegPath = "ffmpeg.exe"; //TODO: pls odjeb toto a aj seba
 
         public static int StreamWidth = 600;
         public static int StreamHight = 480;
@@ -35,12 +35,11 @@
         public static bool BetterMessageBoxLauched = false;
 
         public static bool Recovery = false;
-        public static bool SVK = false;
 
         public static string ScriptOutput = "";
 
         //debug only
-        public static bool DebugMode = false;
+        public static bool DebugMode = true;
 
         public static System.Windows.Media.Media3D.Vector3D point;
     }
