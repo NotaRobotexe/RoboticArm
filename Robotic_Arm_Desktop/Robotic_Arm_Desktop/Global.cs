@@ -19,7 +19,7 @@
         public static string ipaddres = "";
         public static bool connected = false;
         public static bool WrongMode = false;
-        public static string FfmpegPath = "ffmpeg.exe"; //TODO: pls odjeb toto a aj seba
+        public static string FfmpegPath = "ffmpeg.exe"; 
 
         public static int StreamWidth = 600;
         public static int StreamHight = 480;

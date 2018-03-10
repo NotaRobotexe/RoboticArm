@@ -24,7 +24,9 @@ using Microsoft.Win32;
 
 namespace Robotic_Arm_Desktop
 {
-    //todo : este skusit cloud
+    //TODO: cloud
+    //TODO: IK
+    //TODO: zvarit jednu finsku
 
     public partial class MainWindow : Window
     {
@@ -1000,7 +1002,7 @@ namespace Robotic_Arm_Desktop
                 {
                 }
 
-                ManualModeStatusEllipse.Fill = new SolidColorBrush(Color.FromRgb(117, 255, 67));
+                ScriptStatus.Fill = new SolidColorBrush(Color.FromRgb(117, 255, 67));
                 if (Global.RemoteExc == false)
                 {
                     pythone = new Process();
@@ -1168,13 +1170,18 @@ namespace Robotic_Arm_Desktop
         {
             if (scriptCom != null)
             {
-                ManualModeStatusEllipse.Fill = new SolidColorBrush(Color.FromRgb(30, 190, 247));
+                Application.Current.Dispatcher.Invoke(
+                () =>
+                {
+                    ScriptStatus.Fill = new SolidColorBrush(Color.FromRgb(30, 190, 247));
+                });
                 scriptCom.EndCom();
             }
         }
 
         private void ScriptStop_Click(object sender, RoutedEventArgs e)
         {
+            ScriptStatus.Fill = new SolidColorBrush(Color.FromRgb(30, 190, 247));
             if (Global.RemoteExc == true)
             {
                 scriptCom.EndCom();
