@@ -11,7 +11,7 @@ new_sck = 0
 
 Yport = 6973
 Ysck = 0
-Ytcp_count = 128
+Ytcp_count = 256
 Ynew_sck = 0
 
 def StopMovement():
@@ -79,7 +79,7 @@ def DrawTargetsOnVideo(objects): #structure [x,y,name]
             for i in range(3):
                 Coordiniates = Coordiniates+str(objects[x][i])+"*"
             Coordiniates = Coordiniates+"|"
-        print(Coordiniates)
+        #print(Coordiniates)
         Send(("8"+Coordiniates))
         acnknowladge()
 
@@ -182,12 +182,13 @@ def GetYoloOutput():
 
     objects_ = objects.split("|")
     num_of_obj = (len(objects_)-1)
-
+    #print(objects)
     for i in range(num_of_obj):
         final_object.append([])
         parameters = objects_[i].split("*")
         for a in range(5):      
             final_object[i].append(parameters[a])
+
 
     return final_object    
 

@@ -985,6 +985,7 @@ namespace Robotic_Arm_Desktop
 
         }
 
+        string ip = "";
         private async void RunScript(object sender, RoutedEventArgs e)
         {
             Global.ScriptOutput = "";
@@ -1028,12 +1029,13 @@ namespace Robotic_Arm_Desktop
                 }
                 else //start script on remote computer
                 {
-                    string ip = "";
-
                     if (connectionStatus == -1)
                     {
+                        if(remoteNetwork != null){
+                            remoteNetwork.EndCom();
+                        }
+                        await NonBlockSleep(2000);
                         remoteNetwork = new RemoteNetwork();
-                        ip = targetIp.Text;
                         connectionStatus = remoteNetwork.InitCom(ip, movement);
 
                         if (connectionStatus == 0){
@@ -1058,8 +1060,11 @@ namespace Robotic_Arm_Desktop
                             Global.ScriptEnabled = true;
                             scriptCom = new ScriptNetwork();
                             scriptCom.InitCom(ip, movement);
-                            scriptCom.Communication();
                             scriptCom.ScriptRunning = true;
+                            scriptCom.Communication();
+                            scriptCom.NewOutput += ScriptCom_NewOutput;
+                            scriptCom.StraightLine += ScriptCom_StraightLine;
+                            scriptCom.DrawTargets += ScriptCom_DrawTargets;
                         }
                     }
                 }
@@ -1082,7 +1087,11 @@ namespace Robotic_Arm_Desktop
 
         private void Restream_Exited(object sender, EventArgs e)
         {
-            remotestatus.Content = "Stream failed";
+            Application.Current.Dispatcher.Invoke(
+           () =>
+           {
+               remotestatus.Content = "Stream Exited";
+           });
         }
 
         private void KillRestream()
@@ -1207,19 +1216,27 @@ namespace Robotic_Arm_Desktop
 
         private void RemoteExecution_Change(object sender, RoutedEventArgs e)
         {
-            Global.RemoteExc = !Global.RemoteExc;
-
-            if (Global.RemoteExc==true)
+            if (targetIp.Text != "")
             {
-                remotestatus.Content = "Active";
-                buttonchange.Content = "Enabled";
-                LauchRestream();
+                Global.RemoteExc = !Global.RemoteExc;
+
+                if (Global.RemoteExc==true)
+                {
+                    ip = targetIp.Text;
+                    remotestatus.Content = "Active";
+                    buttonchange.Content = "Enabled";
+                    LauchRestream();
+                }
+                else
+                {
+                    KillRestream();
+                    buttonchange.Content = "Disabled";
+                    remotestatus.Content = "Non-Active";
+                }
             }
             else
             {
-                KillRestream();
-                buttonchange.Content = "Disabled";
-                remotestatus.Content = "Non-Active";
+                MessageBox.Show("IP address cannot be empty");
             }
         }
 
