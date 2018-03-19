@@ -24,10 +24,6 @@ using Microsoft.Win32;
 
 namespace Robotic_Arm_Desktop
 {
-    //TODO: cloud
-    //TODO: IK
-    //TODO: zvarit jednu finsku
-
     public partial class MainWindow : Window
     {
         GamepadState gamepadData;
@@ -159,7 +155,7 @@ namespace Robotic_Arm_Desktop
             int speed = (int)Math.Round(fanSlider.Value); //start fan after loading
             netFan.SendData(speed.ToString());
 
-            GamepadSlower = new Timer(TimerCallback, null, 0, 5);
+            GamepadSlower = new Timer(TimerCallback, null, 0, 33);
             Global.streamratioX = (float)ViewFrame.Width / (float)Global.StreamWidth;
             Global.streamratioY = (float)ViewFrame.Height / (float)Global.StreamHight;
 
