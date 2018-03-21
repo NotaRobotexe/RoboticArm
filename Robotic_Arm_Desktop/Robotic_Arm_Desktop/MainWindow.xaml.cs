@@ -155,7 +155,7 @@ namespace Robotic_Arm_Desktop
             int speed = (int)Math.Round(fanSlider.Value); //start fan after loading
             netFan.SendData(speed.ToString());
 
-            GamepadSlower = new Timer(TimerCallback, null, 0, 33);
+            GamepadSlower = new Timer(TimerCallback, null, 0, 55);
             Global.streamratioX = (float)ViewFrame.Width / (float)Global.StreamWidth;
             Global.streamratioY = (float)ViewFrame.Height / (float)Global.StreamHight;
 
@@ -1135,9 +1135,9 @@ namespace Robotic_Arm_Desktop
 
                     TargetImg[i] = new Ellipse();
                     TargetImg[i].Fill = Brushes.Red;
-                    TargetImg[i].Width = 20;
-                    TargetImg[i].Height = 20;
-                    TargetImg[i].StrokeThickness = 6;
+                    TargetImg[i].Width = 25;
+                    TargetImg[i].Height = 25;
+                    TargetImg[i].StrokeThickness = 7;
 
                     Cnv.Children.Add(TargetImg[i]);
                     Canvas.SetLeft(TargetImg[i],posx);
@@ -1145,12 +1145,12 @@ namespace Robotic_Arm_Desktop
 
                     TargetName[i] = new TextBlock();
                     TargetName[i].Text = targets[i, 2];
-                    TargetName[i].FontSize = 25;
+                    TargetName[i].FontSize = 33;
                     TargetName[i].Foreground = Brushes.Red;
 
                     Cnv.Children.Add(TargetName[i]);
-                    Canvas.SetLeft(TargetName[i], posx+15);
-                    Canvas.SetTop(TargetName[i], posy+15);
+                    Canvas.SetLeft(TargetName[i], posx+20);
+                    Canvas.SetTop(TargetName[i], posy+20);
                 }
             });
         }
