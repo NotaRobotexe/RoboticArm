@@ -227,7 +227,7 @@ namespace Robotic_Arm_Desktop
 
         private void FrameRateCounter_Tick(object sender, EventArgs e)
         {
-            FrameLab.Content = (framerate/2).ToString() + " fps";
+            FrameLab.Content = framerate.ToString() + " fps";
             framerate = 0;
         }
 
@@ -1007,7 +1007,7 @@ namespace Robotic_Arm_Desktop
                     pythone.StartInfo.Arguments = "\""+ScriptPath+ "\"";
                     pythone.StartInfo.UseShellExecute = false;
                     pythone.StartInfo.RedirectStandardOutput = false;
-                    pythone.StartInfo.CreateNoWindow = true;
+                    pythone.StartInfo.CreateNoWindow = false;
                     pythone.EnableRaisingEvents = true;
                     pythone.Start();
                     pythone.Exited += Pythone_Exited;
@@ -1125,8 +1125,6 @@ namespace Robotic_Arm_Desktop
             Application.Current.Dispatcher.Invoke((Action)delegate {
                 TargetImg = new Ellipse[targets.Length/3];
                 TargetName = new TextBlock[targets.Length/3];
-
-                
 
                 for (int i = 0; i < targets.Length/3; i++)
                 {

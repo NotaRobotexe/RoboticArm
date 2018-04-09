@@ -25,7 +25,7 @@ namespace Robotic_Arm_Desktop
             {
                 process = new Process();
                 process.StartInfo.FileName = Global.FfmpegPath;
-                process.StartInfo.Arguments = @"-i rtsp://"+Global.ipaddres+":8554/unicast  -c:v copy -r 60 -f image2pipe -pix_fmt rgb24 -vcodec rawvideo -";
+                process.StartInfo.Arguments = @"-i rtsp://"+Global.ipaddres+":8554/unicast  -c:v copy -r 24 -f image2pipe -pix_fmt rgb24 -vcodec rawvideo -";
                 process.StartInfo.UseShellExecute = false;
                 process.StartInfo.RedirectStandardOutput = true;
                 process.StartInfo.CreateNoWindow = true;
