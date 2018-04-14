@@ -1,151 +1,163 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using SharpDX.DirectInput;
+using System.Threading;
 
 namespace Robotic_Arm_Desktop
 {
     class Gamepad
     {
-        public int err_code = 0;
-        private RawInputDevice[] rid;
-        private IntPtr hwnd;
-        public bool gamepadConnected = true;
+        public static bool gamepadConnected = false;
+        static Joystick joystick;
+        static GamepadState NewData;
 
-        public Gamepad(IntPtr handler)
+
+        public static void GamepadInit()
         {
-            rid = new RawInputDevice[1];
-            rid[0].UsagePage = HidUsagePage.GENERIC;
-            rid[0].Usage = HidUsage.Joystick;
-            rid[0].Flags = RawInputDeviceFlags.INPUTSINK;
-            rid[0].Target = handler;
-
-            if (RegisterRawInputDevices(rid, (uint)rid.Length, (uint)Marshal.SizeOf(rid[0])) == false)
-            {
-                err_code = 1;
-            }
-
-            hwnd = handler;
+            Thread thread = new Thread(new ThreadStart(FindAndSetupGamepad));
+            thread.Start();
         }
 
-        [DllImport("User32.dll", SetLastError = true)]
-        internal static extern bool RegisterRawInputDevices(RawInputDevice[] pRawInputDevice, uint numberDevices, uint size);
+        private static void FindAndSetupGamepad()
+        {
+            while (true)
+            {
+                DirectInput directInput;
+                Guid joystickGuid;
+                directInput = new DirectInput();
+                joystickGuid = Guid.Empty;
+                SetDefault();
 
-        [DllImport("GamepadDLL.dll")]
-        public static extern GamepadState GamepadProcesing(IntPtr lParam);
+                while (joystickGuid == Guid.Empty)
+                {
+                    foreach (var deviceInstance in directInput.GetDevices(DeviceType.Gamepad, DeviceEnumerationFlags.AllDevices))
+                        joystickGuid = deviceInstance.InstanceGuid;
+
+                    if (joystickGuid == Guid.Empty)
+                        foreach (var deviceInstance in directInput.GetDevices(DeviceType.Joystick, DeviceEnumerationFlags.AllDevices))
+                            joystickGuid = deviceInstance.InstanceGuid;
+
+                    Thread.Sleep(1000);
+                }
+                gamepadConnected = true;
+
+                joystick = new Joystick(directInput, joystickGuid); //joystick was found
+                joystick.Properties.BufferSize = 128;
+
+                joystick.Acquire(); // Acquire the joystick
+
+                ReceiveData();
+                gamepadConnected = false;
+            }
+        }
+
+        private static void ReceiveData()
+        {
+            while (true)
+            {
+                joystick.Poll();
+                JoystickUpdate[] datas = null;
+
+                try
+                {
+                    datas = joystick.GetBufferedData();
+                }
+                catch
+                {
+                    break;
+                }
+
+                if (datas.Length > 0)
+                {
+                    switch (datas[0].Offset)
+                    {
+                        case JoystickOffset.X:
+                            NewData.x = datas[0].Value;
+                            break;
+                        case JoystickOffset.Y:
+                            NewData.y = datas[0].Value;
+                            break;
+                        case JoystickOffset.Buttons0:
+                            NewData.button0 = datas[0].Value;
+                            break;
+                        case JoystickOffset.Buttons1:
+                            NewData.button1 = datas[0].Value;
+                            break;
+                        case JoystickOffset.Buttons2:
+                            NewData.button2 = datas[0].Value;
+                            break;
+                        case JoystickOffset.Buttons3:
+                            NewData.button3 = datas[0].Value;
+                            break;
+                        case JoystickOffset.Buttons4:
+                            NewData.button4 = datas[0].Value;
+                            break;
+                        case JoystickOffset.Buttons5:
+                            NewData.button5 = datas[0].Value;
+                            break;
+                        case JoystickOffset.Buttons6:
+                            NewData.button6 = datas[0].Value;
+                            break;
+                        case JoystickOffset.Buttons7:
+                            NewData.button7 = datas[0].Value;
+                            break;
+                        case JoystickOffset.Buttons8:
+                            NewData.button8 = datas[0].Value;
+                            break;
+                        case JoystickOffset.Buttons9:
+                            NewData.button9 = datas[0].Value;
+                            break;
+                        case JoystickOffset.Buttons10:
+                            NewData.button10 = datas[0].Value;
+                            break;
+                        case JoystickOffset.Buttons11:
+                            NewData.button11 = datas[0].Value;
+                            break;
+                        default:
+                            break;
+                    }
+
+                    Global.gamepadState = NewData;
+                }
+            }
+        }
+
+        private static void SetDefault()
+        {
+            NewData.button0 = 0;
+            NewData.button1 = 0;
+            NewData.button2 = 0;
+            NewData.button3 = 0;
+            NewData.button4 = 0;
+            NewData.button5 = 0;
+            NewData.button6 = 0;
+            NewData.button7 = 0;
+            NewData.button8 = 0;
+            NewData.button9 = 0;
+            NewData.button10 = 0;
+            NewData.button11 = 0;
+            NewData.x = 32511;
+            NewData.y = 32511;
+        }
     }
 
 
     public struct GamepadState
     {
-        public int leftStickHor;
-        public int leftStickVer;
-        public int rightStickHor;
-        public int rightStickVer;
-        public int button;
-        public int frontButton;
-        public int mode;
-      
+        public int x;
+        public int y;
+        public int button0;
+        public int button1;
+        public int button2;
+        public int button3;
+        public int button4;
+        public int button5;
+        public int button6;
+        public int button7;
+        public int button8;
+        public int button9;
+        public int button10;
+        public int button11;
+
     };
-
-    [StructLayout(LayoutKind.Sequential)]
-    public struct Rawinputheader
-    {
-        public uint dwType;
-        public uint dwSize;
-        public IntPtr hDevice;
-        public IntPtr wParam;
-
-        public override string ToString()
-        {
-            return string.Format("RawInputHeader\n dwType : {0}\n dwSize : {1}\n hDevice : {2}\n wParam : {3}", dwType, dwSize, hDevice, wParam);
-        }
-    }
-
-    [StructLayout(LayoutKind.Sequential)]
-    internal struct Rawhid
-    {
-        public uint dwSizHid;
-        public uint dwCount;
-        public byte bRawData;
-
-        public override string ToString()
-        {
-            return string.Format("Rawhib\n dwSizeHid : {0}\n dwCount : {1}\n bRawData : {2}\n", dwSizHid, dwCount, bRawData);
-        }
-    }
-
-    [StructLayout(LayoutKind.Sequential)]
-    internal struct RawInputDevice
-    {
-        internal HidUsagePage UsagePage;
-        internal HidUsage Usage;
-        internal RawInputDeviceFlags Flags;
-        internal IntPtr Target;
-
-        public override string ToString()
-        {
-            return string.Format("{0}/{1}, flags: {2}, target: {3}", UsagePage, Usage, Flags, Target);
-        }
-    }
-
-    [StructLayout(LayoutKind.Explicit)]
-    public struct RawData
-    {
-       // [FieldOffset(0)]
-       // internal Rawmouse mouse;
-       // [FieldOffset(0)]
-       // internal Rawkeyboard keyboard;
-        [FieldOffset(0)]
-        internal Rawhid hid;
-    }
-
-    [StructLayout(LayoutKind.Sequential)]
-    public struct InputData
-    {
-        public Rawinputheader header;
-        public RawData data;
-    }
-
-    [Flags]
-    internal enum RawInputDeviceFlags
-    {
-        NONE = 0,                   // No flags
-        REMOVE = 0x00000001,        // Removes the top level collection from the inclusion list. This tells the operating system to stop reading from a device which matches the top level collection. 
-        EXCLUDE = 0x00000010,       // Specifies the top level collections to exclude when reading a complete usage page. This flag only affects a TLC whose usage page is already specified with PageOnly.
-        PAGEONLY = 0x00000020,      // Specifies all devices whose top level collection is from the specified UsagePage. Note that Usage must be zero. To exclude a particular top level collection, use Exclude.
-        NOLEGACY = 0x00000030,      // Prevents any devices specified by UsagePage or Usage from generating legacy messages. This is only for the mouse and keyboard.
-        INPUTSINK = 0x00000100,     // Enables the caller to receive the input even when the caller is not in the foreground. Note that WindowHandle must be specified.
-        CAPTUREMOUSE = 0x00000200,  // Mouse button click does not activate the other window.
-        NOHOTKEYS = 0x00000200,     // Application-defined keyboard device hotkeys are not handled. However, the system hotkeys; for example, ALT+TAB and CTRL+ALT+DEL, are still handled. By default, all keyboard hotkeys are handled. NoHotKeys can be specified even if NoLegacy is not specified and WindowHandle is NULL.
-        APPKEYS = 0x00000400,       // Application keys are handled.  NoLegacy must be specified.  Keyboard only.
-
-        // Enables the caller to receive input in the background only if the foreground application does not process it. 
-        // In other words, if the foreground application is not registered for raw input, then the background application that is registered will receive the input.
-        EXINPUTSINK = 0x00001000,
-        DEVNOTIFY = 0x00002000
-    }
-
-    public enum HidUsagePage : ushort
-    {
-        UNDEFINED = 0x00,   // Unknown usage page
-        GENERIC = 0x01,     // Generic desktop controls
-        SIMULATION = 0x02,  // Simulation controls
-        VR = 0x03,          // Virtual reality controls
-        SPORT = 0x04,       // Sports controls
-        GAME = 0x05,        // Games controls
-        KEYBOARD = 0x07,    // Keyboard controls
-    }
-
-    public enum HidUsage : ushort
-    {
-        Undefined = 0x00,       // Unknown usage
-        Pointer = 0x01,         // Pointer
-        Mouse = 0x02,           // Mouse
-        Joystick = 0x04,        // Joystick
-        Gamepad = 0x05,         // Game Pad
-        Keyboard = 0x06,        // Keyboard
-        Keypad = 0x07,          // Keypad
-        SystemControl = 0x80,   // Muilt-axis Controller
-        Tablet = 0x80,          // Tablet PC controls
-        Consumer = 0x0C,        // Consumer
-    }
 }

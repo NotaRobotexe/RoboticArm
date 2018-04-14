@@ -23,11 +23,7 @@ namespace Robotic_Arm_Desktop
         {
             InitializeComponent();
 
-            if (Global.BetterMessageBoxErrorIndex == 1)
-            {
-                CheckGamepadMode();
-            }
-            else if (Global.BetterMessageBoxErrorIndex == 2)
+            if (Global.BetterMessageBoxErrorIndex == 2)
             {
                 GlobalException();
             }
@@ -49,21 +45,6 @@ namespace Robotic_Arm_Desktop
             betterLabel.FontSize = 15;
             betterLabel.Content = "Something went wrong! &#xA; Restart program and reconnect robotic arm.";
             shBut.Visibility = Visibility.Visible;
-
-        }
-
-        async void CheckGamepadMode()
-        {
-            betterLabel.Content = "Press 'Mode' to activate GamePad";
-            MainWindow main = new MainWindow();
-            main.Activate();
-            while (Global.WrongMode == true)
-            {
-                await BetterDelay(300);
-            }
-
-            Global.BetterMessageBoxLauched = false;
-            this.Close();
 
         }
 

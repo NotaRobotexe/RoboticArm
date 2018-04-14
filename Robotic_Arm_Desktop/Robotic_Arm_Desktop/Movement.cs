@@ -83,23 +83,13 @@ namespace Robotic_Arm_Desktop
 
         public short keyboardMovingArm=0; // moving with witch part of arm 0=el0 1=el1 2=el2 
 
-        public float valueCountExp = (float)0.01;
-        public float valueCount = 1; //on how much will value increment
+        public float valueCountExp = 0.01f;
+        public float valueCount = 2.5f; //on how much will value increment
 
 
         public void AnalizeData(GamepadState data) 
         {
-                //value 143yellow 79red 47green 31blue 6left 0up 2right 4down 15nothing|7. 0nothing 4left down 1left up 2right up 8 right down 16 select 32 start 64 right press 128 left press | 8. mode 64/192
-            if(data.mode != 64)
-            {
-                Global.WrongMode = true;
-            }
-            else
-            {
-                Global.WrongMode = false;
-            }
-
-            if (data.button == 0 && Global.WrongMode == false)
+            if (data.button10 > 0)
             {
                 if (valueCount+valueCountExp < 25)
                 {
@@ -107,7 +97,7 @@ namespace Robotic_Arm_Desktop
                     OnIncrementationChange(EventArgs.Empty);
                 }
             }
-            else if (data.button == 4 && Global.WrongMode == false)
+            else if (data.button11 > 0)
             {
                 if (valueCount-valueCountExp>0)
                 {
@@ -116,55 +106,56 @@ namespace Robotic_Arm_Desktop
                 }
             }
 
-            if (data.frontButton==8 && Global.WrongMode == false)
+            if (data.button7 > 0)
             {
                 elbow0.SetPostionFromKeyboadrOrGamepad(-(valueCount));
             }
-            else if (data.frontButton == 4 && Global.WrongMode == false)
+            else if (data.button6 > 0)
             {
                 elbow0.SetPostionFromKeyboadrOrGamepad((valueCount));
             }
-            else if (data.frontButton == 1 && Global.WrongMode == false)
+
+            if (data.button4 > 0)
             {
                 griper.SetPostionFromKeyboadrOrGamepad(-valueCount);
             }
-            else if (data.frontButton == 2 && Global.WrongMode == false)
+            else if (data.button5 > 0)
             {
                 griper.SetPostionFromKeyboadrOrGamepad(valueCount);
             }
 
-            if (data.leftStickVer>0 && Global.WrongMode == false)
+            if (data.y > 32511)
             {
                 elbow1.SetPostionFromKeyboadrOrGamepad(valueCount);
             }
-            else if (data.leftStickVer < 0 && Global.WrongMode == false)
+            else if (data.y < 32511)
             {
                 elbow1.SetPostionFromKeyboadrOrGamepad(-(valueCount));
             }
 
-            if (data.rightStickVer > 0 && Global.WrongMode == false)
+            if (data.button2 > 0)
             {
                 elbow2.SetPostionFromKeyboadrOrGamepad(valueCount);
             }
-            else if (data.rightStickVer < 0 && Global.WrongMode == false)
+            else if (data.button0 > 0)
             {
                 elbow2.SetPostionFromKeyboadrOrGamepad(-(valueCount));
             }
 
-            if (data.rightStickHor > 0 && Global.WrongMode == false)
+            if (data.button3 > 0)
             {
                 griperRotation.SetPostionFromKeyboadrOrGamepad(valueCount);
             }
-            else if (data.rightStickHor < 0 && Global.WrongMode == false)
+            else if (data.button1 > 0)
             {
                 griperRotation.SetPostionFromKeyboadrOrGamepad(-(valueCount));
             }
 
-            if (data.leftStickHor > 0 && Global.WrongMode == false)
+            if (data.x > 32511)
             {
                 baseMovemend.SetPostionFromKeyboadrOrGamepad(-(valueCount));
             }
-            else if (data.leftStickHor < 0 && Global.WrongMode == false)
+            else if (data.x < 32511)
             {
                 baseMovemend.SetPostionFromKeyboadrOrGamepad((valueCount));
             }

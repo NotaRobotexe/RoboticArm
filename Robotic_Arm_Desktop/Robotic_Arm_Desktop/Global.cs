@@ -18,7 +18,6 @@
         public static System.Windows.Media.Imaging.BitmapSource Frame;
         public static string ipaddres = "";
         public static bool connected = false;
-        public static bool WrongMode = false;
         public static string FfmpegPath = "ffmpeg.exe"; 
 
         public static int StreamWidth = 600;
@@ -38,8 +37,10 @@
 
         public static string ScriptOutput = "";
 
+        public static GamepadState gamepadState;
+
         //debug only
-        public static bool DebugMode = false;
+        public static bool DebugMode = true;
 
         public static System.Windows.Media.Media3D.Vector3D point;
     }

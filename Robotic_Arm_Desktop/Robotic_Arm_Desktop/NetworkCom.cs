@@ -114,12 +114,12 @@ namespace Robotic_Arm_Desktop
 
         public void AnalyzeAndSend()
         {
-            actual.BaseRotation = Convert.ToInt32(Math.Round(moveData.baseMovemend.AngleInPWM));
-            actual.Elb0 = Convert.ToInt32(Math.Round(moveData.elbow0.AngleInPWM));
-            actual.Elb1 = Convert.ToInt32(Math.Round(moveData.elbow1.AngleInPWM));
-            actual.Elb2 = Convert.ToInt32(Math.Round(moveData.elbow2.AngleInPWM));
-            actual.GripperRot = Convert.ToInt32(Math.Round(moveData.griperRotation.AngleInPWM));
-            actual.Gripper = Convert.ToInt32(Math.Round(moveData.griper.AngleInPWM));
+            actual.BaseRotation = Convert.ToInt32(moveData.baseMovemend.AngleInPWM);
+            actual.Elb0 = Convert.ToInt32(moveData.elbow0.AngleInPWM);
+            actual.Elb1 = Convert.ToInt32(moveData.elbow1.AngleInPWM);
+            actual.Elb2 = Convert.ToInt32(moveData.elbow2.AngleInPWM);
+            actual.GripperRot = Convert.ToInt32(moveData.griperRotation.AngleInPWM);
+            actual.Gripper = Convert.ToInt32(moveData.griper.AngleInPWM);
 
             if (actual.BaseRotation != old.BaseRotation)
             {

@@ -29,7 +29,6 @@ namespace Robotic_Arm_Desktop
         GamepadState gamepadData;
         Movement movement;
         _3Dmodel model;
-        Gamepad gamepad;
         XmlReadWriter xrw;
         VideoStream stream;
         RemoteNetwork remoteNetwork;
@@ -38,7 +37,7 @@ namespace Robotic_Arm_Desktop
 
         bool GamepadSlowDown = false;
         bool AutoMode = false;
-        bool gamepadConnected = false;
+        bool gamepadConnected = true;
         bool hud = false;
         bool WaitForTrigger = false;
         int framerate = 0;
@@ -48,7 +47,6 @@ namespace Robotic_Arm_Desktop
         DispatcherTimer ControllstatusTimer;
         DispatcherTimer FrameRateCounter;
         DispatcherTimer IK_timer;
-        Timer GamepadSlower;
 
         List<string> Commands = new List<string>(); //Template command
         Stopwatch stopWatch;
@@ -143,21 +141,13 @@ namespace Robotic_Arm_Desktop
             buttonAnimationOnOff(HUDbutton, false);
             this.incLabel.Content = Math.Round(movement.valueCount, 3);
 
-            int mainID = Process.GetCurrentProcess().Id;
-            new Thread(() =>
-            {
-                Process p = Process.GetProcessById(mainID);
-                IntPtr windowHandle = p.MainWindowHandle;
-                InitializeGamepad(windowHandle);
-            }).Start();
-
-
             int speed = (int)Math.Round(fanSlider.Value); //start fan after loading
             netFan.SendData(speed.ToString());
 
-            GamepadSlower = new Timer(TimerCallback, null, 0, 55);
             Global.streamratioX = (float)ViewFrame.Width / (float)Global.StreamWidth;
             Global.streamratioY = (float)ViewFrame.Height / (float)Global.StreamHight;
+
+            GamepadInit();
 
             Global.loadingDone = true;
         }
@@ -322,6 +312,27 @@ namespace Robotic_Arm_Desktop
         }
 
         /*manual mode stuff here*/
+
+        private void GamepadInit()
+        {
+            Gamepad.GamepadInit();
+
+            DispatcherTimer gamepadRefres = new DispatcherTimer();
+            gamepadRefres.Interval = new TimeSpan(0, 0, 0, 0, 35);
+            gamepadRefres.Tick += GamepadRefres_Tick;
+            gamepadRefres.Start();
+
+        }
+
+        private void GamepadRefres_Tick(object sender, EventArgs e)
+        {
+            if (Gamepad.gamepadConnected == true && movement.gamepadEnabled == true)
+            {
+                movement.AnalizeData(Global.gamepadState);
+            }
+            gamepadStateChange = Gamepad.gamepadConnected;
+        }
+
         private void OnOffControllStatus() //ManualModeStatusEllipse turning on off
         {
             if (ControllstatusTimer != null)
@@ -351,7 +362,7 @@ namespace Robotic_Arm_Desktop
 
         private void GamepadOnOff(object sender, RoutedEventArgs e)
         {
-            if (gamepad.gamepadConnected == true && AutoMode == false)
+            if (Gamepad.gamepadConnected == true )
             {
                 movement.gamepadEnabled = !movement.gamepadEnabled;
                 buttonAnimationOnOff(GamepadEnalbeButton, movement.gamepadEnabled);
@@ -378,11 +389,11 @@ namespace Robotic_Arm_Desktop
         {
             set
             {
-                if (gamepad.gamepadConnected != value)
+                if (gamepadConnected != value)
                 {
-                    gamepad.gamepadConnected = value;
+                    gamepadConnected = value;
 
-                    if (gamepad.gamepadConnected == false)
+                    if (gamepadConnected == false)
                     {
                         gamepadLabel.Foreground = new SolidColorBrush(Color.FromRgb(128, 128, 128));
                         GamepadEnalbeButton.Content = "Disabled";
@@ -398,54 +409,6 @@ namespace Robotic_Arm_Desktop
                     }
                 }
             }
-        }
-
-
-        /*gamepad and keyboard basic input*/
-        private void InitializeGamepad(IntPtr windowHandle)
-        {
-            gamepad = new Gamepad(windowHandle);
-
-            HwndSource source = HwndSource.FromHwnd(windowHandle);
-            source.AddHook(new HwndSourceHook(WndProc));
-
-        }
-
-        private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled) //gamepad input
-        {
-            if (movement.gamepadEnabled == true && GamepadSlowDown == false)
-            {
-                switch (msg)
-                {
-                    case 0x00ff:
-                        {
-                            gamepadData = Gamepad.GamepadProcesing(lParam);
-                            movement.AnalizeData(gamepadData);
-                            gamepadConnected = true;
-                        }
-                        break;
-
-                    case 0x0219:
-                        {
-                            gamepadConnected = false;
-                        }
-                        break;
-                }
-                gamepadStateChange = gamepadConnected;
-
-                if (Global.WrongMode == true)
-                {
-                    if (Global.BetterMessageBoxLauched == false)
-                    {
-                        Global.BetterMessageBoxLauched = true;
-                        Global.BetterMessageBoxErrorIndex = 1;
-                        BetterPopUpBox BetterMessageBox = new BetterPopUpBox();
-                        BetterMessageBox.Show();
-                    }
-                }
-
-            }
-            return IntPtr.Zero;
         }
 
         private void KeyboardEvent(object sender, KeyEventArgs e)
@@ -713,7 +676,6 @@ namespace Robotic_Arm_Desktop
 
         public void DrawDataAndUpdateModel()
         {
-            
             this.baseRa.Content = Math.Round(movement.baseMovemend.AngleInDegree, 2) + " °";
             this.elb0a.Content = Math.Round(movement.elbow0.AngleInDegree, 2) + " °";
             this.elb1a.Content = Math.Round(movement.elbow1.AngleInDegree, 2) + " °";
