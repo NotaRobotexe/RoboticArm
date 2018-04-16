@@ -12,7 +12,7 @@ namespace Robotic_Arm_Desktop
     {
         public static event EventHandler PositonChange;
 
-        private const double PwmPerDegree = 2.633333333333333333333333333333333;
+        private const double PwmPerDegree = 2.562162162;
         public const double min_Pwm = 102;
         public const double max_Pwm = 576;
 
@@ -84,7 +84,7 @@ namespace Robotic_Arm_Desktop
         public short keyboardMovingArm=0; // moving with witch part of arm 0=el0 1=el1 2=el2 
 
         public float valueCountExp = 0.01f;
-        public float valueCount = 2.5f; //on how much will value increment
+        public float valueCount = 4f; //on how much will value increment
 
 
         public void AnalizeData(GamepadState data) 

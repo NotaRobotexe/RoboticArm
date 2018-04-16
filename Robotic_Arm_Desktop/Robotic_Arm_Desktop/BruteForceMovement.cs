@@ -126,7 +126,7 @@ namespace Robotic_Arm_Desktop
             prop.arm2P = model.elbow2.Bounds.Location;
 
             prop.arm0A = movement.elbow0.AngleInDegree;
-            prop.arm1A = prop.arm0A+movement.elbow1.AngleInDegree-22;
+            prop.arm1A = prop.arm0A+movement.elbow1.AngleInDegree-14.75;
             prop.arm2A = prop.arm1A+movement.elbow2.AngleInDegree;
 
             prop.arm0l = Math.Sqrt(Math.Pow((prop.arm0P.X- prop.arm1P.X),2) + Math.Pow((prop.arm0P.Z - prop.arm1P.Z),2));
@@ -137,7 +137,7 @@ namespace Robotic_Arm_Desktop
 
         private void Settings(int distance)
         {
-            angle = movement.elbow0.AngleInDegree + movement.elbow1.AngleInDegree + movement.elbow2.AngleInDegree-22;
+            angle = movement.elbow0.AngleInDegree + movement.elbow1.AngleInDegree + movement.elbow2.AngleInDegree-14.75;
 
             startPoin = model.griper.Bounds.Location;
             startPoin.X = Math.Round(startPoin.X, 3);

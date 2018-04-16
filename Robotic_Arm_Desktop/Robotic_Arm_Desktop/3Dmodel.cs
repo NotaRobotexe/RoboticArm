@@ -56,7 +56,7 @@ namespace Robotic_Arm_Desktop
 
             baserotation = 0;
             elbow0rot = 0;
-            elbow1rot = 22;
+            elbow1rot = 14.75;
             elbow2rot = -90;
             gripper0rot = 90;
         }

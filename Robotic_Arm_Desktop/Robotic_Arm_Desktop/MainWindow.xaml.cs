@@ -678,7 +678,7 @@ namespace Robotic_Arm_Desktop
         {
             this.baseRa.Content = Math.Round(movement.baseMovemend.AngleInDegree, 2) + " °";
             this.elb0a.Content = Math.Round(movement.elbow0.AngleInDegree, 2) + " °";
-            this.elb1a.Content = Math.Round(movement.elbow1.AngleInDegree, 2) + " °";
+            this.elb1a.Content = Math.Round(movement.elbow1.AngleInDegree, 2) + " ° " + "("+ Math.Round(movement.elbow1.AngleInDegree+14.75, 2)+ " °)";
             this.elb2a.Content = Math.Round(movement.elbow2.AngleInDegree, 2) + " °";
             this.grra.Content = Math.Round(movement.griperRotation.AngleInDegree, 2) + " °";
             this.gr.Content = Math.Round(movement.griper.AngleInDegree, 2) + " °";

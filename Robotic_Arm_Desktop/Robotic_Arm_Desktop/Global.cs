@@ -40,7 +40,7 @@
         public static GamepadState gamepadState;
 
         //debug only
-        public static bool DebugMode = true;
+        public static bool DebugMode = false;
 
         public static System.Windows.Media.Media3D.Vector3D point;
     }

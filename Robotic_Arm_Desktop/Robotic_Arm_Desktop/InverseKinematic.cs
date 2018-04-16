@@ -34,7 +34,7 @@ namespace Robotic_Arm_Desktop
         void Settings()
         {
             Point3D startPoint;
-            double angle =   movement.elbow0.AngleInDegree -( movement.elbow1.AngleInDegree + movement.elbow2.AngleInDegree + 22);
+            double angle =   movement.elbow0.AngleInDegree -( movement.elbow1.AngleInDegree + movement.elbow2.AngleInDegree + 14.75);
             startPoint = model.griper.Bounds.Location;
             startPoint.X = Math.Round(startPoint.X, 3);
             startPoint.Z = Math.Round(startPoint.Z, 3);

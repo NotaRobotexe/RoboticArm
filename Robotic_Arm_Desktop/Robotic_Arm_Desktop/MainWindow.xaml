@@ -34,14 +34,14 @@
             <Label Content="Gripper rotation :" HorizontalAlignment="Left" Margin="18,210,0,0" VerticalAlignment="Top" Foreground="White" FontSize="20" FontWeight="Bold" />
             <Label x:Name="baseRa" Content="0" HorizontalAlignment="Left" Margin="229,20,0,0" VerticalAlignment="Top" FontSize="20" Foreground="#FF1EBEF7" FontWeight="Bold" />
             <Label x:Name="elb0a" Content="0" HorizontalAlignment="Left" Margin="229,68,0,0" VerticalAlignment="Top" FontSize="20" Foreground="#FF1EBEF7" FontWeight="Bold" />
-            <Label x:Name="elb1a" Content="0" HorizontalAlignment="Left" Margin="229,116,0,0" VerticalAlignment="Top" FontSize="20" Foreground="#FF1EBEF7" FontWeight="Bold" />
+            <Label x:Name="elb1a" Content="0" HorizontalAlignment="Left" Margin="160,116,0,0" VerticalAlignment="Top" FontSize="20" Foreground="#FF1EBEF7" FontWeight="Bold" />
             <Label x:Name="elb2a" Content="0" HorizontalAlignment="Left" Margin="229,163,0,0" VerticalAlignment="Top" FontSize="20" Foreground="#FF1EBEF7" FontWeight="Bold" />
             <Label x:Name="grra" Content="0" HorizontalAlignment="Left" Margin="229,210,0,0" VerticalAlignment="Top" FontSize="20" Foreground="#FF1EBEF7" FontWeight="Bold" />
             <Label Content="Gripper :" HorizontalAlignment="Left" Margin="19,257,0,0" VerticalAlignment="Top" Foreground="White" FontSize="20" FontWeight="Bold" />
             <Label Content="Gripper trigger :" HorizontalAlignment="Left" Margin="19,305,0,0" VerticalAlignment="Top" Foreground="White" FontSize="20" FontWeight="Bold" />
             <Label x:Name="gr" Content="0" HorizontalAlignment="Left" Margin="229,257,0,0" VerticalAlignment="Top" FontSize="20" Foreground="#FF1EBEF7" FontWeight="Bold" RenderTransformOrigin="0.489,0.256" />
             <Label Name="trigger" Content="False" HorizontalAlignment="Left" Margin="229,305,0,0" VerticalAlignment="Top" FontSize="20" Foreground="#FF1EBEF7" FontWeight="Bold" RenderTransformOrigin="0.745,-0.433" />
-            <Label Content="Incrementation :" HorizontalAlignment="Left" Margin="19,354,0,0" VerticalAlignment="Top"  Foreground="White" FontSize="20" FontWeight="Bold" />
+            <Label Content="Speed :" HorizontalAlignment="Left" Margin="19,354,0,0" VerticalAlignment="Top"  Foreground="White" FontSize="20" FontWeight="Bold" />
             <Label Name="incLabel" Content="0" HorizontalAlignment="Left" Margin="229,354,0,0" VerticalAlignment="Top" FontSize="20" Foreground="#FF1EBEF7" FontWeight="Bold" />
         </Grid>
         <Grid HorizontalAlignment="Left" Height="309" Margin="393,318,0,0" VerticalAlignment="Top" Width="398" Background="#FF252526">
