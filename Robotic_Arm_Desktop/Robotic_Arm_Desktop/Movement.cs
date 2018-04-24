@@ -89,7 +89,7 @@ namespace Robotic_Arm_Desktop
 
         public void AnalizeData(GamepadState data) 
         {
-            if (data.button10 > 0)
+            if (data.button10 == 128)
             {
                 if (valueCount+valueCountExp < 25)
                 {
@@ -97,7 +97,7 @@ namespace Robotic_Arm_Desktop
                     OnIncrementationChange(EventArgs.Empty);
                 }
             }
-            else if (data.button11 > 0)
+            else if (data.button11 == 128)
             {
                 if (valueCount-valueCountExp>0)
                 {
@@ -106,56 +106,57 @@ namespace Robotic_Arm_Desktop
                 }
             }
 
-            if (data.button7 > 0)
+            if (data.button7 == 128)
             {
                 elbow0.SetPostionFromKeyboadrOrGamepad(-(valueCount));
             }
-            else if (data.button6 > 0)
+            else if (data.button6 == 128)
             {
                 elbow0.SetPostionFromKeyboadrOrGamepad((valueCount));
             }
 
-            if (data.button4 > 0)
+            if (data.button4 == 128)
             {
                 griper.SetPostionFromKeyboadrOrGamepad(-valueCount);
             }
-            else if (data.button5 > 0)
+            else if (data.button5 == 128)
             {
                 griper.SetPostionFromKeyboadrOrGamepad(valueCount);
             }
 
-            if (data.y > 32511)
+            if (data.y == 65535)
             {
+
                 elbow1.SetPostionFromKeyboadrOrGamepad(valueCount);
             }
-            else if (data.y < 32511)
+            else if (data.y == 0)
             {
                 elbow1.SetPostionFromKeyboadrOrGamepad(-(valueCount));
             }
 
-            if (data.button2 > 0)
+            if (data.button2 == 128)
             {
                 elbow2.SetPostionFromKeyboadrOrGamepad(valueCount);
             }
-            else if (data.button0 > 0)
+            else if (data.button0 == 128)
             {
                 elbow2.SetPostionFromKeyboadrOrGamepad(-(valueCount));
             }
 
-            if (data.button3 > 0)
+            if (data.button3 == 128)
             {
                 griperRotation.SetPostionFromKeyboadrOrGamepad(valueCount);
             }
-            else if (data.button1 > 0)
+            else if (data.button1 == 128)
             {
                 griperRotation.SetPostionFromKeyboadrOrGamepad(-(valueCount));
             }
 
-            if (data.x > 32511)
+            if (data.x == 65535)
             {
                 baseMovemend.SetPostionFromKeyboadrOrGamepad(-(valueCount));
             }
-            else if (data.x < 32511)
+            else if (data.x == 0)
             {
                 baseMovemend.SetPostionFromKeyboadrOrGamepad((valueCount));
             }
