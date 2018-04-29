@@ -1,1 +1,2 @@
 Place folder "RoboticArm" to your Documents and if you wanna run scrip move file Arm.py to your python's library foldier. 
+if something is not working I dont know what is wrong
