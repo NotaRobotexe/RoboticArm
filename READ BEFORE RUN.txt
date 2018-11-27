@@ -1,5 +1,0 @@
-Place folder "RoboticArm" to your Documents and if you wanna controll robotic arm with python scrip move file Arm.py to your python's library foldier. 
-***************************************************************************************************************************************
-working only on fullHD monitors ¯\_(ツ)_/¯ and expect more bugs (ノಠ益ಠ)ノ彡┻━┻ ¯\_(ツ)_/¯ ¯\_(ツ)_/¯ ¯\_(ツ)_/¯ 
-***************************************************************************************************************************************
-if something is not working I dont know what is wrong
